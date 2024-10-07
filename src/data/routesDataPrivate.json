@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1",
+    "to": "/",
+    "label": "Home"
+  },
+  {
+    "id": "2",
+    "to": "/profile",
+    "label": "Profile"
+  }
+]

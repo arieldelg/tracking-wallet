@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1",
+    "to": "/",
+    "label": "Home"
+  },
+  {
+    "id": "2",
+    "to": "/about-us",
+    "label": "About Us"
+  },
+  {
+    "id": "3",
+    "to": "/auth/login",
+    "label": "Login"
+  },
+  {
+    "id": "4",
+    "to": "/auth/register",
+    "label": "Register"
+  }
+]

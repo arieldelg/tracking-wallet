@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #282c34;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+html {
+  margin: 0;
+}
+
+@layer components {
+  .navlinkContainer {
+    @apply hover:bg-slate-500 hover:bg-opacity-50 text-2xl h-10 w-full rounded-lg flex flex-col items-center justify-center;
+  }
+  .navlink {
+    @apply w-full;
+  }
+  .active {
+    @apply transition-all animate-active text-gray-500;
+  }
+}
+
+/* 
+color for navbar
+#242424 
+*/
