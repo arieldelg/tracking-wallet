@@ -54,7 +54,7 @@ const NewBill = () => {
                 <div>
                   <div>
                     <label htmlFor="type">Type</label>
-                    <input
+                    <Field
                       type="text"
                       placeholder="tipo"
                       name="type"
@@ -63,7 +63,7 @@ const NewBill = () => {
                   </div>
                   <div>
                     <label htmlFor="date">Date</label>
-                    <input
+                    <Field
                       type="text"
                       placeholder="tipo"
                       name="date"
@@ -72,7 +72,7 @@ const NewBill = () => {
                   </div>
                   <div>
                     <label htmlFor="time">Time</label>
-                    <input
+                    <Field
                       type="text"
                       placeholder="tipo"
                       name="time"
@@ -81,7 +81,7 @@ const NewBill = () => {
                   </div>
                   <div>
                     <label htmlFor="tag">Tag</label>
-                    <input
+                    <Field
                       type="text"
                       placeholder="tipo"
                       name="tag"
