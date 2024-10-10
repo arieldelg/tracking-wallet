@@ -1,0 +1,26 @@
+[
+  {
+    "label": "Today",
+    "Income": "12,000",
+    "Expenses": "5,000"
+  },
+  {
+    "label": "Up Coming Income",
+    "newIncomes": [
+      {
+        "label": "Nomina",
+        "quantity": "3,500"
+      }
+    ]
+  },
+  {
+    "label": "Up Coming Expenses",
+    "Income": "12,000",
+    "Expenses": "5,000"
+  },
+  {
+    "label": "Last 30 Days",
+    "Income": "12,000",
+    "Expenses": "5,000"
+  }
+]

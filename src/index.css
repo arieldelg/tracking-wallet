@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* color-scheme: light dark; */
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #282c34;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+body,
+html {
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+@layer components {
+  .navlinkContainer {
+    @apply hover:bg-slate-500 hover:bg-opacity-50 text-2xl h-10 w-full rounded-lg flex flex-col items-center justify-center;
+  }
+  .navlink {
+    @apply w-full;
+  }
+  .active {
+    @apply transition-all animate-active text-gray-500;
+  }
+  .layoutMargins {
+    @apply w-full h-full font-bold font-mono p-8 max-lg:h-auto;
+  }
+  .imageContainerUpload {
+    @apply sm:max-lg:w-36 sm:max-lg:h-36 xl:w-28 xl:h-28 2xl:w-36 2xl:h-36 ultraWide:w-48 ultraWide:h-48 relative;
+  }
+  .input {
+    @apply focus:outline-none text-black;
+  }
+}
+
+/* 
+color for navbar
+#242424 
+*/
