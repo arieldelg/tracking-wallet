@@ -16,7 +16,6 @@ const route = createBrowserRouter([
         index: true,
         element: <Home />,
       },
-
       {
         path: "newBill",
         element: <NewBill />,
