@@ -1,0 +1,46 @@
+[
+  {
+    "title": "mi primer registro",
+    "date": "10/9/2024",
+    "id": "1",
+    "tag": "casa",
+    "note": "este es mi primer registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "income",
+    "typePayment": "cash",
+    "quantity": 2500
+  },
+  {
+    "title": "mi segundo registro",
+    "date": "10/9/2024",
+    "id": "2",
+    "tag": "casa",
+    "note": "este es mi segundo registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 3500
+  },
+  {
+    "title": "mi tercer registro",
+    "date": "10/9/2024",
+    "id": "3",
+    "tag": "casa",
+    "note": "Este es mi tercer registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 1500
+  },
+  {
+    "title": "mi cuarto registro",
+    "date": "10/9/2024",
+    "id": "4",
+    "tag": "casa",
+    "note": "Este es mi cuarto registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 4500
+  }
+]

@@ -1,4 +1,3 @@
-
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import headphones from "../assets/headphones-bright-background.jpg";
 import {
@@ -25,7 +24,7 @@ for (const type of ArrayTypePayment) {
 }
 
 const initialValues: InitialValues = {
-  type: "",
+  typePayment: "",
   date: new Date(),
   tag: "",
   title: "",
@@ -49,7 +48,7 @@ const NewBill = () => {
           initialValues={initialValues}
           onSubmit={(values) => console.log(values)}
           validationSchema={Yup.object({
-            type: Yup.string().required().oneOf(validationTypePayment),
+            typePayment: Yup.string().required().oneOf(validationTypePayment),
             date: Yup.date().required(),
             tag: Yup.string(),
             title: Yup.string().required(),
@@ -122,14 +121,14 @@ const NewBill = () => {
                 //* input type payment
                 */}
                   <MySelect
-                    name="type"
+                    name="typePayment"
                     placeholder="type payment"
                     classnameinput="input h-8 px-4 "
                     classnamelabel="text-lg text-center"
                     label="Type Payment"
                     onBlur={() => null}
                     classnameerror="errorMessage"
-                    id="type"
+                    id="typePayment"
                   >
                     <option value="" disabled>
                       Select an option

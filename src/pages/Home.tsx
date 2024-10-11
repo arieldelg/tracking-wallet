@@ -1,9 +1,15 @@
 import { NavLink } from "react-router-dom";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/24/outline";
+import MockBills from "../data/mockDataBills.json";
+import { BillPreviewCard } from "../components";
+import Modal from "../modals/Modal";
 
 const Home = () => {
   return (
     <>
+      {/* 
+    //* Income and Expense Sections
+    */}
       <h2 className="text-4xl pb-6">Income and Expenses</h2>
 
       <div className="w-full border-black flex  h-[181px] justify-between md:gap-4">
@@ -76,6 +82,10 @@ const Home = () => {
 
       <hr className="mt-10 pb-6" />
 
+      {/* 
+        //* Bills Section
+    */}
+
       <div className="w-full flex items-center justify-between pb-6">
         <h2 className="text-4xl">Bills</h2>
         <NavLink
@@ -87,95 +97,15 @@ const Home = () => {
         </NavLink>
       </div>
 
-      <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-lg text-sm">
-        <div className="bg-customGreen w-full h-20 ring-2 ring-customGreen rounded-2xl shadow-2xl flex gap-2 items-center justify-between px-7 py-3">
-          <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full   ">
-            <div className="h-full flex flex-col justify-between">
-              <h3>Mi Primer Registro</h3>
-              <p>Cobre en mi Trabajo</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Income</h3>
-              <p>2,500</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Tag</h3>
-              <p>Casa</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Date</h3>
-              <p>10/9/2024</p>
-            </div>
-          </div>
-          <TrashIcon className="w-12 text-black" />
-        </div>
-
-        <div className="bg-customRed w-full h-20 ring-2 ring-customRed rounded-2xl shadow-2xl flex gap-2 items-center justify-between px-7 py-3">
-          <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full   ">
-            <div className="h-full flex flex-col justify-between">
-              <h3>Mi Primer Registro</h3>
-              <p>Cobre en mi Trabajo</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Income</h3>
-              <p>2,500</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Tag</h3>
-              <p>Casa</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Date</h3>
-              <p>10/9/2024</p>
-            </div>
-          </div>
-          <TrashIcon className="w-12 text-black" />
-        </div>
-
-        <div className="bg-customRed w-full h-20 ring-2 ring-customRed rounded-2xl shadow-2xl flex gap-2 items-center justify-between px-7 py-3">
-          <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full   ">
-            <div className="h-full flex flex-col justify-between">
-              <h3>Mi Primer Registro</h3>
-              <p>Cobre en mi Trabajo</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Income</h3>
-              <p>2,500</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Tag</h3>
-              <p>Casa</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Date</h3>
-              <p>10/9/2024</p>
-            </div>
-          </div>
-          <TrashIcon className="w-12 text-black" />
-        </div>
-
-        <div className="bg-customGreen w-full h-20 ring-2 ring-customGreen rounded-2xl shadow-2xl flex gap-2 items-center justify-between px-7 py-3">
-          <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full   ">
-            <div className="h-full flex flex-col justify-between">
-              <h3>Mi Primer Registro</h3>
-              <p>Cobre en mi Trabajo</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Income</h3>
-              <p>2,500</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Tag</h3>
-              <p>Casa</p>
-            </div>
-            <div className="h-full flex flex-col justify-between">
-              <h3>Date</h3>
-              <p>10/9/2024</p>
-            </div>
-          </div>
-          <TrashIcon className="w-12 text-black" />
-        </div>
+      <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
+        {MockBills.map(({ id, ...props }) => (
+          <BillPreviewCard {...props} key={id} id={id} />
+        ))}
       </div>
+
+      <Modal>
+        <p>Hola</p>
+      </Modal>
 
       <div className="w-full text-center pt-6">
         <NavLink to={"bills"}>+ show more...</NavLink>
@@ -183,6 +113,9 @@ const Home = () => {
 
       <hr className="mt-6 pb-6" />
 
+      {/* 
+      //* Graphic section
+      */}
       <h2 className="text-4xl pb-6">Graphs</h2>
     </>
   );

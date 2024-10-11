@@ -1,6 +1,6 @@
 import { useField } from "formik";
-import { useAppDispatch } from "../store/hooks";
-import { setEntryPay } from "../store/wallet/walletSlice";
+import { useAppDispatch } from "../../store/hooks";
+import { setEntryPay } from "../../store/wallet/walletSlice";
 
 type Props = {
   name: string;

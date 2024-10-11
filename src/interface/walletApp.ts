@@ -8,7 +8,7 @@ export type Currency = "MXN" | "USD";
 export type TypeCurrency = "income" | "expense";
 
 export interface InitialValues {
-  type: PaymentType | "";
+  typePayment: PaymentType | "";
   date: Date;
   tag: string;
   title: string;
