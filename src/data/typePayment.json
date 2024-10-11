@@ -1,0 +1,22 @@
+[
+  {
+    "name": "cash",
+    "label": "Cash"
+  },
+  {
+    "name": "creditCard",
+    "label": "Credit Card"
+  },
+  {
+    "name": "debitCard",
+    "label": "Debit Card"
+  },
+  {
+    "name": "transfer",
+    "label": "Transfer"
+  },
+  {
+    "name": "checkBook",
+    "label": "Check Book"
+  }
+]

@@ -1,25 +1,45 @@
-import { Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import headphones from "../assets/headphones-bright-background.jpg";
-import { HeaderApp } from "../components";
+import {
+  ButtonsTypeCurrency,
+  MyDate,
+  MySelect,
+  MyTextArea,
+  MyTextInput,
+} from "../components";
 import { useRef } from "react";
-import { TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
+import * as Yup from "yup";
+import ArrayTypePayment from "../data/typePayment.json";
+import CurrencyTypeMoney from "../data/currencyType.json";
+import { useAppSelector } from "../store/hooks";
+import { EntryPaySelector } from "../store/wallet/walletSlice";
+import { useNavigate } from "react-router-dom";
+import { InitialValues } from "../interface/walletApp";
 
-const initialValues = {
+const validationTypePayment: string[] = [];
+
+for (const type of ArrayTypePayment) {
+  validationTypePayment.push(type.name);
+}
+
+const initialValues: InitialValues = {
   type: "",
-  date: "",
-  time: "",
+  date: new Date(),
   tag: "",
   title: "",
   note: "",
   quantity: 0,
-  currency: "",
+  currency: "MXN",
+  typeCurrency: "income",
 };
 
 const NewBill = () => {
+  const entry = useAppSelector(EntryPaySelector);
   const imgRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
   return (
-    <section className="layoutMargins grid grid-rows-[118px_auto]">
-      <HeaderApp title="New Entry" classNameLine="pb-7" />
+    <>
       <div className=" grid grid-rows-2 items-center gap-4 max-lg:gap-8 lg:grid-cols-2 lg:grid-rows-1">
         {/* 
         //* seccion de formulario
@@ -27,91 +47,161 @@ const NewBill = () => {
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => console.log(values)}
+          validationSchema={Yup.object({
+            type: Yup.string().required().oneOf(validationTypePayment),
+            date: Yup.date().required(),
+            tag: Yup.string(),
+            title: Yup.string().required(),
+            note: Yup.string(),
+            quantity: Yup.number().required().positive(),
+            currency: Yup.string().required(),
+          })}
         >
           {() => (
-            <Form className="h-full w-full min-w-[350px] xl:w-[480px] 2xl:w-[550px] 2xl:h-[550px] ultraWide:h-[700px] ultraWide:w-[700px] bg-customBGDark1 rounded-lg ring-2 ring-white ">
-              <div>
-                <button>Income</button>
-                <button>Expemses</button>
+            <Form
+              className={`h-full w-full p-7 min-w-[350px] xl:w-[480px] xl:h-[550px] 2xl:w-[550px] 2xl:h-[550px] ultraWide:h-[700px] ultraWide:w-[700px] bg-customBGDark1 rounded-lg ring-2 flex flex-col justify-between ${
+                entry === "income" ? "ring-customGreen " : "ring-customRed"
+              }`}
+            >
+              {/* 
+              //* here goes the income or expense
+              */}
+              <div className="w-full h-7 flex justify-center ultraWide:mb-11 gap-1">
+                <ButtonsTypeCurrency name="typeCurrency" />
               </div>
-              <div className="flex items-center">
-                <PlusIcon className="w-8" />
-                <div className="flex flex-col items-center">
-                  <Field type="number" className="input" name="quantity" />
+              {/* 
+              //* here goes the quantity and currency inputs
+              */}
+              <div className="flex justify-center items-center w-full h-28 gap-4 relative  ultraWide:mb-8 transition-all">
+                {entry === "income" ? (
+                  <PlusIcon className="w-12 ultraWide:w-16 absolute left-6 text-green-400 animate-fadeIn" />
+                ) : (
+                  <MinusIcon className="w-12 ultraWide:w-16 absolute left-6 text-red-400 animate-fadeIn" />
+                )}
+                <div className="h-full flex flex-col items-center justify-evenly text">
+                  <ErrorMessage
+                    name="quantity"
+                    className="text-center text-xs ultraWide:text-base text-red-500 first-letter:capitalize"
+                    component="span"
+                  />
                   <Field
+                    type="number"
+                    className="inputQuantity w-60 h-12 ultraWide:h-16 text-5xl text-right text-white bg-transparent"
+                    name="quantity"
+                    onBlur={() => null}
+                  />
+                  <MySelect
                     name="currency"
                     id="currency"
-                    className="input"
-                    as="select"
+                    classnameinput="input w-28 h-9 ultraWide:h-11 bg-transparent text-white text-4xl"
+                    onBlur={() => null}
+                    classnameerror="errorMessage"
                   >
-                    <option value=""></option>
-                    <option value="MXN">MXN</option>
-                    <option value="USD">USD</option>
-                  </Field>
+                    <option value="" disabled className="text-2xl">
+                      Tipo
+                    </option>
+                    {CurrencyTypeMoney.map(({ label, name }) => (
+                      <option
+                        value={name}
+                        className="text-black text-2xl"
+                        key={name}
+                      >
+                        {label}
+                      </option>
+                    ))}
+                  </MySelect>
                 </div>
               </div>
-              <div>
-                <div>
-                  <div>
-                    <label htmlFor="type">Type</label>
-                    <Field
-                      type="text"
-                      placeholder="tipo"
-                      name="type"
-                      className="input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="date">Date</label>
-                    <Field
-                      type="text"
-                      placeholder="tipo"
-                      name="date"
-                      className="input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="time">Time</label>
-                    <Field
-                      type="text"
-                      placeholder="tipo"
-                      name="time"
-                      className="input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="tag">Tag</label>
-                    <Field
-                      type="text"
-                      placeholder="tipo"
-                      name="tag"
-                      className="input"
-                    />
-                  </div>
+              {/* 
+              //* Here Starts the input sections
+              */}
+              <div className="w-full flex justify-between h-max items-center gap-8 ultraWide:pb-2">
+                <div className="flex flex-col justify-between h-full w-1/2 ultraWide:space-y-8">
+                  {/* 
+                //* input type payment
+                */}
+                  <MySelect
+                    name="type"
+                    placeholder="type payment"
+                    classnameinput="input h-8 px-4 "
+                    classnamelabel="text-lg text-center"
+                    label="Type Payment"
+                    onBlur={() => null}
+                    classnameerror="errorMessage"
+                    id="type"
+                  >
+                    <option value="" disabled>
+                      Select an option
+                    </option>
+                    {ArrayTypePayment.map(({ label, name }) => (
+                      <option key={name} value={name}>
+                        {label}
+                      </option>
+                    ))}
+                  </MySelect>
+                  {/* 
+                    //* input Date
+                    */}
+                  <MyDate
+                    classnamelabel="text-center text-lg"
+                    classnameinput="w-full h-8 input text-sm ultraWide:text-base"
+                    name="date"
+                    value={JSON.stringify(new Date())}
+                    label="Date"
+                    onBlur={() => null}
+                    id="date"
+                  />
+                  {/* 
+                  //* input tag
+                  */}
+                  <MyTextInput
+                    id="tag"
+                    name="tag"
+                    label="Tag"
+                    placeholder="keyword"
+                    classnamelabel="text-center text-lg"
+                    classnameinput="input w-full h-8"
+                    onBlur={() => null}
+                    classnameerror="errorMessage"
+                  />
                 </div>
-                <div>
-                  <div>
-                    <label htmlFor="title">Title</label>
-                    <input
-                      type="text"
-                      placeholder="title"
-                      name="title"
-                      className="input"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="note">Note</label>
-                    <textarea
-                      name="note"
-                      id="note"
-                      className="input"
-                    ></textarea>
-                  </div>
+                <div className="flex flex-col justify-between h-full w-1/2 ultraWide:space-y-8">
+                  <MyTextInput
+                    id="title"
+                    label="Title"
+                    name="title"
+                    placeholder="title"
+                    classnameinput="input w-full h-8"
+                    classnamelabel="text-center text-lg"
+                    onBlur={() => null}
+                    classnameerror="errorMessage"
+                  />
+                  <MyTextArea
+                    label="Note"
+                    name="note"
+                    placeholder="Note..."
+                    classnamelabel="text-center text-lg"
+                    classnameinput="input py-2 h-24 ultraWide:h-32 w-full"
+                    onBlur={() => null}
+                    id="note"
+                    classnameerror="errorMessage"
+                  />
                 </div>
               </div>
-              <div>
-                <button type="button">Cancelar</button>
-                <button type="submit">Salvar</button>
+              <div className="w-full h-8 ultraWide:h-10 flex justify-between">
+                <button
+                  type="button"
+                  className="w-52 ultraWide:w-64 h-full bg-customRed rounded-full ring-2 ring-customRed hover:bg-red-500 hover:ring-red-300"
+                  onClick={() => navigate(-1)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="w-52 ultraWide:w-64 h-full bg-customGreen rounded-full ring-2 ring-customGreen hover:bg-green-500 hover:ring-green-300"
+                >
+                  Salvar
+                </button>
               </div>
             </Form>
           )}
@@ -120,7 +210,7 @@ const NewBill = () => {
         {/* 
         //* seccion de imagenes
         */}
-        <div className="flex flex-col items-center justify-start gap-10 h-full ultraWide:h-[700px]">
+        <div className="flex flex-col items-center justify-start gap-10 h-auto ultraWide:h-[700px]">
           <div className="flex w-full items-center justify-between">
             <h1 className="text-2xl">Images</h1>
             <input
@@ -235,7 +325,7 @@ const NewBill = () => {
           </div>
         </div>
       </div>
-    </section>
+    </>
   );
 };
 

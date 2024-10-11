@@ -17,11 +17,25 @@
   display: none;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 body,
 html {
   margin: 0;
   box-sizing: border-box;
   padding: 0;
+}
+
+.react-datepicker__header--time {
+  width: 95px;
+}
+
+.react-datepicker__time {
+  width: 95px;
 }
 
 @layer components {
@@ -41,7 +55,13 @@ html {
     @apply sm:max-lg:w-36 sm:max-lg:h-36 xl:w-28 xl:h-28 2xl:w-36 2xl:h-36 ultraWide:w-48 ultraWide:h-48 relative;
   }
   .input {
+    @apply focus:outline-none text-black rounded-lg focus:ring-2 focus:ring-blue-400 px-2 ultraWide:px-4;
+  }
+  .inputQuantity {
     @apply focus:outline-none text-black;
+  }
+  .errorMessage {
+    @apply text-center text-red-500 text-sm ultraWide:text-base;
   }
 }
 

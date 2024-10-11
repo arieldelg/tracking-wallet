@@ -1,12 +1,9 @@
 import { NavLink } from "react-router-dom";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { HeaderApp } from "../components";
 
 const Home = () => {
   return (
-    <section className="layoutMargins">
-      <HeaderApp title="Dashboard" />
-
+    <>
       <h2 className="text-4xl pb-6">Income and Expenses</h2>
 
       <div className="w-full border-black flex  h-[181px] justify-between md:gap-4">
@@ -187,7 +184,7 @@ const Home = () => {
       <hr className="mt-6 pb-6" />
 
       <h2 className="text-4xl pb-6">Graphs</h2>
-    </section>
+    </>
   );
 };
 

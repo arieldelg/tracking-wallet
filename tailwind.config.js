@@ -12,6 +12,13 @@ export default {
       },
       animation: {
         active: " 0.3s ease-out infinite",
+        fadeIn: "fadeIn 1s linear 1",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       width: {
         homeIncomeExpense: "304px",
