@@ -25,13 +25,13 @@ interface IMG {
 
 export type NoteProps = {
   id: string;
-  typeCurrency: string;
+  typeCurrency: TypeCurrency;
   title: string;
   note: string;
-  typePayment: string;
+  typePayment: PaymentType | "";
   quantity: number;
   tag: string;
   date: string;
   currency: Currency;
-  images: IMG[] | null;
+  images?: IMG[] | null;
 };

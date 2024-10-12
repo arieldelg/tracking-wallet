@@ -6,6 +6,7 @@ import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
 import { useAppSelector } from "../store/hooks";
 import { OpenModalSelector } from "../store/ui/uiSlice";
+import { NoteProps } from "../interface/walletApp";
 
 const Home = () => {
   const openModal = useAppSelector(OpenModalSelector);
@@ -103,7 +104,7 @@ const Home = () => {
 
       <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
         {MockBills.map(({ id, ...props }) => (
-          <BillPreviewCard {...props} key={id} id={id} />
+          <BillPreviewCard {...(props as NoteProps)} key={id} id={id} />
         ))}
       </div>
 
