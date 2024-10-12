@@ -17,3 +17,15 @@ export interface InitialValues {
   currency: Currency;
   typeCurrency: TypeCurrency;
 }
+
+export type NoteProps = {
+  id: string;
+  typeCurrency: string;
+  title: string;
+  note: string;
+  typePayment: string;
+  quantity: number;
+  tag: string;
+  date: string;
+  currency: Currency;
+};

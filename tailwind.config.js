@@ -10,9 +10,13 @@ export default {
       maxWidth: {
         1920: "1670px",
       },
+      maxHeight: {
+        890: "890px",
+      },
       animation: {
         active: " 0.3s ease-out infinite",
         fadeIn: "fadeIn 1s linear 1",
+        fadeInBillModal: "fadeIn 0.3s ease 1",
       },
       keyframes: {
         fadeIn: {
@@ -27,6 +31,7 @@ export default {
         customGreen: "#78C760",
         customRed: "#FB9F9F",
         customBGDark1: "#363A45",
+        customBGDark2: "#282c34",
       },
       ringColor: {
         customGreen: "#66FF37",

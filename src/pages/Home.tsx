@@ -3,8 +3,12 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import MockBills from "../data/mockDataBills.json";
 import { BillPreviewCard } from "../components";
 import Modal from "../modals/Modal";
+import { ViewCard } from "./views";
+import { useAppSelector } from "../store/hooks";
+import { OpenModalSelector } from "../store/ui/uiSlice";
 
 const Home = () => {
+  const openModal = useAppSelector(OpenModalSelector);
   return (
     <>
       {/* 
@@ -103,9 +107,11 @@ const Home = () => {
         ))}
       </div>
 
-      <Modal>
-        <p>Hola</p>
-      </Modal>
+      {openModal && (
+        <Modal>
+          <ViewCard />
+        </Modal>
+      )}
 
       <div className="w-full text-center pt-6">
         <NavLink to={"bills"}>+ show more...</NavLink>

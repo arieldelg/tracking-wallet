@@ -1,24 +1,22 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { useAppDispatch } from "../../store/hooks";
+import { setOpen } from "../../store/ui/uiSlice";
+import { NoteProps } from "../../interface/walletApp";
+import { startSavingActiveNote } from "../../store/wallet/thunk";
 
-type Props = {
-  id: string;
-  typeCurrency: string;
-  title: string;
-  note: string;
-  typePayment: string;
-  quantity: number;
-  tag: string;
-  date: string;
-};
-
-const BillPreviewCard = (props: Props) => {
+const BillPreviewCard = (props: NoteProps) => {
+  const dispatch = useAppDispatch();
   return (
     <div
-      className={`w-full h-20 ring-2 rounded-2xl shadow-2xl flex gap-4 items-center justify-between pl-7 pr-4 py-3 ${
+      className={`w-full h-20 ring-2 rounded-2xl shadow-2xl flex gap-4 items-center justify-between pl-7 pr-4 py-3 cursor-pointer ${
         props.typeCurrency === "income"
           ? "bg-customGreen ring-customGreen"
           : "bg-customRed ring-customRed"
       }`}
+      onClick={() => {
+        dispatch(setOpen());
+        dispatch(startSavingActiveNote(props));
+      }}
     >
       <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full">
         <div className="h-full flex flex-col justify-between overflow-hidden text-start ">
@@ -40,7 +38,12 @@ const BillPreviewCard = (props: Props) => {
           <p>{props.date}</p>
         </div>
       </div>
-      <TrashIcon className="w-12 text-black" />
+      <TrashIcon
+        className="w-12 text-black"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      />
     </div>
   );
 };
