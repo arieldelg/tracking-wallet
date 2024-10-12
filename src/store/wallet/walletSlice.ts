@@ -2,7 +2,14 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { NoteProps } from "../../interface/walletApp";
 
+/**
+ *
+ * ? atento a futuras modificaciones
+ */
+
 type TypeEntryPay = "income" | "expense";
+
+//? deberia eliminar el entry pay si no lo uso??? o lo guardo para mas tarde
 
 interface InitialState {
   entryPay: TypeEntryPay;
@@ -23,7 +30,7 @@ export const walletSlice = createSlice({
     setEntryPay: (state, action: PayloadAction<TypeEntryPay>) => {
       state.entryPay = action.payload;
     },
-    setActiveNote: (state, action: PayloadAction<NoteProps>) => {
+    setActiveNote: (state, action: PayloadAction<NoteProps | undefined>) => {
       state.activeNote = action.payload;
     },
   },
@@ -36,8 +43,14 @@ export const { setEntryPay, setActiveNote } = walletSlice.actions;
 export default walletSlice.reducer;
 
 const ENTRYPAY = (state: RootState) => state;
+const ACTIVENOTE = (state: RootState) => state;
 
 export const EntryPaySelector = createSelector(
   [ENTRYPAY],
   (ENTRYPAY) => ENTRYPAY.wallet.entryPay
+);
+
+export const ActiveNoteSelector = createSelector(
+  [ACTIVENOTE],
+  (ACTIVENOTE) => ACTIVENOTE.wallet.activeNote
 );

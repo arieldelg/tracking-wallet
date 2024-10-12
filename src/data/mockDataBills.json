@@ -12,19 +12,23 @@
     "images": [
       {
         "id": "1",
-        "img": "back-view-man-carrying-tote-bag.jpg"
+        "img": "back-view-man-carrying-tote-bag.jpg",
+        "name": "bag"
       },
       {
         "id": "2",
-        "img": "beautiful-t-shirt-black-women-s-simple-streetwear-outdoor-shoot.jpg"
+        "img": "beautiful-t-shirt-black-women-s-simple-streetwear-outdoor-shoot.jpg",
+        "name": "bag"
       },
       {
         "id": "3",
-        "img": "bedroom.jpg"
+        "img": "bedroom.jpg",
+        "name": "bag"
       },
       {
         "id": "4",
-        "img": "bff-printed-red-hoodie.jpg"
+        "img": "bff-printed-red-hoodie.jpg",
+        "name": "bag"
       }
     ]
   },

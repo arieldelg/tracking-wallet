@@ -18,7 +18,10 @@ export const uiSlice = createSlice({
   initialState,
   reducers: {
     setOpen: (state) => {
-      state.open = !state.open;
+      state.open = true;
+    },
+    setClose: (state) => {
+      state.open = false;
     },
     setHeader: (state, action: PayloadAction<string>) => {
       state.headerName = action.payload;
@@ -27,7 +30,7 @@ export const uiSlice = createSlice({
 });
 
 /*!exportamos las acciones del slice*/
-export const { setOpen, setHeader } = uiSlice.actions;
+export const { setOpen, setHeader, setClose } = uiSlice.actions;
 
 /* ! esto lo qu exportamos al store*/
 export default uiSlice.reducer;

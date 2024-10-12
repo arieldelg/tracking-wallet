@@ -1,13 +1,10 @@
 import { useField } from "formik";
-import { useAppDispatch } from "../../store/hooks";
-import { setEntryPay } from "../../store/wallet/walletSlice";
 
 type Props = {
   name: string;
 };
 
 const ButtonsTypeCurrency = (props: Props) => {
-  const dispatch = useAppDispatch();
   const [, meta, helpers] = useField(props);
   const { value } = meta;
   const { setValue } = helpers;
@@ -17,7 +14,6 @@ const ButtonsTypeCurrency = (props: Props) => {
         type="button"
         onClick={() => {
           setValue("income");
-          dispatch(setEntryPay("income"));
         }}
         className={`${
           value === "income"
@@ -31,7 +27,6 @@ const ButtonsTypeCurrency = (props: Props) => {
         type="button"
         onClick={() => {
           setValue("expense");
-          dispatch(setEntryPay("expense"));
         }}
         className={`${
           value === "expense"

@@ -1,10 +1,17 @@
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import { useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useHeaderName } from "../../hooks";
+import { ActiveNoteSelector } from "../../store/wallet/walletSlice";
+import { setClose } from "../../store/ui/uiSlice";
 
 const ViewCard = () => {
-  const activeNote = useAppSelector((state) => state.wallet.activeNote);
   const [img, setImg] = useState<string | undefined>(undefined);
+  const activeNote = useAppSelector(ActiveNoteSelector);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { setHeaderName } = useHeaderName();
   return (
     <div
       className="relative transition-all "
@@ -19,7 +26,11 @@ const ViewCard = () => {
       >
         <PencilSquareIcon
           className="w-10 absolute top-3 right-3 text-white cursor-pointer"
-          onClick={() => console.log("edit")}
+          onClick={() => {
+            dispatch(setClose());
+            setHeaderName("New Bill");
+            navigate("/newBill");
+          }}
         />
         <h1 className="text-3xl ultraWide:text-4xl text-center first-letter:capitalize">
           {activeNote?.typeCurrency}

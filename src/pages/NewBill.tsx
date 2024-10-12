@@ -1,5 +1,4 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import headphones from "../assets/headphones-bright-background.jpg";
 import {
   ButtonsTypeCurrency,
   MyDate,
@@ -8,15 +7,21 @@ import {
   MyTextInput,
 } from "../components";
 import { useRef } from "react";
-import { TrashIcon, PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
+import {
+  TrashIcon,
+  PlusIcon,
+  MinusIcon,
+  CloudArrowUpIcon,
+} from "@heroicons/react/24/outline";
 import * as Yup from "yup";
 import ArrayTypePayment from "../data/typePayment.json";
 import CurrencyTypeMoney from "../data/currencyType.json";
-import { useAppSelector } from "../store/hooks";
-import { EntryPaySelector } from "../store/wallet/walletSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { ActiveNoteSelector } from "../store/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
 import { InitialValues } from "../interface/walletApp";
 import { useHeaderName } from "../hooks";
+import { startResetActiveNote } from "../store/wallet/thunk";
 
 const validationTypePayment: string[] = [];
 
@@ -36,8 +41,9 @@ const initialValues: InitialValues = {
 };
 
 const NewBill = () => {
-  const entry = useAppSelector(EntryPaySelector);
   const imgRef = useRef<HTMLInputElement | null>(null);
+  const activeNote = useAppSelector(ActiveNoteSelector);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { setHeaderName } = useHeaderName();
   return (
@@ -47,7 +53,7 @@ const NewBill = () => {
         //* seccion de formulario
         */}
         <Formik
-          initialValues={initialValues}
+          initialValues={activeNote ? activeNote : initialValues}
           onSubmit={(values) => console.log(values)}
           validationSchema={Yup.object({
             typePayment: Yup.string().required().oneOf(validationTypePayment),
@@ -59,10 +65,12 @@ const NewBill = () => {
             currency: Yup.string().required(),
           })}
         >
-          {() => (
+          {({ values }) => (
             <Form
               className={`h-full w-full p-7 min-w-[350px] xl:w-[480px] xl:h-[550px] 2xl:w-[550px] 2xl:h-[550px] ultraWide:h-[700px] ultraWide:w-[700px] bg-customBGDark1 rounded-lg ring-2 flex flex-col justify-between ${
-                entry === "income" ? "ring-customGreen " : "ring-customRed"
+                values.typeCurrency === "income"
+                  ? "ring-customGreen "
+                  : "ring-customRed"
               }`}
             >
               {/* 
@@ -75,7 +83,7 @@ const NewBill = () => {
               //* here goes the quantity and currency inputs
               */}
               <div className="flex justify-center items-center w-full h-28 gap-4 relative  ultraWide:mb-8 transition-all">
-                {entry === "income" ? (
+                {values.typeCurrency === "income" ? (
                   <PlusIcon className="w-12 ultraWide:w-16 absolute left-6 text-green-400 animate-fadeIn" />
                 ) : (
                   <MinusIcon className="w-12 ultraWide:w-16 absolute left-6 text-red-400 animate-fadeIn" />
@@ -195,6 +203,7 @@ const NewBill = () => {
                   type="button"
                   className="w-52 ultraWide:w-64 h-full bg-customRed rounded-full ring-2 ring-customRed hover:bg-red-500 hover:ring-red-300"
                   onClick={() => {
+                    dispatch(startResetActiveNote());
                     setHeaderName("Dashboard");
                     navigate(-1);
                   }}
@@ -229,105 +238,26 @@ const NewBill = () => {
               + upload an image
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-8 overflow-auto p-2 bg-customBGDark1 rounded-lg h-96 ultraWide:h-full scrollbar">
-            <div className="imageContainerUpload">
-              <img
-                src={headphones}
-                alt="headphones"
-                className="w-full rounded-xl"
-              />
-              <button
-                className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                onClick={() => console.log("delete image")}
-              >
-                <TrashIcon className="w-5 text-red-500" />
-              </button>
+          {activeNote?.images ? (
+            <div className="grid grid-cols-3 gap-8 overflow-auto p-2 bg-customBGDark1 rounded-lg h-96 ultraWide:h-full scrollbar">
+              {activeNote?.images?.map(({ id, img, name }) => (
+                <div className="imageContainerUpload" key={id}>
+                  <img src={img} alt={name} className="w-full rounded-xl" />
+                  <button
+                    className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
+                    onClick={() => console.log("delete image")}
+                  >
+                    <TrashIcon className="w-5 text-red-500" />
+                  </button>
+                </div>
+              ))}
             </div>
-
-            <div className="imageContainerUpload">
-              <img
-                src={headphones}
-                alt="headphones"
-                className="w-full rounded-xl"
-              />
-              <button
-                className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                onClick={() => console.log("delete image")}
-              >
-                <TrashIcon className="w-5 text-red-500" />
-              </button>
+          ) : (
+            <div className="w-full h-96 flex flex-col items-center justify-center space-y-4">
+              <CloudArrowUpIcon className="w-36 text-gray-500" />
+              <p className="text-2xl text-gray-500">Upload an Image!!</p>
             </div>
-
-            <div className="imageContainerUpload">
-              <img
-                src={headphones}
-                alt="headphones"
-                className="w-full rounded-xl"
-              />
-              <button
-                className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                onClick={() => console.log("delete image")}
-              >
-                <TrashIcon className="w-5 text-red-500" />
-              </button>
-            </div>
-
-            <div className="imageContainerUpload">
-              <img
-                src={headphones}
-                alt="headphones"
-                className="w-full rounded-xl"
-              />
-              <button
-                className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                onClick={() => console.log("delete image")}
-              >
-                <TrashIcon className="w-5 text-red-500" />
-              </button>
-            </div>
-
-            <div className="imageContainerUpload">
-              <img
-                src={headphones}
-                alt="headphones"
-                className="w-full rounded-xl"
-              />
-              <button
-                className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                onClick={() => console.log("delete image")}
-              >
-                <TrashIcon className="w-5 text-red-500" />
-              </button>
-            </div>
-
-            <div className="imageContainerUpload">
-              <img
-                src={headphones}
-                alt="headphones"
-                className="w-full rounded-xl"
-              />
-              <button
-                className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                onClick={() => console.log("delete image")}
-              >
-                <TrashIcon className="w-5 text-red-500" />
-              </button>
-            </div>
-
-            <div className="imageContainerUpload">
-              <img
-                src={headphones}
-                alt="headphones"
-                className="w-full rounded-xl"
-              />
-              <button
-                className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                onClick={() => console.log("delete image")}
-              >
-                <TrashIcon className="w-5 text-red-500" />
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </>

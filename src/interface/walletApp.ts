@@ -21,6 +21,7 @@ export interface InitialValues {
 interface IMG {
   id: string;
   img: string;
+  name: string;
 }
 
 export type NoteProps = {
