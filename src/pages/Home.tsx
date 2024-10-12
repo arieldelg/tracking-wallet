@@ -4,15 +4,16 @@ import MockBills from "../data/mockDataBills.json";
 import { BillPreviewCard } from "../components";
 import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
-import { useAppSelector } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { OpenModalSelector } from "../store/ui/uiSlice";
 import { NoteProps } from "../interface/walletApp";
 import { useHeaderName } from "../hooks";
+import { startResetActiveNote } from "../store/wallet/thunk";
 
 const Home = () => {
   const openModal = useAppSelector(OpenModalSelector);
   const { setHeaderName } = useHeaderName();
-
+  const dispatch = useAppDispatch();
   return (
     <>
       {/* 
@@ -99,7 +100,10 @@ const Home = () => {
         <NavLink
           className="w-24 h-9 bg-teal-500 rounded-full flex items-center justify-between text-xl px-4"
           to={"newBill"}
-          onClick={() => setHeaderName("New Entry")}
+          onClick={() => {
+            dispatch(startResetActiveNote());
+            setHeaderName("New Entry");
+          }}
         >
           <PlusIcon className="w-6" />
           <p>New</p>
