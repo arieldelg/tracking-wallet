@@ -5,6 +5,7 @@ export default {
     extend: {
       screens: {
         ultraWide: "1800px",
+        xs: "450px",
         // "2xl": "1537px",
       },
       maxWidth: {
@@ -17,11 +18,15 @@ export default {
         active: " 0.3s ease-out infinite",
         fadeIn: "fadeIn 1s linear 1",
         fadeInBillModal: "fadeIn 0.3s ease 1",
+        translateImg: "translateX 0.5s linear 1 forwards",
       },
       keyframes: {
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
+        },
+        translateX: {
+          "100%": { transform: "translateX(100%)" },
         },
       },
       width: {
