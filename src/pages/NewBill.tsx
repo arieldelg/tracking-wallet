@@ -16,6 +16,7 @@ import { useAppSelector } from "../store/hooks";
 import { EntryPaySelector } from "../store/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
 import { InitialValues } from "../interface/walletApp";
+import { useHeaderName } from "../hooks";
 
 const validationTypePayment: string[] = [];
 
@@ -38,6 +39,7 @@ const NewBill = () => {
   const entry = useAppSelector(EntryPaySelector);
   const imgRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
+  const { setHeaderName } = useHeaderName();
   return (
     <>
       <div className=" grid grid-rows-2 items-center gap-4 max-lg:gap-8 lg:grid-cols-2 lg:grid-rows-1">
@@ -192,7 +194,10 @@ const NewBill = () => {
                 <button
                   type="button"
                   className="w-52 ultraWide:w-64 h-full bg-customRed rounded-full ring-2 ring-customRed hover:bg-red-500 hover:ring-red-300"
-                  onClick={() => navigate(-1)}
+                  onClick={() => {
+                    setHeaderName("Dashboard");
+                    navigate(-1);
+                  }}
                 >
                   Cancelar
                 </button>

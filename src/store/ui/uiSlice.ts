@@ -1,9 +1,15 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
+interface InitialState {
+  open: boolean;
+  headerName: string;
+}
+
 /*!initialState*/
-const initialState: { open: boolean } = {
+const initialState: InitialState = {
   open: false,
+  headerName: "Dashboard",
 };
 
 /*!slice*/
@@ -14,11 +20,14 @@ export const uiSlice = createSlice({
     setOpen: (state) => {
       state.open = !state.open;
     },
+    setHeader: (state, action: PayloadAction<string>) => {
+      state.headerName = action.payload;
+    },
   },
 });
 
 /*!exportamos las acciones del slice*/
-export const { setOpen } = uiSlice.actions;
+export const { setOpen, setHeader } = uiSlice.actions;
 
 /* ! esto lo qu exportamos al store*/
 export default uiSlice.reducer;

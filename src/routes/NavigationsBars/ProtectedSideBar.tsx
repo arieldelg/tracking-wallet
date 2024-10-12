@@ -1,8 +1,10 @@
 import { NavLink, NavLinkRenderProps } from "react-router-dom";
 import huron from "../../assets/f6b509853a254673be01d2ee62fb81bf.jpg";
 import PrivateRoutes from "../../data/routesDataPrivate.json";
+import { useHeaderName } from "../../hooks";
 
 const ProtectedSideBar = () => {
+  const { setHeaderName } = useHeaderName();
   return (
     <header className="w-full h-full bg-[#363a45]">
       <img src={huron} alt="huron" className="object-cover w-full h-44" />
@@ -14,6 +16,7 @@ const ProtectedSideBar = () => {
                 to={to}
                 className={`${({ isActive, isPending }: NavLinkRenderProps) =>
                   isActive ? "active" : isPending ? "pending" : null} navlink`}
+                onClick={() => setHeaderName(label)}
               >
                 {label}
               </NavLink>
