@@ -8,7 +8,25 @@
     "currency": "MXN",
     "typeCurrency": "income",
     "typePayment": "cash",
-    "quantity": 2500
+    "quantity": 2500,
+    "images": [
+      {
+        "id": "1",
+        "img": "back-view-man-carrying-tote-bag.jpg"
+      },
+      {
+        "id": "2",
+        "img": "beautiful-t-shirt-black-women-s-simple-streetwear-outdoor-shoot.jpg"
+      },
+      {
+        "id": "3",
+        "img": "bedroom.jpg"
+      },
+      {
+        "id": "4",
+        "img": "bff-printed-red-hoodie.jpg"
+      }
+    ]
   },
   {
     "title": "mi segundo registro",
@@ -19,7 +37,8 @@
     "currency": "MXN",
     "typeCurrency": "expense",
     "typePayment": "cash",
-    "quantity": 3500
+    "quantity": 3500,
+    "images": null
   },
   {
     "title": "mi tercer registro",

@@ -1,4 +1,3 @@
-import mockImg from "../../assets/headphones-bright-background.jpg";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { useAppSelector } from "../../store/hooks";
 
@@ -6,7 +5,7 @@ const ViewCard = () => {
   const activeNote = useAppSelector((state) => state.wallet.activeNote);
   return (
     <div
-      className="w-full h-5/6 max-h-[750px] max-w-[600px] ultraWide:max-w-[730px] text-lg ultraWide:text-xl relative "
+      className="w-full h-5/6 max-h-[790px] max-w-[600px] ultraWide:max-w-[730px] text-lg ultraWide:text-xl relative "
       onClick={(e) => e.stopPropagation()}
     >
       <div
@@ -68,42 +67,22 @@ const ViewCard = () => {
             {/* 
             //* imagenes
             */}
-            <div className="w-[340px] ultraWide:w-full grid grid-cols-3 ultraWide:gap-x-2 gap-y-4 items-center justify-items-center overflow-auto h-[200px] ultraWide:h-[280px] scrollbar bg-cu p-2 rounded-md">
-              <img
-                src={mockImg}
-                alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
-              />
-              <img
-                src={mockImg}
-                alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
-              />
-              <img
-                src={mockImg}
-                alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
-              />
-              <img
-                src={mockImg}
-                alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
-              />
-              <img
-                src={mockImg}
-                alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
-              />
-              <img
-                src={mockImg}
-                alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
-              />
-              <img
-                src={mockImg}
-                alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
-              />
+
+            <div
+              className={`w-[340px] ultraWide:w-full grid grid-cols-3 ultraWide:gap-x-2 gap-y-4 items-center justify-items-center overflow-auto scrollbar p-2 rounded-md ${
+                !activeNote?.images
+                  ? "h-[80px] ultraWide:h-[130px]"
+                  : "h-[200px] ultraWide:h-[280px]"
+              }`}
+            >
+              {activeNote?.images?.map(({ id, img }) => (
+                <img
+                  key={id}
+                  src={img}
+                  alt="headphones"
+                  className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg"
+                />
+              ))}
             </div>
           </div>
         </div>

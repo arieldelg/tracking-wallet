@@ -18,6 +18,11 @@ export interface InitialValues {
   typeCurrency: TypeCurrency;
 }
 
+interface IMG {
+  id: string;
+  img: string;
+}
+
 export type NoteProps = {
   id: string;
   typeCurrency: string;
@@ -28,4 +33,5 @@ export type NoteProps = {
   tag: string;
   date: string;
   currency: Currency;
+  images: IMG[] | null;
 };
