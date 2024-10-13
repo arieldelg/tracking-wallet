@@ -2,7 +2,10 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useAppDispatch } from "../../store/hooks";
 import { setOpen } from "../../store/ui/uiSlice";
 import { NoteProps } from "../../interface/walletApp";
-import { startSavingActiveNote } from "../../store/wallet/thunk";
+import {
+  startDeleteNote,
+  startSavingActiveNote,
+} from "../../store/wallet/thunk";
 
 const BillPreviewCard = (props: NoteProps) => {
   const dispatch = useAppDispatch();
@@ -42,6 +45,7 @@ const BillPreviewCard = (props: NoteProps) => {
         className="w-12 text-black"
         onClick={(e) => {
           e.stopPropagation();
+          dispatch(startDeleteNote(props.id));
         }}
       />
     </div>

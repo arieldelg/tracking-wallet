@@ -19,9 +19,12 @@ import CurrencyTypeMoney from "../data/currencyType.json";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { ActiveNoteSelector } from "../store/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
-import { InitialValues } from "../interface/walletApp";
+import { InitialValues, NoteProps } from "../interface/walletApp";
 import { useHeaderName } from "../hooks";
-import { startResetActiveNote } from "../store/wallet/thunk";
+import {
+  startResetActiveNote,
+  startSavingNewNote,
+} from "../store/wallet/thunk";
 
 const validationTypePayment: string[] = [];
 
@@ -54,7 +57,13 @@ const NewBill = () => {
         */}
         <Formik
           initialValues={activeNote ? activeNote : initialValues}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={(values) => {
+            const newValues = {
+              ...values,
+              images: [],
+            };
+            dispatch(startSavingNewNote(newValues as NoteProps));
+          }}
           validationSchema={Yup.object({
             typePayment: Yup.string().required().oneOf(validationTypePayment),
             date: Yup.date().required(),

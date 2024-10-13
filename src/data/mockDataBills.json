@@ -42,7 +42,7 @@
     "typeCurrency": "expense",
     "typePayment": "cash",
     "quantity": 3500,
-    "images": null
+    "images": []
   },
   {
     "title": "mi tercer registro",
@@ -54,7 +54,7 @@
     "typeCurrency": "expense",
     "typePayment": "cash",
     "quantity": 1500,
-    "images": null
+    "images": []
   },
   {
     "title": "mi cuarto registro",
@@ -66,6 +66,6 @@
     "typeCurrency": "expense",
     "typePayment": "cash",
     "quantity": 4500,
-    "images": null
+    "images": []
   }
 ]

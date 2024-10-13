@@ -32,7 +32,7 @@ export type NoteProps = {
   typePayment: PaymentType | "";
   quantity: number;
   tag: string;
-  date: string;
+  date: number;
   currency: Currency;
   images?: IMG[] | null;
 };

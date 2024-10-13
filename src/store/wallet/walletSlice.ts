@@ -14,12 +14,14 @@ type TypeEntryPay = "income" | "expense";
 interface InitialState {
   entryPay: TypeEntryPay;
   activeNote: NoteProps | undefined;
+  notes: NoteProps[];
 }
 
 /*!initialState*/
 const initialState: InitialState = {
   entryPay: "income",
   activeNote: undefined,
+  notes: [],
 };
 
 /*!slice*/
@@ -33,17 +35,25 @@ export const walletSlice = createSlice({
     setActiveNote: (state, action: PayloadAction<NoteProps | undefined>) => {
       state.activeNote = action.payload;
     },
+    setNotes: (state, action: PayloadAction<NoteProps[] | []>) => {
+      state.notes = action.payload;
+    },
+    setSaveNote: (state, action: PayloadAction<NoteProps>) => {
+      state.notes.push(action.payload);
+    },
   },
 });
 
 /*!exportamos las acciones del slice*/
-export const { setEntryPay, setActiveNote } = walletSlice.actions;
+export const { setEntryPay, setActiveNote, setNotes, setSaveNote } =
+  walletSlice.actions;
 
 /* ! esto lo qu exportamos al store*/
 export default walletSlice.reducer;
 
 const ENTRYPAY = (state: RootState) => state;
 const ACTIVENOTE = (state: RootState) => state;
+const NOTES = (state: RootState) => state;
 
 export const EntryPaySelector = createSelector(
   [ENTRYPAY],
@@ -53,4 +63,9 @@ export const EntryPaySelector = createSelector(
 export const ActiveNoteSelector = createSelector(
   [ACTIVENOTE],
   (ACTIVENOTE) => ACTIVENOTE.wallet.activeNote
+);
+
+export const GetNotesDBSelector = createSelector(
+  [NOTES],
+  (NOTES) => NOTES.wallet.notes
 );

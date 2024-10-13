@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { PlusIcon } from "@heroicons/react/24/outline";
-import MockBills from "../data/mockDataBills.json";
+import { PlusIcon, CloudArrowUpIcon } from "@heroicons/react/24/outline";
 import { BillPreviewCard } from "../components";
 import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
@@ -9,9 +8,11 @@ import { OpenModalSelector } from "../store/ui/uiSlice";
 import { NoteProps } from "../interface/walletApp";
 import { useHeaderName } from "../hooks";
 import { startResetActiveNote } from "../store/wallet/thunk";
+import { GetNotesDBSelector } from "../store/wallet/walletSlice";
 
 const Home = () => {
   const openModal = useAppSelector(OpenModalSelector);
+  const notes = useAppSelector(GetNotesDBSelector);
   const { setHeaderName } = useHeaderName();
   const dispatch = useAppDispatch();
   return (
@@ -110,11 +111,25 @@ const Home = () => {
         </NavLink>
       </div>
 
-      <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
-        {MockBills.map(({ id, ...props }) => (
-          <BillPreviewCard {...(props as NoteProps)} key={id} id={id} />
-        ))}
-      </div>
+      {notes?.length !== 0 ? (
+        <div>
+          <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
+            {notes?.map(({ id, ...props }) => (
+              <BillPreviewCard {...(props as NoteProps)} key={id} id={id} />
+            ))}
+          </div>
+          <div className="w-full text-center pt-6">
+            <NavLink to={"bills"}>+ show more...</NavLink>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full flex flex-col items-center justify-center space-y-5 text-gray-500">
+          <CloudArrowUpIcon className="w-20" />
+          <p className="text-xl">
+            Theres nothing here yet... Try adding a new Bill
+          </p>
+        </div>
+      )}
 
       {openModal && (
         <Modal>
@@ -122,11 +137,7 @@ const Home = () => {
         </Modal>
       )}
 
-      <div className="w-full text-center pt-6">
-        <NavLink to={"bills"}>+ show more...</NavLink>
-      </div>
-
-      <hr className="mt-6 pb-6" />
+      <hr className="mt-4 pb-6" />
 
       {/* 
       //* Graphic section
