@@ -49,6 +49,7 @@ const NewBill = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { setHeaderName } = useHeaderName();
+  console.log(activeNote);
   return (
     <>
       <div className=" grid grid-rows-2 items-center gap-4 max-lg:gap-8 lg:grid-cols-2 lg:grid-rows-1">
@@ -247,7 +248,7 @@ const NewBill = () => {
               + upload an image
             </button>
           </div>
-          {activeNote?.images ? (
+          {(activeNote?.images?.length as number) > 0 ? (
             <div className="grid grid-cols-3 gap-8 overflow-auto p-2 bg-customBGDark1 rounded-lg h-96 ultraWide:h-full scrollbar">
               {activeNote?.images?.map(({ id, img, name }) => (
                 <div className="imageContainerUpload" key={id}>
