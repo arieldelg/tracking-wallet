@@ -67,5 +67,77 @@
     "typePayment": "cash",
     "quantity": 4500,
     "images": []
+  },
+  {
+    "title": "mi cuarto registro",
+    "date": "10/9/2024",
+    "id": "5",
+    "tag": "casa",
+    "note": "Este es mi cuarto registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 4500,
+    "images": []
+  },
+  {
+    "title": "mi cuarto registro",
+    "date": "10/9/2024",
+    "id": "6",
+    "tag": "casa",
+    "note": "Este es mi cuarto registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 4500,
+    "images": []
+  },
+  {
+    "title": "mi cuarto registro",
+    "date": "10/9/2024",
+    "id": "7",
+    "tag": "casa",
+    "note": "Este es mi cuarto registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 4500,
+    "images": []
+  },
+  {
+    "title": "mi cuarto registro",
+    "date": "10/9/2024",
+    "id": "8",
+    "tag": "casa",
+    "note": "Este es mi cuarto registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 4500,
+    "images": []
+  },
+  {
+    "title": "mi cuarto registro",
+    "date": "10/9/2024",
+    "id": "9",
+    "tag": "casa",
+    "note": "Este es mi cuarto registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 4500,
+    "images": []
+  },
+  {
+    "title": "mi cuarto registro",
+    "date": "10/9/2024",
+    "id": "10",
+    "tag": "casa",
+    "note": "Este es mi cuarto registro en esta aplicacion",
+    "currency": "MXN",
+    "typeCurrency": "expense",
+    "typePayment": "cash",
+    "quantity": 4500,
+    "images": []
   }
 ]

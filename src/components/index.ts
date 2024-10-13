@@ -5,6 +5,8 @@ import MySelect from "./MySelect";
 import MyTextArea from "./MyTextArea";
 import MyTextInput from "./MyTextInput";
 import BillPreviewCard from "./walletApp/BillPreviewCard";
+import MyBillComponent from "./walletApp/MyBillComponent";
+import MyNewButton from "./walletApp/MyNewButton";
 export {
   HeaderApp,
   ButtonsTypeCurrency,
@@ -13,4 +15,6 @@ export {
   MyDate,
   MyTextArea,
   BillPreviewCard,
+  MyBillComponent,
+  MyNewButton,
 };

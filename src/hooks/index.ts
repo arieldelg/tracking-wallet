@@ -1,2 +1,4 @@
 import useHeaderName from "./useHeaderName";
-export { useHeaderName };
+import useWalletStore from "./useWalletStore";
+import useWindowDimensions from "./useWindowDimensions";
+export { useHeaderName, useWindowDimensions, useWalletStore };

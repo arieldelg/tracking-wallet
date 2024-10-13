@@ -49,7 +49,7 @@ const NewBill = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { setHeaderName } = useHeaderName();
-  console.log(activeNote);
+
   return (
     <>
       <div className=" grid grid-rows-2 items-center gap-4 max-lg:gap-8 lg:grid-cols-2 lg:grid-rows-1">

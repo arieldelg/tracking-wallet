@@ -1,20 +1,18 @@
 import { NavLink } from "react-router-dom";
-import { PlusIcon, CloudArrowUpIcon } from "@heroicons/react/24/outline";
-import { BillPreviewCard } from "../components";
+import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
+import { BillPreviewCard, MyNewButton } from "../components";
 import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { useAppSelector } from "../store/hooks";
 import { OpenModalSelector } from "../store/ui/uiSlice";
-import { NoteProps } from "../interface/walletApp";
-import { useHeaderName } from "../hooks";
-import { startResetActiveNote } from "../store/wallet/thunk";
+import { useHeaderName, useWalletStore } from "../hooks";
 import { GetNotesDBSelector } from "../store/wallet/walletSlice";
 
 const Home = () => {
   const openModal = useAppSelector(OpenModalSelector);
   const notes = useAppSelector(GetNotesDBSelector);
   const { setHeaderName } = useHeaderName();
-  const dispatch = useAppDispatch();
+  const { deleteNote, reset, setOpenModal } = useWalletStore();
   return (
     <>
       {/* 
@@ -95,31 +93,26 @@ const Home = () => {
       {/* 
         //* Bills Section
     */}
-
       <div className="w-full flex items-center justify-between pb-6">
         <h2 className="text-4xl">Bills</h2>
-        <NavLink
-          className="w-24 h-9 bg-teal-500 rounded-full flex items-center justify-between text-xl px-4"
-          to={"newBill"}
-          onClick={() => {
-            dispatch(startResetActiveNote());
-            setHeaderName("New Entry");
-          }}
-        >
-          <PlusIcon className="w-6" />
-          <p>New</p>
-        </NavLink>
+        <MyNewButton reset={reset} headerName="New Bill" />
       </div>
-
       {notes?.length !== 0 ? (
         <div>
           <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
-            {notes?.map(({ id, ...props }) => (
-              <BillPreviewCard {...(props as NoteProps)} key={id} id={id} />
+            {notes?.slice(0, 4).map(({ ...props }) => (
+              <BillPreviewCard
+                props={props}
+                key={props.id}
+                onClick={setOpenModal}
+                deleteNote={deleteNote}
+              />
             ))}
           </div>
           <div className="w-full text-center pt-6">
-            <NavLink to={"bills"}>+ show more...</NavLink>
+            <NavLink to={"bills"} onClick={() => setHeaderName("Bills")}>
+              + show more...
+            </NavLink>
           </div>
         </div>
       ) : (

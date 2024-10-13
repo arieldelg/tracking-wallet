@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root.tsx";
 import "./index.css";
-import { Home, NewBill } from "./pages/index.ts";
+import { BillsPage, Home, NewBill } from "./pages/index.ts";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 
@@ -26,7 +26,7 @@ const route = createBrowserRouter([
       },
       {
         path: "bills",
-        element: <p>bills</p>,
+        element: <BillsPage />,
       },
       {
         path: "settings",

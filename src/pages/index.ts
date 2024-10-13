@@ -1,4 +1,5 @@
+import BillsPage from "./BillsPage";
 import Home from "./Home";
 import NewBill from "./NewBill";
 import Profile from "./Profile";
-export { Home, Profile, NewBill };
+export { Home, Profile, NewBill, BillsPage };
