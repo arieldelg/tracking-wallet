@@ -21,10 +21,7 @@ import { ActiveNoteSelector } from "../store/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
 import { InitialValues, NoteProps } from "../interface/walletApp";
 import { useHeaderName } from "../hooks";
-import {
-  startResetActiveNote,
-  startSavingNewNote,
-} from "../store/wallet/thunk";
+import { startSavingNewNote } from "../store/wallet/thunk";
 
 const validationTypePayment: string[] = [];
 
@@ -213,7 +210,7 @@ const NewBill = () => {
                   type="button"
                   className="w-52 ultraWide:w-64 h-full bg-customRed rounded-full ring-2 ring-customRed hover:bg-red-500 hover:ring-red-300"
                   onClick={() => {
-                    dispatch(startResetActiveNote());
+                    // dispatch(startResetActiveNote());
                     setHeaderName("Dashboard");
                     navigate(-1);
                   }}

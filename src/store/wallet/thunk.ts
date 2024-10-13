@@ -1,5 +1,6 @@
 import { NoteProps } from "../../interface/walletApp";
 import { RootState } from "../store";
+import { setClose } from "../ui/uiSlice";
 import { setActiveNote, setNotes, setSaveNote } from "./walletSlice";
 
 export const startSavingActiveNote = (note: NoteProps) => {
@@ -17,9 +18,10 @@ export const startResetActiveNote = () => {
   return async (
     dispatch: (arg0: {
       payload: NoteProps | undefined;
-      type: "wallet/setActiveNote";
+      type: "wallet/setActiveNote" | "ui/setClose";
     }) => void
   ) => {
+    dispatch(setClose());
     dispatch(setActiveNote(undefined));
   };
 };
@@ -38,14 +40,15 @@ export const startGetNotesDB = (data: NoteProps[]) => {
 export const startDeleteNote = (id: string) => {
   return async (
     dispatch: (arg0: {
-      payload: NoteProps[] | null;
-      type: "wallet/setNotes";
+      payload: NoteProps[] | null | undefined | NoteProps;
+      type: "wallet/setNotes" | "wallet/setActiveNote";
     }) => void,
     getState: () => RootState
   ) => {
     const notes = getState().wallet.notes;
     const newNotes = notes?.filter((idNote) => idNote.id !== id);
     dispatch(setNotes(newNotes as NoteProps[]));
+    dispatch(setActiveNote(undefined));
   };
 };
 

@@ -19,6 +19,7 @@ export default {
         fadeIn: "fadeIn 1s linear 1",
         fadeInBillModal: "fadeIn 0.3s ease 1",
         translateImg: "translateX 0.5s linear 1 forwards",
+        translateCard: "translateXCard 0.3s linear 1 forwards",
       },
       keyframes: {
         fadeIn: {
@@ -27,6 +28,9 @@ export default {
         },
         translateX: {
           "100%": { transform: "translateX(100%)" },
+        },
+        translateXCard: {
+          "100%": { transform: "translateX(5%)" },
         },
       },
       width: {

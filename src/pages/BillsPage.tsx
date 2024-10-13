@@ -10,9 +10,9 @@ const BillsPage = () => {
   const notes = useAppSelector(GetNotesDBSelector);
   const activeNote = useAppSelector(ActiveNoteSelector);
   const { height } = useWindowDimensions();
-  const { deleteNote, setOpenBill } = useWalletStore();
+  const { deleteNote, setOpenBill, reset } = useWalletStore();
   return (
-    <div className="grid grid-cols-2 gap-16">
+    <div className="grid grid-cols-2 gap-4">
       <div className="w-full space-y-5">
         <div>
           <h1 className="text-base">Filter By:</h1>
@@ -26,14 +26,14 @@ const BillsPage = () => {
               </ul>
               <hr />
             </div>
-            <MyNewButton headerName="Edit" />
+            <MyNewButton headerName="Edit" to="/newbill" reset={reset} />
           </div>
         </div>
         <div
           style={{
             height: height - 280,
           }}
-          className={`flex flex-col gap-6 py-4 px-[2px] overflow-auto scrollbar bg-customBGDark2`}
+          className={`flex flex-col gap-6 py-4 px-[2px] overflow-auto scrollbar `}
         >
           {notes?.map(({ ...props }) => (
             <BillPreviewCard
@@ -41,11 +41,19 @@ const BillsPage = () => {
               key={props.id}
               deleteNote={deleteNote}
               onClick={setOpenBill}
+              className={`${
+                activeNote?.id === props.id ? "animate-translateCard" : ""
+              } sm:max-w-[565px] ultraWide:max-w-[700px]`}
             />
           ))}
         </div>
       </div>
-      <div className="place-content-center h-full">
+      <div
+        style={{
+          height: height - 190,
+        }}
+        className="place-content-center h-full"
+      >
         {activeNote ? (
           <MyBillComponent activeNote={activeNote!} />
         ) : (

@@ -1,16 +1,43 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { NoteProps } from "../../interface/walletApp";
+import { CSSProperties } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface Props {
   props: NoteProps;
   onClick?: (note: NoteProps) => void;
   deleteNote?: (id: string) => void;
+  style?: CSSProperties;
+  className?: string;
 }
 
-const BillPreviewCard = ({ props, onClick, deleteNote }: Props) => {
+const BillPreviewCard = ({
+  props,
+  onClick,
+  deleteNote,
+  style,
+  className,
+}: Props) => {
+  const classes = twMerge(`
+    w-full 
+    h-20 
+    ring-2 
+    rounded-2xl 
+    shadow-2xl 
+    flex 
+    gap-4 
+    items-center 
+    justify-between 
+    pl-7 
+    pr-4 
+    py-3 
+    cursor-pointer 
+    ${className ?? ""}
+    `);
   return (
     <div
-      className={`w-full h-20 ring-2 rounded-2xl shadow-2xl flex gap-4 items-center justify-between pl-7 pr-4 py-3 cursor-pointer ${
+      style={style}
+      className={`${classes} ${
         props?.typeCurrency === "income"
           ? "bg-customGreen ring-customGreen"
           : "bg-customRed ring-customRed"

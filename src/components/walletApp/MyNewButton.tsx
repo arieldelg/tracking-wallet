@@ -5,14 +5,15 @@ import { useHeaderName } from "../../hooks";
 type Props = {
   reset?: () => void;
   headerName?: string;
+  to: string;
 };
 
-const MyNewButton = ({ reset, headerName = "New Bill" }: Props) => {
+const MyNewButton = ({ reset, headerName = "New Bill", to }: Props) => {
   const { setHeaderName } = useHeaderName();
   return (
     <NavLink
       className="w-24 h-9 bg-teal-500 rounded-full flex items-center justify-between text-xl px-4"
-      to={"newBill"}
+      to={to}
       onClick={() => {
         if (reset) reset();
         setHeaderName(headerName);

@@ -13,7 +13,6 @@ type Props = {
 const MyBillComponent = ({
   activeNote,
   nameHeader = "New Bill",
-  closeModal,
   getImage,
 }: Props) => {
   const navigate = useNavigate();
@@ -33,7 +32,6 @@ const MyBillComponent = ({
       <PencilSquareIcon
         className="w-10 absolute top-3 right-3 text-white cursor-pointer"
         onClick={() => {
-          if (closeModal) closeModal();
           setHeaderName(nameHeader);
           navigate("/newBill");
         }}
@@ -41,7 +39,7 @@ const MyBillComponent = ({
       <h1 className="text-3xl ultraWide:text-4xl text-center first-letter:capitalize">
         {activeNote?.typeCurrency}
       </h1>
-      <div className="flex flex-col justify-center items-center h-auto gap-2 py-4">
+      <div className="flex flex-col justify-center items-center h-auto gap-2">
         <p className="text-4xl ultraWide:text-6xl">{activeNote?.quantity}</p>
         <p className="text-2xl ultraWide:text-4xl">{activeNote?.currency}</p>
       </div>
@@ -70,14 +68,14 @@ const MyBillComponent = ({
         {/* 
     //* seccion 2 ( title y note )
     */}
-        <div className="space-y-3">
-          <div className="gap-3 h-auto flex flex-col justify-between">
+        <div className="space-y-1">
+          <div className="gap-2 h-auto flex flex-col justify-between">
             <h2 className="first-letter:capitalize">title</h2>
             <p className="text-[#7C7676] first-letter:capitalize">
               {activeNote?.title}
             </p>
           </div>
-          <div className="h-auto gap-3 flex flex-col justify-between">
+          <div className="h-auto gap-2 flex flex-col justify-between">
             <h2 className="first-letter:capitalize">{activeNote?.note}</h2>
             <p className="text-[#7C7676] first-letter:capitalize">
               cobre en mi chamba la primera paga de la semana
