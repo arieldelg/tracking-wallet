@@ -21,7 +21,6 @@ const useFilterData = ({
   filterNote: NoteProps[];
 } => {
   const [filterNote, setFilterNote] = useState<NoteProps[]>(data);
-  console.log(initiValueFilter);
   const filterBy = useCallback(
     ({ value = initiValueFilter, activeFirstValue = false }: FilterProps) => {
       switch (value) {
