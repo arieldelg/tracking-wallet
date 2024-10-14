@@ -1,13 +1,11 @@
 import { NavLink, NavLinkRenderProps } from "react-router-dom";
 import huron from "../../assets/f6b509853a254673be01d2ee62fb81bf.jpg";
 import PrivateRoutes from "../../data/routesDataPrivate.json";
-import { useHeaderName } from "../../hooks";
-import { useAppDispatch } from "../../store/hooks";
-import { startResetActiveNote } from "../../store/wallet/thunk";
+import { useHeaderName, useWalletStore } from "../../hooks";
 
 const ProtectedSideBar = () => {
-  const dispatch = useAppDispatch();
   const { setHeaderName } = useHeaderName();
+  const { reset, resetFilter } = useWalletStore();
   return (
     <header className="w-full h-full bg-[#363a45]">
       <img src={huron} alt="huron" className="object-cover w-full h-44" />
@@ -20,7 +18,8 @@ const ProtectedSideBar = () => {
                 className={`${({ isActive, isPending }: NavLinkRenderProps) =>
                   isActive ? "active" : isPending ? "pending" : null} navlink`}
                 onClick={() => {
-                  dispatch(startResetActiveNote());
+                  reset();
+                  resetFilter();
                   setHeaderName(label);
                 }}
               >

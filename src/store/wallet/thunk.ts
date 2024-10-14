@@ -1,7 +1,12 @@
 import { NoteProps } from "../../interface/walletApp";
 import { RootState } from "../store";
 import { setClose } from "../ui/uiSlice";
-import { setActiveNote, setNotes, setSaveNote } from "./walletSlice";
+import {
+  setActiveNote,
+  setFilterState,
+  setNotes,
+  setSaveNote,
+} from "./walletSlice";
 
 export const startSavingActiveNote = (note: NoteProps) => {
   return async (
@@ -63,5 +68,13 @@ export const startSavingNewNote = (NoteProps: NoteProps) => {
       date: newDate,
     };
     dispatch(setSaveNote(note));
+  };
+};
+
+export const startFilteringState = (value: string) => {
+  return async (
+    dispatch: (arg0: { payload: string; type: "wallet/setFilterState" }) => void
+  ) => {
+    dispatch(setFilterState(value));
   };
 };

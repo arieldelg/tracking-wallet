@@ -6,14 +6,15 @@ import { useHeaderName } from "../../hooks";
 type Props = {
   activeNote: NoteProps;
   nameHeader?: string;
-  closeModal?: () => void;
   getImage?: (value: string) => void;
+  editPathTo?: string;
 };
 
 const MyBillComponent = ({
   activeNote,
   nameHeader = "New Bill",
   getImage,
+  editPathTo,
 }: Props) => {
   const navigate = useNavigate();
   const { setHeaderName } = useHeaderName();
@@ -33,7 +34,7 @@ const MyBillComponent = ({
         className="w-10 absolute top-3 right-3 text-white cursor-pointer"
         onClick={() => {
           setHeaderName(nameHeader);
-          navigate("/newBill");
+          navigate(editPathTo as string);
         }}
       />
       <h1 className="text-3xl ultraWide:text-4xl text-center first-letter:capitalize">

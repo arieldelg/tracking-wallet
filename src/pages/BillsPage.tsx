@@ -1,16 +1,27 @@
+import { useEffect } from "react";
 import { BillPreviewCard, MyBillComponent, MyNewButton } from "../components";
-import { useWalletStore, useWindowDimensions } from "../hooks";
-import { useAppSelector } from "../store/hooks";
-import {
-  ActiveNoteSelector,
-  GetNotesDBSelector,
-} from "../store/wallet/walletSlice";
+import { useFilterData, useWalletStore, useWindowDimensions } from "../hooks";
 
 const BillsPage = () => {
-  const notes = useAppSelector(GetNotesDBSelector);
-  const activeNote = useAppSelector(ActiveNoteSelector);
   const { height } = useWindowDimensions();
-  const { deleteNote, setOpenBill, reset } = useWalletStore();
+  const {
+    deleteNote,
+    setActiveNote,
+    reset,
+    setFilter,
+    filter,
+    activeNote,
+    notes,
+  } = useWalletStore();
+  const { filterBy, filterNote } = useFilterData({
+    data: notes,
+    initiValueFilter: filter,
+    getFirstValueFilter: setActiveNote,
+  });
+  useEffect(() => {
+    if (!activeNote) return setActiveNote(filterNote[0]);
+  }, [activeNote, filterNote, setActiveNote]);
+
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="w-full space-y-5">
@@ -19,9 +30,45 @@ const BillsPage = () => {
           <div className="flex items-center gap-4">
             <div className="w-[540px]">
               <ul className="flex text-base ultraWide:text-xl justify-between">
-                <li>Income</li>
-                <li>Expense</li>
-                <li>Quantity</li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setFilter("income");
+                      filterBy({ value: "income", activeFirstValue: true });
+                    }}
+                  >
+                    Income
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setFilter("expense");
+                      filterBy({ value: "expense", activeFirstValue: true });
+                    }}
+                  >
+                    Expense
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      const filterValue =
+                        filter === ""
+                          ? "quantity"
+                          : filter === "quantity"
+                          ? "quantity2"
+                          : "quantity";
+                      setFilter(filterValue);
+                      filterBy({
+                        value: filterValue,
+                        activeFirstValue: true,
+                      });
+                    }}
+                  >
+                    Quantity
+                  </button>
+                </li>
                 <li>Tag</li>
               </ul>
               <hr />
@@ -35,12 +82,12 @@ const BillsPage = () => {
           }}
           className={`flex flex-col gap-6 py-4 px-[2px] overflow-auto scrollbar `}
         >
-          {notes?.map(({ ...props }) => (
+          {filterNote?.map(({ ...props }) => (
             <BillPreviewCard
               props={props}
               key={props.id}
               deleteNote={deleteNote}
-              onClick={setOpenBill}
+              onClick={setActiveNote}
               className={`${
                 activeNote?.id === props.id ? "animate-translateCard" : ""
               } sm:max-w-[565px] ultraWide:max-w-[700px]`}
@@ -55,10 +102,10 @@ const BillsPage = () => {
         className="place-content-center h-full"
       >
         {activeNote ? (
-          <MyBillComponent activeNote={activeNote!} />
-        ) : (
-          <MyBillComponent activeNote={notes[0]} />
-        )}
+          <MyBillComponent activeNote={activeNote!} editPathTo={"/newBill"} />
+        ) : filterNote.length > 0 ? (
+          <MyBillComponent activeNote={filterNote[0]} />
+        ) : null}
       </div>
     </div>
   );
