@@ -11,7 +11,7 @@ const AccountsPage = () => {
   return (
     <div className="flex flex-col items-end gap-5">
       <MyNewButton openModal={() => setOpenModal(true)} />
-      <div className="w-full h-96 flex flex-col justify-between">
+      <div className="w-full h-96 flex flex-col justify-start">
         <MyContainerCardAccounts />
         <MyContainerCardAccounts />
       </div>
