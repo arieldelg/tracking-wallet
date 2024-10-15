@@ -1,3 +1,5 @@
+import { transform } from "typescript";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -20,6 +22,12 @@ export default {
         fadeInBillModal: "fadeIn 0.3s ease 1",
         translateImg: "translateX 0.5s linear 1 forwards",
         translateCard: "translateXCard 0.3s linear 1 forwards",
+        translateDescDown: "translateYD 0.3s linear 1 forwards",
+        translateDescDownButton: "translateYDButton 0.3s linear 1 forwards",
+        translateDescUpButton: "translateYUButton 0.3s linear 1 forwards",
+        translateDescUp: "translateYU 0.3s linear 1 forwards",
+        rotate0_180: "rotate0_180 0.3s linear 1 forwards",
+        rotate180_0: "rotate180_0 0.3s linear 1 forwards",
       },
       keyframes: {
         fadeIn: {
@@ -32,6 +40,24 @@ export default {
         translateXCard: {
           "100%": { transform: "translateX(5%)" },
         },
+        translateYD: {
+          "100%": { transform: "translateY(60%)" },
+        },
+        translateYU: {
+          "0%": { transform: "translateY(60%)" },
+        },
+        translateYDButton: {
+          "100%": { transform: "translateY(98%)" },
+        },
+        translateYUButton: {
+          "0%": { transform: "translateY(98%)" },
+        },
+        rotate0_180: {
+          "100%": { transform: "rotate(180deg)" },
+        },
+        rotate180_0: {
+          "0%": { transform: "rotate(180deg)" },
+        },
       },
       width: {
         homeIncomeExpense: "304px",
@@ -41,6 +67,7 @@ export default {
         customRed: "#FB9F9F",
         customBGDark1: "#363A45",
         customBGDark2: "#282c34",
+        customBlue: "#60AFC7",
       },
       ringColor: {
         customGreen: "#66FF37",

@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/Root.tsx";
 import "./index.css";
-import { BillsPage, Home, NewBill } from "./pages/index.ts";
+import { AccountsPage, BillsPage, Home, NewBill } from "./pages/index.ts";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 
@@ -22,7 +22,7 @@ const route = createBrowserRouter([
       },
       {
         path: "accounts",
-        element: <p>Accounts</p>,
+        element: <AccountsPage />,
       },
       {
         path: "bills",
