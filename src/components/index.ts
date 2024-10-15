@@ -7,6 +7,7 @@ import MyTextInput from "./MyTextInput";
 import BillPreviewCard from "./walletApp/BillPreviewCard";
 import MyBillComponent from "./walletApp/MyBillComponent";
 import MyNewButton from "./walletApp/MyNewButton";
+import MyContainerCardAccounts from "./walletApp/MyContainerCardAccounts";
 export {
   HeaderApp,
   ButtonsTypeCurrency,
@@ -17,4 +18,5 @@ export {
   BillPreviewCard,
   MyBillComponent,
   MyNewButton,
+  MyContainerCardAccounts,
 };
