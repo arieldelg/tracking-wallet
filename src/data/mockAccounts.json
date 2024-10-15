@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "title": "Nomina",
+    "quantity": 10000,
+    "typeCurrency": "MXN",
+    "description": "Esta cuenta lleva el registro de la casa de kino y de mi trabajo"
+  },
+  {
+    "id": "2",
+    "title": "Cheques",
+    "quantity": 5000,
+    "typeCurrency": "MXN",
+    "description": "Esta cuenta son para mis gastos personales"
+  }
+]

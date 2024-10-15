@@ -1,6 +1,6 @@
 import { NoteProps } from "../interface/walletApp";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setOpen } from "../store/ui/uiSlice";
+import { setOpen, setOpenTab, ValuesAccountTab } from "../store/ui/uiSlice";
 import {
   startDeleteNote,
   startFilteringState,
@@ -38,7 +38,9 @@ const useWalletStore = () => {
   const resetFilter = () => {
     dispatch(startFilteringState("reset"));
   };
-
+  const openTabAccounts = (value: ValuesAccountTab) => {
+    dispatch(setOpenTab(value));
+  };
   return {
     // Method
     setOpenModal,
@@ -47,6 +49,7 @@ const useWalletStore = () => {
     setActiveNote,
     setFilter,
     resetFilter,
+    openTabAccounts,
     //state store
     filter,
     notes,

@@ -24,7 +24,7 @@ const MyBillComponent = ({
   };
   return (
     <div
-      className={`bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 ultraWide:p-8 w-full h-full max-h-[790px] max-w-[600px] ultraWide:max-w-[730px] text-lg ultraWide:text-xl relative flex flex-col justify-between animate-fadeInBillModal ${
+      className={`bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 ultraWide:p-8 w-full h-full max-h-[750px] max-w-[600px] ultraWide:max-w-[730px] text-lg ultraWide:text-xl relative flex flex-col justify-between animate-fadeInBillModal ${
         activeNote?.typeCurrency === "income"
           ? "ring-customGreen"
           : "ring-customRed"

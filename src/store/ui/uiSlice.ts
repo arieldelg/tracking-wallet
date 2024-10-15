@@ -1,7 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-type ValuesAccountTab = "init" | "open" | "close";
+export type ValuesAccountTab = "init" | "open" | "close";
 
 interface InitialState {
   open: boolean;

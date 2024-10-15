@@ -1,3 +1,5 @@
+import { ValuesAccountTab } from "../store/ui/uiSlice";
+
 export type PaymentType =
   | "cash"
   | "creditCard"
@@ -36,3 +38,16 @@ export type NoteProps = {
   currency: Currency;
   images?: IMG[] | null;
 };
+
+export interface PropsCardAccounts {
+  title: string;
+  quantity: number;
+  typeCurrency: string;
+  description: string;
+  id: string;
+  children?: React.ReactNode;
+  openTab?: string;
+  openTabAccounts?: (value: ValuesAccountTab) => void;
+  setIdAccount?: (value: string) => void;
+  idAccount?: string;
+}
