@@ -2,36 +2,36 @@ import { useState } from "react";
 import MockAccounts from "../data/mockAccounts.json";
 import { MyContainerCardAccounts, MyNewButton } from "../components";
 import Modal from "../modals/Modal";
-import { useAppSelector } from "../store/hooks";
-import { OpenAccountTabSelector } from "../store/ui/uiSlice";
-import { useWalletStore } from "../hooks";
+import { toogleClass } from "../helpers";
+import { NewAccount } from "./views";
+import { useWalletStore, useWindowDimensions } from "../hooks";
 
 //TODO agregar un dispatch de que resete el estado de abrir y cerrar el tab en Accounts, que se active cuando cambies de ruta
 
 const AccountsPage = () => {
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const openTab = useAppSelector(OpenAccountTabSelector);
-  const { openTabAccounts } = useWalletStore();
-  const [idAccount, setIdAccount] = useState<string>("");
-
+  const { setOpenModal, isOpenModal } = useWalletStore();
+  const { height } = useWindowDimensions();
+  const [active, setActive] = useState<string | boolean>("");
   return (
     <div className="flex flex-col items-end gap-5">
-      <MyNewButton openModal={() => setOpenModal(true)} />
-      <div className="w-full h-96 flex flex-col justify-start">
+      <MyNewButton openModal={() => setOpenModal()} />
+      <div
+        style={{ height: height - 235 }}
+        className="w-full  flex flex-col justify-start overflow-auto scrollbar"
+      >
         {MockAccounts.map((props) => (
           <MyContainerCardAccounts
             {...props}
             key={props.id}
-            openTab={openTab}
-            openTabAccounts={openTabAccounts}
-            setIdAccount={setIdAccount}
-            idAccount={idAccount}
+            toogleClass={toogleClass}
+            setActive={setActive}
+            active={props.id === active ? true : false}
           />
         ))}
       </div>
-      {openModal && (
+      {isOpenModal && (
         <Modal>
-          <p>Hola</p>
+          <NewAccount />
         </Modal>
       )}
     </div>

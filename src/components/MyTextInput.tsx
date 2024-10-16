@@ -7,7 +7,7 @@ interface Props {
   classnameinput?: string;
   label: string;
   onBlur: () => void;
-  classnameerror: string;
+  classnameerror?: string;
   id: string;
 }
 

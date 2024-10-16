@@ -1,10 +1,11 @@
-import { NoteProps } from "../interface/walletApp";
+import { NoteProps, UsersAccountFormik } from "../interface/walletApp";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { setOpen, setOpenTab, ValuesAccountTab } from "../store/ui/uiSlice";
+import { OpenModalSelector, setClose, setOpen } from "../store/ui/uiSlice";
 import {
   startDeleteNote,
   startFilteringState,
   startResetActiveNote,
+  startSavingAccount,
   startSavingActiveNote,
 } from "../store/wallet/thunk";
 import {
@@ -18,10 +19,11 @@ const useWalletStore = () => {
   const filter = useAppSelector(FilterNotesSelector);
   const notes = useAppSelector(GetNotesDBSelector) as NoteProps[];
   const activeNote = useAppSelector(ActiveNoteSelector);
+  const isOpenModal = useAppSelector(OpenModalSelector);
 
-  const setOpenModal = (props: NoteProps) => {
+  const setOpenModal = (props?: NoteProps) => {
     dispatch(setOpen());
-    dispatch(startSavingActiveNote(props));
+    if (props) dispatch(startSavingActiveNote(props));
   };
   const deleteNote = (id: string) => {
     dispatch(startDeleteNote(id));
@@ -38,9 +40,13 @@ const useWalletStore = () => {
   const resetFilter = () => {
     dispatch(startFilteringState("reset"));
   };
-  const openTabAccounts = (value: ValuesAccountTab) => {
-    dispatch(setOpenTab(value));
+  const setCloseModal = () => {
+    dispatch(setClose());
   };
+  const setSaveAccount = (account: UsersAccountFormik) => {
+    dispatch(startSavingAccount(account));
+  };
+
   return {
     // Method
     setOpenModal,
@@ -49,11 +55,13 @@ const useWalletStore = () => {
     setActiveNote,
     setFilter,
     resetFilter,
-    openTabAccounts,
+    setCloseModal,
+    setSaveAccount,
     //state store
     filter,
     notes,
     activeNote,
+    isOpenModal,
   };
 };
 

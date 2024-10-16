@@ -37,7 +37,7 @@ const MyBillComponent = ({
           navigate(editPathTo as string);
         }}
       />
-      <h1 className="text-3xl ultraWide:text-4xl text-center first-letter:capitalize">
+      <h1 className="text-xl ultraWide:text-4xl text-center first-letter:capitalize">
         {activeNote?.typeCurrency}
       </h1>
       <div className="flex flex-col justify-center items-center h-auto gap-2">
@@ -46,7 +46,7 @@ const MyBillComponent = ({
       </div>
       <div className="grid grid-flow-col items-start gap-10 pt-2">
         {/* 
-      //* seccion 1 ( type, date, tag )
+      // * seccion 1 ( type, date, tag )
       */}
         <div className="space-y-3">
           <div className="gap-3 h-auto flex flex-col justify-between">
@@ -67,7 +67,7 @@ const MyBillComponent = ({
           </div>
         </div>
         {/* 
-    //* seccion 2 ( title y note )
+    // * seccion 2 ( title y note )
     */}
         <div className="space-y-1">
           <div className="gap-2 h-auto flex flex-col justify-between">

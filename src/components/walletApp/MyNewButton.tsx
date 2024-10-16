@@ -18,7 +18,7 @@ const MyNewButton = ({
   const { setHeaderName } = useHeaderName();
   return (
     <NavLink
-      className="w-24 h-9 bg-teal-500 rounded-full flex items-center justify-between text-xl px-4"
+      className="w-24 h-9 bg-teal-500 rounded-full flex items-center justify-between text-xl px-4 text-white"
       to={to!}
       onClick={() => {
         if (reset) reset();

@@ -56,6 +56,7 @@ const NewBill = () => {
         <Formik
           initialValues={activeNote ? activeNote : initialValues}
           onSubmit={(values) => {
+            console.log(values);
             const newValues = {
               ...values,
               images: [],
@@ -103,18 +104,18 @@ const NewBill = () => {
                   />
                   <Field
                     type="number"
-                    className="inputQuantity w-60 h-12 ultraWide:h-16 text-5xl text-right text-white bg-transparent"
+                    className="inputQuantity "
                     name="quantity"
                     onBlur={() => null}
                   />
                   <MySelect
                     name="currency"
                     id="currency"
-                    classnameinput="input w-28 h-9 ultraWide:h-11 bg-transparent text-white text-4xl"
+                    classnameinput="inputSelect "
                     onBlur={() => null}
                     classnameerror="errorMessage"
                   >
-                    <option value="" disabled className="text-2xl">
+                    <option value="" disabled className="text-2xl mt-4">
                       Tipo
                     </option>
                     {CurrencyTypeMoney.map(({ label, name }) => (
@@ -141,7 +142,7 @@ const NewBill = () => {
                     name="typePayment"
                     placeholder="type payment"
                     classnameinput="input h-8 px-4 "
-                    classnamelabel="text-lg text-center"
+                    classnamelabel="inputLabel"
                     label="Type Payment"
                     onBlur={() => null}
                     classnameerror="errorMessage"
@@ -160,7 +161,7 @@ const NewBill = () => {
                     //* input Date
                     */}
                   <MyDate
-                    classnamelabel="text-center text-lg"
+                    classnamelabel="inputLabel"
                     classnameinput="w-full h-8 input text-sm ultraWide:text-base"
                     name="date"
                     value={JSON.stringify(new Date())}
@@ -176,7 +177,7 @@ const NewBill = () => {
                     name="tag"
                     label="Tag"
                     placeholder="keyword"
-                    classnamelabel="text-center text-lg"
+                    classnamelabel="inputLabel"
                     classnameinput="input w-full h-8"
                     onBlur={() => null}
                     classnameerror="errorMessage"
@@ -189,7 +190,7 @@ const NewBill = () => {
                     name="title"
                     placeholder="title"
                     classnameinput="input w-full h-8"
-                    classnamelabel="text-center text-lg"
+                    classnamelabel="inputLabel"
                     onBlur={() => null}
                     classnameerror="errorMessage"
                   />
@@ -197,7 +198,7 @@ const NewBill = () => {
                     label="Note"
                     name="note"
                     placeholder="Note..."
-                    classnamelabel="text-center text-lg"
+                    classnamelabel="inputLabel"
                     classnameinput="input py-2 h-24 ultraWide:h-32 w-full"
                     onBlur={() => null}
                     id="note"

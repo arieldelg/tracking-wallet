@@ -1,6 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { NoteProps } from "../../interface/walletApp";
+import { UsersAccount, NoteProps } from "../../interface/walletApp";
 
 /**
  *
@@ -16,6 +16,8 @@ interface InitialState {
   activeNote: NoteProps | undefined;
   notes: NoteProps[];
   filterState: string;
+  accounts: UsersAccount[];
+  activeAccount: UsersAccount | undefined;
 }
 
 /*!initialState*/
@@ -24,6 +26,8 @@ const initialState: InitialState = {
   activeNote: undefined,
   notes: [],
   filterState: "reset",
+  accounts: [],
+  activeAccount: undefined,
 };
 
 /*!slice*/
@@ -46,6 +50,9 @@ export const walletSlice = createSlice({
     setFilterState: (state, action: PayloadAction<string>) => {
       state.filterState = action.payload;
     },
+    setSaveNewAccount: (state, action: PayloadAction<UsersAccount>) => {
+      state.accounts.unshift(action.payload);
+    },
   },
 });
 
@@ -56,6 +63,7 @@ export const {
   setNotes,
   setSaveNote,
   setFilterState,
+  setSaveNewAccount,
 } = walletSlice.actions;
 
 /* ! esto lo qu exportamos al store*/

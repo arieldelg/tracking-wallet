@@ -23,9 +23,9 @@ export default {
         translateImg: "translateX 0.5s linear 1 forwards",
         translateCard: "translateXCard 0.3s linear 1 forwards",
         translateDescDown: "translateYD 0.3s linear 1 forwards",
+        translateDescUp: "translateYU 0.3s linear 1 forwards",
         translateDescDownButton: "translateYDButton 0.3s linear 1 forwards",
         translateDescUpButton: "translateYUButton 0.3s linear 1 forwards",
-        translateDescUp: "translateYU 0.3s linear 1 forwards",
         rotate0_180: "rotate0_180 0.3s linear 1 forwards",
         rotate180_0: "rotate180_0 0.3s linear 1 forwards",
       },
@@ -41,16 +41,16 @@ export default {
           "100%": { transform: "translateX(5%)" },
         },
         translateYD: {
-          "100%": { transform: "translateY(60%)" },
+          "100%": { transform: "translateY(65%)" },
         },
         translateYU: {
-          "0%": { transform: "translateY(60%)" },
+          "0%": { transform: "translateY(65%)" },
         },
         translateYDButton: {
-          "100%": { transform: "translateY(98%)" },
+          "100%": { transform: "translateY(106%)" },
         },
         translateYUButton: {
-          "0%": { transform: "translateY(98%)" },
+          "0%": { transform: "translateY(106%)" },
         },
         rotate0_180: {
           "100%": { transform: "rotate(180deg)" },

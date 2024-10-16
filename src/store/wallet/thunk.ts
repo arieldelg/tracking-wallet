@@ -1,10 +1,15 @@
-import { NoteProps } from "../../interface/walletApp";
+import {
+  NoteProps,
+  UsersAccount,
+  UsersAccountFormik,
+} from "../../interface/walletApp";
 import { RootState } from "../store";
 import { setClose } from "../ui/uiSlice";
 import {
   setActiveNote,
   setFilterState,
   setNotes,
+  setSaveNewAccount,
   setSaveNote,
 } from "./walletSlice";
 
@@ -76,5 +81,21 @@ export const startFilteringState = (value: string) => {
     dispatch: (arg0: { payload: string; type: "wallet/setFilterState" }) => void
   ) => {
     dispatch(setFilterState(value));
+  };
+};
+
+export const startSavingAccount = (account: UsersAccountFormik) => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount | undefined;
+      type: "wallet/setSaveNewAccount" | "ui/setClose";
+    }) => void
+  ) => {
+    const data = {
+      ...account,
+      id: JSON.stringify(new Date().getTime()),
+    };
+    dispatch(setSaveNewAccount(data as UsersAccount));
+    dispatch(setClose());
   };
 };

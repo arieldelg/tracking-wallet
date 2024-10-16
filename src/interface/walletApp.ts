@@ -1,5 +1,3 @@
-import { ValuesAccountTab } from "../store/ui/uiSlice";
-
 export type PaymentType =
   | "cash"
   | "creditCard"
@@ -45,9 +43,18 @@ export interface PropsCardAccounts {
   typeCurrency: string;
   description: string;
   id: string;
-  children?: React.ReactNode;
-  openTab?: string;
-  openTabAccounts?: (value: ValuesAccountTab) => void;
-  setIdAccount?: (value: string) => void;
-  idAccount?: string;
+  toogleClass?: (event: HTMLDivElement | null) => void;
+  setActive?: (value: string) => void;
+  active: boolean;
+}
+
+export interface UsersAccount extends UsersAccountFormik {
+  id: string;
+}
+
+export interface UsersAccountFormik {
+  title: string;
+  description: string;
+  quantity: number;
+  currency: Currency;
 }

@@ -1,2 +1,3 @@
+import NewAccount from "./NewAccount";
 import ViewCard from "./ViewCard";
-export { ViewCard };
+export { ViewCard, NewAccount };
