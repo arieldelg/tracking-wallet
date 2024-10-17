@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
-import { BillPreviewCard, MyNewButton } from "../components";
+import { BillPreviewCard, MyNewButton, MyNewEmptySection } from "../components";
 import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
 import { useAppSelector } from "../store/hooks";
@@ -116,12 +115,7 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <div className="w-full flex flex-col items-center justify-center space-y-5 text-gray-500">
-          <CloudArrowUpIcon className="w-20" />
-          <p className="text-xl">
-            Theres nothing here yet... Try adding a new Bill
-          </p>
-        </div>
+        <MyNewEmptySection label="Theres nothing here yet... Try adding a new Bill" />
       )}
 
       {openModal && (

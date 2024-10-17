@@ -7,7 +7,7 @@
     "typePayment": "cash",
     "quantity": 2500,
     "tag": "casa",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "currency": "MXN",
     "images": [
       {
@@ -34,7 +34,7 @@
   },
   {
     "title": "mi segundo registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "2",
     "tag": "casa",
     "note": "este es mi segundo registro en esta aplicacion",
@@ -46,7 +46,7 @@
   },
   {
     "title": "mi tercer registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "3",
     "tag": "casa",
     "note": "Este es mi tercer registro en esta aplicacion",
@@ -58,7 +58,7 @@
   },
   {
     "title": "recien implementado",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "4",
     "tag": "casa",
     "note": "Este es mi tercer registro en esta aplicacion",
@@ -70,7 +70,7 @@
   },
   {
     "title": "mi cuarto registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "5",
     "tag": "casa",
     "note": "Este es mi cuarto registro en esta aplicacion",
@@ -82,7 +82,7 @@
   },
   {
     "title": "mi cuarto registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "6",
     "tag": "casa",
     "note": "Este es mi cuarto registro en esta aplicacion",
@@ -94,7 +94,7 @@
   },
   {
     "title": "mi cuarto registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "7",
     "tag": "casa",
     "note": "Este es mi cuarto registro en esta aplicacion",
@@ -106,7 +106,7 @@
   },
   {
     "title": "mi cuarto registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "8",
     "tag": "casa",
     "note": "Este es mi cuarto registro en esta aplicacion",
@@ -118,7 +118,7 @@
   },
   {
     "title": "mi cuarto registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "9",
     "tag": "casa",
     "note": "Este es mi cuarto registro en esta aplicacion",
@@ -130,7 +130,7 @@
   },
   {
     "title": "mi cuarto registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "10",
     "tag": "casa",
     "note": "Este es mi cuarto registro en esta aplicacion",
@@ -142,7 +142,7 @@
   },
   {
     "title": "mi cuarto registro",
-    "date": "10/9/2024",
+    "date": 1729110994302,
     "id": "11",
     "tag": "casa",
     "note": "Este es mi cuarto registro en esta aplicacion",

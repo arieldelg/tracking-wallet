@@ -40,12 +40,14 @@ export type NoteProps = {
 export interface PropsCardAccounts {
   title: string;
   quantity: number;
-  typeCurrency: string;
+  currency: Currency;
   description: string;
   id: string;
   toogleClass?: (event: HTMLDivElement | null) => void;
-  setActive?: (value: string) => void;
   active: boolean;
+  setEditAccount: (value: UsersAccount) => void;
+  setOpenModal: () => void;
+  setDeleteAccount: (id: string) => void;
 }
 
 export interface UsersAccount extends UsersAccountFormik {

@@ -2,18 +2,20 @@ import { Outlet } from "react-router-dom";
 import { LayoutHeader } from "../pages/layout";
 import { ProtectedSideBar } from "./NavigationsBars";
 import { useEffect } from "react";
-import { useAppDispatch } from "../store/hooks";
-import { startGetNotesDB } from "../store/wallet/thunk";
 import MockBills from "../data/mockDataBills.json";
-import { NoteProps } from "../interface/walletApp";
+import { NoteProps, UsersAccount } from "../interface/walletApp";
+import { useWalletStore } from "../hooks";
+import MockAccounts from "../data/mockAccounts.json";
 
 const ProtectedRoute = () => {
-  const dispatch = useAppDispatch();
+  const { setSaveAllUserAccounts, setSaveAllNotesDB, setEditAccount } =
+    useWalletStore();
   useEffect(() => {
-    return () => {
-      dispatch(startGetNotesDB(MockBills as NoteProps[]));
-    };
-  });
+    setSaveAllNotesDB(MockBills as NoteProps[]);
+    setSaveAllUserAccounts(MockAccounts as UsersAccount[]);
+    setEditAccount();
+  }, []);
+
   return (
     <main className="grid grid-cols-[250px_auto] h-screen">
       <ProtectedSideBar />

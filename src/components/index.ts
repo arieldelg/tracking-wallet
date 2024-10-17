@@ -9,6 +9,7 @@ import MyBillComponent from "./walletApp/MyBillComponent";
 import MyNewButton from "./walletApp/MyNewButton";
 import MyContainerCardAccounts from "./walletApp/MyContainerCardAccounts";
 import MyNewAccount from "./walletApp/MyNewAccount";
+import MyNewEmptySection from "./walletApp/MyNewEmptySection";
 export {
   HeaderApp,
   ButtonsTypeCurrency,
@@ -21,4 +22,5 @@ export {
   MyNewButton,
   MyContainerCardAccounts,
   MyNewAccount,
+  MyNewEmptySection,
 };

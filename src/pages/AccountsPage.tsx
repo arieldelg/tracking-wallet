@@ -1,33 +1,55 @@
-import { useState } from "react";
-import MockAccounts from "../data/mockAccounts.json";
-import { MyContainerCardAccounts, MyNewButton } from "../components";
+import {
+  MyContainerCardAccounts,
+  MyNewButton,
+  MyNewEmptySection,
+} from "../components";
 import Modal from "../modals/Modal";
 import { toogleClass } from "../helpers";
 import { NewAccount } from "./views";
 import { useWalletStore, useWindowDimensions } from "../hooks";
 
-//TODO agregar un dispatch de que resete el estado de abrir y cerrar el tab en Accounts, que se active cuando cambies de ruta
-
 const AccountsPage = () => {
-  const { setOpenModal, isOpenModal } = useWalletStore();
+  const {
+    setOpenModal,
+    isOpenModal,
+    Accounts,
+    setEditAccount,
+    setResetAccount,
+    setDeleteAccount,
+    activeAccountMemo,
+  } = useWalletStore();
   const { height } = useWindowDimensions();
-  const [active, setActive] = useState<string | boolean>("");
+
   return (
     <div className="flex flex-col items-end gap-5">
-      <MyNewButton openModal={() => setOpenModal()} />
+      <MyNewButton
+        openModal={() => {
+          setResetAccount();
+          setOpenModal();
+        }}
+      />
       <div
         style={{ height: height - 235 }}
         className="w-full  flex flex-col justify-start overflow-auto scrollbar"
       >
-        {MockAccounts.map((props) => (
-          <MyContainerCardAccounts
-            {...props}
-            key={props.id}
-            toogleClass={toogleClass}
-            setActive={setActive}
-            active={props.id === active ? true : false}
+        {Accounts.length > 0 ? (
+          Accounts.map((props) => (
+            <MyContainerCardAccounts
+              {...props}
+              key={props.id}
+              toogleClass={toogleClass}
+              active={props.id === activeAccountMemo({})?.id ? true : false}
+              setEditAccount={setEditAccount}
+              setOpenModal={setOpenModal}
+              setDeleteAccount={setDeleteAccount}
+            />
+          ))
+        ) : (
+          <MyNewEmptySection
+            label="It seems that you dont have any accounts... try adding a new one"
+            classNameContainer="h-full"
           />
-        ))}
+        )}
       </div>
       {isOpenModal && (
         <Modal>

@@ -8,15 +8,23 @@ import { useRef } from "react";
 
 const MyContainerCardAccounts = ({
   toogleClass,
-  setActive,
   active,
+  setEditAccount,
+  setOpenModal,
+  setDeleteAccount,
   ...props
 }: PropsCardAccounts) => {
   const divRef = useRef<HTMLDivElement | null>(null);
   return (
     <div className="w-full h-auto flex flex-col items-center">
       <div className="flex w-full h-20 z-10">
-        <div className="h-full w-24 bg-customBlue rounded-l-xl flex items-center justify-center cursor-pointer">
+        <div
+          className="h-full w-24 bg-customBlue rounded-l-xl flex items-center justify-center cursor-pointer"
+          onClick={() => {
+            setEditAccount(props);
+            setOpenModal();
+          }}
+        >
           <PencilSquareIcon className="w-14 text-black" />
         </div>
         <div
@@ -24,16 +32,19 @@ const MyContainerCardAccounts = ({
             active ? "text-green-400" : ""
           }`}
           onClick={() => {
-            if (setActive) setActive(props.id);
+            setEditAccount(props);
           }}
         >
-          <p>{props.title}</p>
+          <p className="capitalize">{props.title}</p>
           <p>
-            {props.quantity} <span>{props.typeCurrency}</span>
+            {props.quantity} <span>{props.currency}</span>
           </p>
         </div>
         <div className="bg-customRed rounded-r-xl flex items-center justify-center h-full w-24 cursor-pointer">
-          <TrashIcon className="w-14 text-black" />
+          <TrashIcon
+            className="w-14 text-black"
+            onClick={() => setDeleteAccount(props.id)}
+          />
         </div>
       </div>
 

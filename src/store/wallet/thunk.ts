@@ -6,11 +6,15 @@ import {
 import { RootState } from "../store";
 import { setClose } from "../ui/uiSlice";
 import {
+  setActiveAccount,
   setActiveNote,
+  setDeleteAccount,
   setFilterState,
   setNotes,
+  setSaveAllUserAccounts,
   setSaveNewAccount,
   setSaveNote,
+  setUpdateAccount,
 } from "./walletSlice";
 
 export const startSavingActiveNote = (note: NoteProps) => {
@@ -88,7 +92,7 @@ export const startSavingAccount = (account: UsersAccountFormik) => {
   return async (
     dispatch: (arg0: {
       payload: UsersAccount | undefined;
-      type: "wallet/setSaveNewAccount" | "ui/setClose";
+      type: "wallet/setSaveNewAccount" | "wallet/setActiveAccount";
     }) => void
   ) => {
     const data = {
@@ -96,6 +100,50 @@ export const startSavingAccount = (account: UsersAccountFormik) => {
       id: JSON.stringify(new Date().getTime()),
     };
     dispatch(setSaveNewAccount(data as UsersAccount));
-    dispatch(setClose());
+    dispatch(setActiveAccount(data));
+  };
+};
+
+export const startGetAccountsDB = (account: UsersAccount[]) => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount[];
+      type: "wallet/setSaveAllUserAccounts";
+    }) => void
+  ) => {
+    dispatch(setSaveAllUserAccounts(account));
+  };
+};
+
+export const startSavingActiveAccount = (account: UsersAccount | undefined) => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount | undefined;
+      type: "wallet/setActiveAccount";
+    }) => void
+  ) => {
+    dispatch(setActiveAccount(account));
+  };
+};
+
+export const startSavingEditAccount = (account: UsersAccount) => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount;
+      type: "wallet/setUpdateAccount";
+    }) => void
+  ) => {
+    dispatch(setUpdateAccount(account));
+  };
+};
+
+export const startDeleteAccount = (id: string) => {
+  return async (
+    dispatch: (arg0: {
+      payload: string;
+      type: "wallet/setDeleteAccount";
+    }) => void
+  ) => {
+    dispatch(setDeleteAccount(id));
   };
 };

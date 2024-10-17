@@ -53,6 +53,31 @@ export const walletSlice = createSlice({
     setSaveNewAccount: (state, action: PayloadAction<UsersAccount>) => {
       state.accounts.unshift(action.payload);
     },
+    setSaveAllUserAccounts: (state, action: PayloadAction<UsersAccount[]>) => {
+      state.accounts = action.payload;
+    },
+    setActiveAccount: (
+      state,
+      action: PayloadAction<UsersAccount | undefined>
+    ) => {
+      state.activeAccount = action.payload;
+    },
+    setUpdateAccount: (state, action: PayloadAction<UsersAccount>) => {
+      state.accounts = state.accounts.map((data) => {
+        if (data.id === action.payload.id) {
+          return {
+            ...data,
+            ...action.payload,
+          };
+        }
+        return data;
+      });
+    },
+    setDeleteAccount: (state, action: PayloadAction<string>) => {
+      state.accounts = state.accounts.filter(
+        (account) => account.id !== action.payload
+      );
+    },
   },
 });
 
@@ -64,6 +89,10 @@ export const {
   setSaveNote,
   setFilterState,
   setSaveNewAccount,
+  setSaveAllUserAccounts,
+  setActiveAccount,
+  setUpdateAccount,
+  setDeleteAccount,
 } = walletSlice.actions;
 
 /* ! esto lo qu exportamos al store*/
@@ -73,6 +102,8 @@ const ENTRYPAY = (state: RootState) => state;
 const ACTIVENOTE = (state: RootState) => state;
 const NOTES = (state: RootState) => state;
 const FILTER = (state: RootState) => state;
+const ACCOUNTS = (state: RootState) => state;
+const ACTIVEACCOUNT = (state: RootState) => state;
 
 export const EntryPaySelector = createSelector(
   [ENTRYPAY],
@@ -92,4 +123,14 @@ export const GetNotesDBSelector = createSelector(
 export const FilterNotesSelector = createSelector(
   [FILTER],
   (FILTER) => FILTER.wallet.filterState
+);
+
+export const GetAllUserAccountsDB = createSelector(
+  [ACCOUNTS],
+  (ACCOUNTS) => ACCOUNTS.wallet.accounts
+);
+
+export const GetActiveAcountSelector = createSelector(
+  [ACTIVEACCOUNT],
+  (ACTIVEACCOUNT) => ACTIVEACCOUNT.wallet.activeAccount
 );

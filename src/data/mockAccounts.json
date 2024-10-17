@@ -3,28 +3,28 @@
     "id": "1",
     "title": "Nomina",
     "quantity": 10000,
-    "typeCurrency": "MXN",
+    "currency": "MXN",
     "description": "Esta cuenta lleva el registro de la casa de kino y de mi trabajo"
   },
   {
     "id": "2",
     "title": "Cheques",
     "quantity": 5000,
-    "typeCurrency": "MXN",
+    "currency": "MXN",
     "description": "Esta cuenta son para mis gastos personales"
   },
   {
     "id": "3",
     "title": "Efectivo",
     "quantity": 18000,
-    "typeCurrency": "MXN",
+    "currency": "MXN",
     "description": "Esta cuenta es de mentiras"
   },
   {
     "id": "4",
     "title": "Nomina2",
     "quantity": 250,
-    "typeCurrency": "MXN",
+    "currency": "MXN",
     "description": "Esta cuenta es de mentiras2"
   }
 ]
