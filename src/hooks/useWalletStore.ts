@@ -100,35 +100,48 @@ const useWalletStore = () => {
   const activeAccountMemo = useCallback(
     ({
       account,
+      id,
+      init,
       deleteAccount,
     }: {
       account?: UsersAccount;
+      id?: string;
+      init?: UsersAccount[];
       deleteAccount?: boolean;
     }) => {
       const istrue = localStorage.getItem("activeAccount");
-      if (Accounts.length === 0) return false;
-
-      if (!istrue && Accounts.length > 0) {
-        localStorage.setItem("activeAccount", JSON.stringify(Accounts[0]));
-        return Accounts[0];
+      if (init?.length === 0) {
+        return false;
       }
+
+      if (init) {
+        if (!istrue && init?.length > 0) {
+          localStorage.setItem("activeAccount", JSON.stringify(init[0]));
+
+          return init[0];
+        }
+      }
+
       if (account) {
         localStorage.setItem("activeAccount", JSON.stringify(account));
         return account;
       }
+
       const activeCompare = JSON.parse(
         localStorage.getItem("activeAccount") as string
       ) as UsersAccount;
-      if (deleteAccount) {
-        if (activeAccount?.id !== activeCompare?.id) {
-          localStorage.removeItem("activeAccount");
+
+      if (id && deleteAccount) {
+        if (id === activeCompare.id) {
+          localStorage.setItem("activeAccount", JSON.stringify(Accounts[0]));
+          return Accounts[0];
         }
       }
-
+      console.log(Accounts);
       return JSON.parse(localStorage.getItem("activeAccount") as string);
     },
 
-    [Accounts, activeAccount]
+    [Accounts]
   );
 
   const activeNoteCallback = useCallback(
@@ -160,9 +173,10 @@ const useWalletStore = () => {
         dispatch(startFilteringState(props));
         keyWordFilter({ key: props });
         dispatch(startSavingActiveNote(filterBy().firstValues));
+        activeNoteCallback({ note: filterBy().firstValues });
       }
     },
-    [dispatch, filterBy, keyWordFilter]
+    [activeNoteCallback, dispatch, filterBy, keyWordFilter]
   );
 
   const setActiveNote = useCallback(
@@ -181,9 +195,9 @@ const useWalletStore = () => {
     [activeNote, activeNoteCallback, dispatch]
   );
 
-  const setOpenModal = (props?: NoteProps) => {
+  const setOpenModal = ({ note }: { note?: NoteProps }) => {
     dispatch(setOpen());
-    if (props) dispatch(startSavingActiveNote(props));
+    if (note) dispatch(startSavingActiveNote(note));
   };
   const deleteNote = (id: string) => {
     dispatch(startDeleteNote(id));
@@ -202,18 +216,29 @@ const useWalletStore = () => {
     dispatch(startSavingAccount(account));
     dispatch(setClose());
   };
-  const setSaveAllUserAccounts = (account: UsersAccount[]) => {
-    dispatch(startGetAccountsDB(account));
-  };
-  const setSaveAllNotesDB = (notes: NoteProps[]) => {
-    dispatch(startGetNotesDB(notes));
-  };
-  const setEditAccount = (account?: UsersAccount) => {
-    dispatch(startSavingActiveAccount(account));
-    if (account) activeAccountMemo({ account });
-    if (!activeAccount)
-      dispatch(startSavingActiveAccount(activeAccountMemo({})));
-  };
+  const setSaveAllUserAccounts = useCallback(
+    (account: UsersAccount[]) => {
+      dispatch(startGetAccountsDB(account));
+    },
+    [dispatch]
+  );
+
+  const setSaveAllNotesDB = useCallback(
+    (notes: NoteProps[]) => {
+      dispatch(startGetNotesDB(notes));
+    },
+    [dispatch]
+  );
+
+  const setEditAccount = useCallback(
+    (account?: UsersAccount) => {
+      dispatch(startSavingActiveAccount(account));
+      if (account) activeAccountMemo({ account });
+      if (!activeAccount)
+        dispatch(startSavingActiveAccount(activeAccountMemo({})));
+    },
+    [activeAccount, activeAccountMemo, dispatch]
+  );
   const setResetAccount = () => {
     dispatch(startSavingActiveAccount(undefined));
   };
@@ -223,8 +248,19 @@ const useWalletStore = () => {
   };
   const setDeleteAccount = (id: string) => {
     dispatch(startDeleteAccount(id));
-    activeAccountMemo({ deleteAccount: true });
+
+    activeAccountMemo({ id, deleteAccount: true });
   };
+
+  const startApplication = useCallback(
+    ({ Bills, Accounts }: { Bills: NoteProps[]; Accounts: UsersAccount[] }) => {
+      setSaveAllNotesDB(Bills as NoteProps[]);
+      setSaveAllUserAccounts(Accounts as UsersAccount[]);
+
+      activeAccountMemo({ init: Accounts });
+    },
+    [activeAccountMemo, setSaveAllNotesDB, setSaveAllUserAccounts]
+  );
 
   return {
     // Method
@@ -245,6 +281,7 @@ const useWalletStore = () => {
     activeAccountMemo,
     keyWordFilter,
     filterBy,
+    startApplication,
     //state store
     filter,
     notes,

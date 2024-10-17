@@ -22,7 +22,7 @@ const MyContainerCardAccounts = ({
           className="h-full w-24 bg-customBlue rounded-l-xl flex items-center justify-center cursor-pointer"
           onClick={() => {
             setEditAccount(props);
-            setOpenModal();
+            setOpenModal({});
           }}
         >
           <PencilSquareIcon className="w-14 text-black" />

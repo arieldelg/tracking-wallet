@@ -5,7 +5,7 @@ import { useHeaderName, useWalletStore } from "../../hooks";
 
 const ProtectedSideBar = () => {
   const { setHeaderName } = useHeaderName();
-  const { reset, resetFilter } = useWalletStore();
+  const { reset, resetFilter, setFilter } = useWalletStore();
   return (
     <header className="w-full h-full bg-[#363a45]">
       <img src={huron} alt="huron" className="object-cover w-full h-44" />
@@ -18,6 +18,7 @@ const ProtectedSideBar = () => {
                 className={`${({ isActive, isPending }: NavLinkRenderProps) =>
                   isActive ? "active" : isPending ? "pending" : null} navlink`}
                 onClick={() => {
+                  setFilter({ props: "reset" });
                   reset();
                   resetFilter();
                   setHeaderName(label);

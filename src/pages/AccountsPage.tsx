@@ -25,7 +25,7 @@ const AccountsPage = () => {
       <MyNewButton
         openModal={() => {
           setResetAccount();
-          setOpenModal();
+          setOpenModal({});
         }}
       />
       <div

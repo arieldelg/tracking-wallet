@@ -11,7 +11,7 @@ const Home = () => {
   const openModal = useAppSelector(OpenModalSelector);
   const notes = useAppSelector(GetNotesDBSelector);
   const { setHeaderName } = useHeaderName();
-  const { deleteNote, reset, setOpenModal } = useWalletStore();
+  const { deleteNote, reset, setOpenModal, setFilter } = useWalletStore();
   return (
     <>
       {/* 
@@ -109,7 +109,13 @@ const Home = () => {
             ))}
           </div>
           <div className="w-full text-center pt-6">
-            <NavLink to={"bills"} onClick={() => setHeaderName("Bills")}>
+            <NavLink
+              to={"bills"}
+              onClick={() => {
+                setFilter({ props: "reset" });
+                setHeaderName("Bills");
+              }}
+            >
               + show more...
             </NavLink>
           </div>
