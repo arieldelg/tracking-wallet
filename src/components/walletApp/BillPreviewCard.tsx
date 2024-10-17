@@ -5,7 +5,13 @@ import { twMerge } from "tailwind-merge";
 
 interface Props {
   props: NoteProps;
-  onClick?: (note: NoteProps) => void;
+  onClick?: ({
+    note,
+    allNote,
+  }: {
+    note?: NoteProps;
+    allNote?: NoteProps[];
+  }) => void;
   deleteNote?: (id: string) => void;
   style?: CSSProperties;
   className?: string;
@@ -43,7 +49,7 @@ const BillPreviewCard = ({
           : "bg-customRed ring-customRed"
       }`}
       onClick={() => {
-        if (onClick) onClick(props);
+        if (onClick) onClick({ note: props });
       }}
     >
       <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full">

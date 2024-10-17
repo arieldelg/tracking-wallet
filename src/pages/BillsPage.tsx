@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { BillPreviewCard, MyBillComponent, MyNewButton } from "../components";
-import { useFilterData, useWalletStore, useWindowDimensions } from "../hooks";
+import { useWalletStore, useWindowDimensions } from "../hooks";
 
 const BillsPage = () => {
   const { height } = useWindowDimensions();
@@ -9,33 +9,46 @@ const BillsPage = () => {
     setActiveNote,
     reset,
     setFilter,
-    filter,
     activeNote,
     notes,
+    keyWordFilter,
+    filterBy,
   } = useWalletStore();
-  const { filterBy, filterNote } = useFilterData({
-    data: notes,
-    initiValueFilter: filter,
-    getFirstValueFilter: setActiveNote,
-  });
+
   useEffect(() => {
-    if (!activeNote) return setActiveNote(filterNote[0]);
-  }, [activeNote, filterNote, setActiveNote]);
+    setActiveNote({ allNote: notes });
+  }, [notes, setActiveNote]);
 
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="w-full space-y-5">
         <div>
-          <h1 className="text-base">Filter By:</h1>
+          <div className="flex justify-between">
+            <h1 className="text-base">Filter By:</h1>
+            {keyWordFilter({}) !== "reset" ? (
+              <button
+                className={
+                  keyWordFilter({}) === "reset" ? "text-[#F99A00]" : ""
+                }
+                onClick={() => {
+                  setFilter({ props: "reset" });
+                }}
+              >
+                Reset Filter
+              </button>
+            ) : null}
+          </div>
           <div className="flex items-center gap-4">
             <div className="w-[540px]">
               <ul className="flex text-base ultraWide:text-xl justify-between">
                 <li>
                   <button
                     onClick={() => {
-                      setFilter("income");
-                      filterBy({ value: "income", activeFirstValue: true });
+                      setFilter({ props: "income" });
                     }}
+                    className={`${
+                      keyWordFilter({}) === "income" ? "text-[#F99A00]" : ""
+                    }`}
                   >
                     Income
                   </button>
@@ -43,9 +56,11 @@ const BillsPage = () => {
                 <li>
                   <button
                     onClick={() => {
-                      setFilter("expense");
-                      filterBy({ value: "expense", activeFirstValue: true });
+                      setFilter({ props: "expense" });
                     }}
+                    className={`${
+                      keyWordFilter({}) === "expense" ? "text-[#F99A00]" : ""
+                    }`}
                   >
                     Expense
                   </button>
@@ -54,17 +69,20 @@ const BillsPage = () => {
                   <button
                     onClick={() => {
                       const filterValue =
-                        filter === ""
+                        keyWordFilter({}) === ""
                           ? "quantity"
-                          : filter === "quantity"
+                          : keyWordFilter({}) === "quantity"
                           ? "quantity2"
                           : "quantity";
-                      setFilter(filterValue);
-                      filterBy({
-                        value: filterValue,
-                        activeFirstValue: true,
-                      });
+                      setFilter({ props: filterValue });
                     }}
+                    className={`${
+                      keyWordFilter({}) === "quantity"
+                        ? "text-[#F99A00]"
+                        : keyWordFilter({}) === "quantity2"
+                        ? "text-[#F99A00]"
+                        : ""
+                    }`}
                   >
                     Quantity
                   </button>
@@ -82,7 +100,7 @@ const BillsPage = () => {
           }}
           className={`flex flex-col gap-6 py-4 px-[2px] overflow-auto scrollbar `}
         >
-          {filterNote?.map(({ ...props }) => (
+          {filterBy()?.notes.map(({ ...props }) => (
             <BillPreviewCard
               props={props}
               key={props.id}
@@ -90,7 +108,7 @@ const BillsPage = () => {
               onClick={setActiveNote}
               className={`${
                 activeNote?.id === props.id ? "animate-translateCard" : ""
-              } sm:max-w-[565px] ultraWide:max-w-[700px]`}
+              } sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[480px] 2xl:max-w-[565px] ultraWide:max-w-[700px]`}
             />
           ))}
         </div>
@@ -102,9 +120,9 @@ const BillsPage = () => {
         className="place-content-center h-full"
       >
         {activeNote ? (
-          <MyBillComponent activeNote={activeNote!} editPathTo={"/newBill"} />
-        ) : filterNote.length > 0 ? (
-          <MyBillComponent activeNote={filterNote[0]} />
+          <MyBillComponent activeNote={activeNote} editPathTo={"/newBill"} />
+        ) : filterBy().notes.length > 0 ? (
+          <MyBillComponent activeNote={filterBy().firstValues} />
         ) : null}
       </div>
     </div>

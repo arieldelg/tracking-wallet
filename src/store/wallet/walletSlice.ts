@@ -25,7 +25,7 @@ const initialState: InitialState = {
   entryPay: "income",
   activeNote: undefined,
   notes: [],
-  filterState: "reset",
+  filterState: "init",
   accounts: [],
   activeAccount: undefined,
 };

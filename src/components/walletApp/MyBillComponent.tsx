@@ -48,7 +48,7 @@ const MyBillComponent = ({
         {/* 
       // * seccion 1 ( type, date, tag )
       */}
-        <div className="space-y-3">
+        <div className="space-y-3 xl:text-[16px] 2xl:text-lg  ultraWide:text-xl">
           <div className="gap-3 h-auto flex flex-col justify-between">
             <h2 className="first-letter:capitalize">type</h2>
             <p className="text-[#7C7676] first-letter:capitalize">
@@ -69,7 +69,7 @@ const MyBillComponent = ({
         {/* 
     // * seccion 2 ( title y note )
     */}
-        <div className="space-y-1">
+        <div className="2xl:space-y-1   xl:text-[16px] xl:tracking-tight 2xl:text-lg ultraWide:text-xl">
           <div className="gap-2 h-auto flex flex-col justify-between">
             <h2 className="first-letter:capitalize">title</h2>
             <p className="text-[#7C7676] first-letter:capitalize">
@@ -90,7 +90,7 @@ const MyBillComponent = ({
             className={`max-w-[450px] ultraWide:w-full grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 ultraWide:gap-x-2 gap-y-4 items-center justify-items-center overflow-auto scrollbar p-2 rounded-md  ${
               activeNote?.images?.length === 0
                 ? "h-[80px] ultraWide:h-[130px]"
-                : "h-[150px] ultraWide:h-[220px]"
+                : "xl:h-[140px] 2xl:h-[150px] ultraWide:h-[220px]"
             }`}
           >
             {activeNote?.images?.map(({ id, img }) => (
@@ -98,7 +98,7 @@ const MyBillComponent = ({
                 key={id}
                 src={img}
                 alt="headphones"
-                className="w-[100px] h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg cursor-pointer"
+                className="w-[80px] h-[80px]  2xl:w-[100px] 2xl:h-[100px] ultraWide:w-[140px] ultraWide:h-[140px] rounded-lg cursor-pointer"
                 onClick={() => saveImage(img)}
               />
             ))}
