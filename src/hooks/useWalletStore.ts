@@ -137,7 +137,7 @@ const useWalletStore = () => {
           return Accounts[0];
         }
       }
-      console.log(Accounts);
+
       return JSON.parse(localStorage.getItem("activeAccount") as string);
     },
 
@@ -254,9 +254,10 @@ const useWalletStore = () => {
 
   const startApplication = useCallback(
     ({ Bills, Accounts }: { Bills: NoteProps[]; Accounts: UsersAccount[] }) => {
-      setSaveAllNotesDB(Bills as NoteProps[]);
-      setSaveAllUserAccounts(Accounts as UsersAccount[]);
-
+      if (Accounts.length !== 0)
+        setSaveAllUserAccounts(Accounts as UsersAccount[]);
+      if (Bills.length !== 0) setSaveAllNotesDB(Bills as NoteProps[]);
+      // TODO filtar por accounts las notas
       activeAccountMemo({ init: Accounts });
     },
     [activeAccountMemo, setSaveAllNotesDB, setSaveAllUserAccounts]

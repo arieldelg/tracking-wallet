@@ -30,6 +30,7 @@ export type NoteProps = {
   title: string;
   note: string;
   typePayment: PaymentType | "";
+  account: string;
   quantity: number;
   tag: string;
   date: number;
