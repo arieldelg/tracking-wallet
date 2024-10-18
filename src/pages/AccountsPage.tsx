@@ -5,8 +5,10 @@ import {
 } from "../components";
 import Modal from "../modals/Modal";
 import { toogleClass } from "../helpers";
-import { NewAccount } from "./views";
+import { NewAccount, WarningView } from "./views";
 import { useWalletStore, useWindowDimensions } from "../hooks";
+import { activeAccountHelper } from "../helpers/wallet";
+import ModalDelete from "../modals/ModalDelete";
 
 const AccountsPage = () => {
   const {
@@ -16,10 +18,10 @@ const AccountsPage = () => {
     setEditAccount,
     setResetAccount,
     setDeleteAccount,
-    activeAccountMemo,
+    setOpenModalDelete,
+    isOpenModalDelete,
   } = useWalletStore();
   const { height } = useWindowDimensions();
-
   return (
     <div className="flex flex-col items-end gap-5">
       <MyNewButton
@@ -36,12 +38,13 @@ const AccountsPage = () => {
           Accounts.map((props) => (
             <MyContainerCardAccounts
               {...props}
-              key={props.id}
+              key={props._id}
               toogleClass={toogleClass}
-              active={props.id === activeAccountMemo({})?.id ? true : false}
+              active={props._id === activeAccountHelper({})?._id ? true : false}
               setEditAccount={setEditAccount}
               setOpenModal={setOpenModal}
               setDeleteAccount={setDeleteAccount}
+              setOpenDelete={setOpenModalDelete}
             />
           ))
         ) : (
@@ -55,6 +58,11 @@ const AccountsPage = () => {
         <Modal>
           <NewAccount />
         </Modal>
+      )}
+      {isOpenModalDelete && (
+        <ModalDelete>
+          <WarningView />
+        </ModalDelete>
       )}
     </div>
   );

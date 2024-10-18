@@ -3,7 +3,7 @@ import { MySelect, MyTextArea, MyTextInput } from "../../components";
 import TypeCurrency from "../../data/currencyType.json";
 import * as Yup from "yup";
 import { useWalletStore } from "../../hooks";
-import { UsersAccountFormik } from "../../interface/walletApp";
+import { UsersAccount, UsersAccountFormik } from "../../interface/walletApp";
 
 const initialValues: UsersAccountFormik = {
   title: "",
@@ -13,19 +13,13 @@ const initialValues: UsersAccountFormik = {
 };
 
 const NewAccount = () => {
-  const {
-    setCloseModal,
-    setSaveAccount,
-    activeAccount,
-    setSaveEditAccount,
-    setEditAccount,
-  } = useWalletStore();
+  const { setCloseModal, setSaveAccount, activeAccount, setUpdateAccount } =
+    useWalletStore();
   return (
     <div
       className="bg-customBGDark1 rounded-2xl ring-2 px-4 md:px-8 py-5 ultraWide:p-8 text-lg ultraWide:text-xl animate-fadeInBillModal ring-white min-w-[400px] xl:min-w-[600px] ultraWide:min-w-[730px] max-h-[600px] ultraWide:max-h-[750px] h-5/6 flex flex-col ultraWide:justify-evenly justify-between"
       onClick={(e) => e.stopPropagation()}
     >
-      {/* <MyNewAccount /> */}
       <h1 className="text-3xl md:text-5xl ultraWide:text-7xl text-center w-full">
         {activeAccount ? <span>Edit Account</span> : <span>New Account</span>}
       </h1>
@@ -33,12 +27,7 @@ const NewAccount = () => {
         initialValues={activeAccount ? activeAccount : initialValues}
         onSubmit={(values, actions) => {
           if (activeAccount) {
-            const newValues = {
-              ...values,
-              id: activeAccount.id,
-            };
-            setEditAccount(newValues);
-            setSaveEditAccount(newValues);
+            setUpdateAccount(values as UsersAccount);
           } else {
             setSaveAccount(values);
           }

@@ -11,6 +11,7 @@ const MyContainerCardAccounts = ({
   active,
   setEditAccount,
   setOpenModal,
+  setOpenDelete,
   setDeleteAccount,
   ...props
 }: PropsCardAccounts) => {
@@ -18,6 +19,9 @@ const MyContainerCardAccounts = ({
   return (
     <div className="w-full h-auto flex flex-col items-center">
       <div className="flex w-full h-20 z-10">
+        {/* 
+        //* Para editar Cuenta
+        */}
         <div
           className="h-full w-24 bg-customBlue rounded-l-xl flex items-center justify-center cursor-pointer"
           onClick={() => {
@@ -27,6 +31,9 @@ const MyContainerCardAccounts = ({
         >
           <PencilSquareIcon className="w-14 text-black" />
         </div>
+        {/* 
+        //* Para activar la cuenta y las notas
+        */}
         <div
           className={`flex text-4xl justify-between items-center w-full px-8 bg-customBGDark1 h-full cursor-pointer ${
             active ? "text-green-400" : ""
@@ -40,10 +47,16 @@ const MyContainerCardAccounts = ({
             {props.quantity} <span>{props.currency}</span>
           </p>
         </div>
+        {/* 
+        //* para eliminar la cuenta
+        */}
         <div className="bg-customRed rounded-r-xl flex items-center justify-center h-full w-24 cursor-pointer">
           <TrashIcon
             className="w-14 text-black"
-            onClick={() => setDeleteAccount(props.id)}
+            onClick={() => {
+              setOpenDelete();
+              // setDeleteAccount(props._id);
+            }}
           />
         </div>
       </div>

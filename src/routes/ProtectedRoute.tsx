@@ -2,18 +2,13 @@ import { Outlet } from "react-router-dom";
 import { LayoutHeader } from "../pages/layout";
 import { ProtectedSideBar } from "./NavigationsBars";
 import { useEffect } from "react";
-import MockBills from "../data/mockDataBills.json";
-import { NoteProps, UsersAccount } from "../interface/walletApp";
-import MockAccounts from "../data/mockAccounts.json";
 import { useWalletStore } from "../hooks";
 
 const ProtectedRoute = () => {
   const { startApplication } = useWalletStore();
+
   useEffect(() => {
-    startApplication({
-      Accounts: MockAccounts as UsersAccount[],
-      Bills: MockBills as NoteProps[],
-    });
+    startApplication();
   }, [startApplication]);
 
   return (

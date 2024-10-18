@@ -25,7 +25,7 @@ interface IMG {
 }
 
 export type NoteProps = {
-  id: string;
+  _id: string;
   typeCurrency: TypeCurrency;
   title: string;
   note: string;
@@ -43,16 +43,22 @@ export interface PropsCardAccounts {
   quantity: number;
   currency: Currency;
   description: string;
-  id: string;
+  _id: string;
   toogleClass?: (event: HTMLDivElement | null) => void;
   active: boolean;
   setEditAccount: (value: UsersAccount) => void;
   setOpenModal: ({ note }: { note?: NoteProps }) => void;
   setDeleteAccount: (id: string) => void;
+  setOpenDelete: () => void;
 }
 
 export interface UsersAccount extends UsersAccountFormik {
-  id: string;
+  _id: string;
+  user?: string;
+  creation?: {
+    updatedAt: number;
+    creationAt: number;
+  };
 }
 
 export interface UsersAccountFormik {

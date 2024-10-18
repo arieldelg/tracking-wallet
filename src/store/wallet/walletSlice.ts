@@ -64,7 +64,7 @@ export const walletSlice = createSlice({
     },
     setUpdateAccount: (state, action: PayloadAction<UsersAccount>) => {
       state.accounts = state.accounts.map((data) => {
-        if (data.id === action.payload.id) {
+        if (data._id === action.payload._id) {
           return {
             ...data,
             ...action.payload,
@@ -75,7 +75,7 @@ export const walletSlice = createSlice({
     },
     setDeleteAccount: (state, action: PayloadAction<string>) => {
       state.accounts = state.accounts.filter(
-        (account) => account.id !== action.payload
+        (account) => account._id !== action.payload
       );
     },
   },

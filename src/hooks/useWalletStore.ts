@@ -5,18 +5,24 @@ import {
   UsersAccountFormik,
 } from "../interface/walletApp";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { OpenModalSelector, setClose, setOpen } from "../store/ui/uiSlice";
+import {
+  OpenModalDeleteSelector,
+  OpenModalSelector,
+  setClose,
+  setOpen,
+  setOpenDelete,
+} from "../store/ui/uiSlice";
 import {
   startDeleteAccount,
   startDeleteNote,
   startFilteringState,
-  startGetAccountsDB,
+  startGetDataDB,
   startGetNotesDB,
   startResetActiveNote,
   startSavingAccount,
   startSavingActiveAccount,
   startSavingActiveNote,
-  startSavingEditAccount,
+  startUpdateAccount,
 } from "../store/wallet/thunk";
 import {
   ActiveNoteSelector,
@@ -32,6 +38,7 @@ const useWalletStore = () => {
   const notes = useAppSelector(GetNotesDBSelector) as NoteProps[];
   const activeNote = useAppSelector(ActiveNoteSelector);
   const isOpenModal = useAppSelector(OpenModalSelector);
+  const isOpenModalDelete = useAppSelector(OpenModalDeleteSelector);
   const Accounts = useAppSelector(GetAllUserAccountsDB);
   const activeAccount = useAppSelector(GetActiveAcountSelector);
 
@@ -97,52 +104,52 @@ const useWalletStore = () => {
     }
   }, [keyWordFilter, notes]);
 
-  const activeAccountMemo = useCallback(
-    ({
-      account,
-      id,
-      init,
-      deleteAccount,
-    }: {
-      account?: UsersAccount;
-      id?: string;
-      init?: UsersAccount[];
-      deleteAccount?: boolean;
-    }) => {
-      const istrue = localStorage.getItem("activeAccount");
-      if (init?.length === 0) {
-        return false;
-      }
+  // const activeAccountMemo = useCallback(
+  //   ({
+  //     account,
+  //     id,
+  //     init,
+  //     deleteAccount,
+  //   }: {
+  //     account?: UsersAccount;
+  //     id?: string;
+  //     init?: UsersAccount[];
+  //     deleteAccount?: boolean;
+  //   }) => {
+  //     const istrue = localStorage.getItem("activeAccount");
+  //     if (init?.length === 0) {
+  //       return false;
+  //     }
 
-      if (init) {
-        if (!istrue && init?.length > 0) {
-          localStorage.setItem("activeAccount", JSON.stringify(init[0]));
+  //     if (init) {
+  //       if (!istrue && init?.length > 0) {
+  //         localStorage.setItem("activeAccount", JSON.stringify(init[0]));
 
-          return init[0];
-        }
-      }
+  //         return init[0];
+  //       }
+  //     }
 
-      if (account) {
-        localStorage.setItem("activeAccount", JSON.stringify(account));
-        return account;
-      }
+  //     if (account) {
+  //       localStorage.setItem("activeAccount", JSON.stringify(account));
+  //       return account;
+  //     }
 
-      const activeCompare = JSON.parse(
-        localStorage.getItem("activeAccount") as string
-      ) as UsersAccount;
+  //     const activeCompare = JSON.parse(
+  //       localStorage.getItem("activeAccount") as string
+  //     ) as UsersAccount;
 
-      if (id && deleteAccount) {
-        if (id === activeCompare.id) {
-          localStorage.setItem("activeAccount", JSON.stringify(Accounts[0]));
-          return Accounts[0];
-        }
-      }
+  //     if (id && deleteAccount) {
+  //       if (id === activeCompare._id) {
+  //         localStorage.setItem("activeAccount", JSON.stringify(Accounts[0]));
+  //         return Accounts[0];
+  //       }
+  //     }
 
-      return JSON.parse(localStorage.getItem("activeAccount") as string);
-    },
+  //     return JSON.parse(localStorage.getItem("activeAccount") as string);
+  //   },
 
-    [Accounts]
-  );
+  //   [Accounts]
+  // );
 
   const activeNoteCallback = useCallback(
     ({ note, initialValue }: { note?: NoteProps; initialValue?: boolean }) => {
@@ -199,6 +206,11 @@ const useWalletStore = () => {
     dispatch(setOpen());
     if (note) dispatch(startSavingActiveNote(note));
   };
+
+  const setOpenModalDelete = () => {
+    dispatch(setOpenDelete());
+  };
+
   const deleteNote = (id: string) => {
     dispatch(startDeleteNote(id));
   };
@@ -216,12 +228,6 @@ const useWalletStore = () => {
     dispatch(startSavingAccount(account));
     dispatch(setClose());
   };
-  const setSaveAllUserAccounts = useCallback(
-    (account: UsersAccount[]) => {
-      dispatch(startGetAccountsDB(account));
-    },
-    [dispatch]
-  );
 
   const setSaveAllNotesDB = useCallback(
     (notes: NoteProps[]) => {
@@ -230,14 +236,16 @@ const useWalletStore = () => {
     [dispatch]
   );
 
+  const setUpdateAccount = (account: UsersAccount) => {
+    dispatch(startUpdateAccount(account));
+    dispatch(setClose());
+  };
+
   const setEditAccount = useCallback(
     (account?: UsersAccount) => {
       dispatch(startSavingActiveAccount(account));
-      if (account) activeAccountMemo({ account });
-      if (!activeAccount)
-        dispatch(startSavingActiveAccount(activeAccountMemo({})));
     },
-    [activeAccount, activeAccountMemo, dispatch]
+    [dispatch]
   );
   const setResetAccount = () => {
     dispatch(startSavingActiveAccount(undefined));
@@ -249,19 +257,12 @@ const useWalletStore = () => {
   const setDeleteAccount = (id: string) => {
     dispatch(startDeleteAccount(id));
 
-    activeAccountMemo({ id, deleteAccount: true });
+    // activeAccountMemo({ id, deleteAccount: true });
   };
 
-  const startApplication = useCallback(
-    ({ Bills, Accounts }: { Bills: NoteProps[]; Accounts: UsersAccount[] }) => {
-      if (Accounts.length !== 0)
-        setSaveAllUserAccounts(Accounts as UsersAccount[]);
-      if (Bills.length !== 0) setSaveAllNotesDB(Bills as NoteProps[]);
-      // TODO filtar por accounts las notas
-      activeAccountMemo({ init: Accounts });
-    },
-    [activeAccountMemo, setSaveAllNotesDB, setSaveAllUserAccounts]
-  );
+  const startApplication = useCallback(() => {
+    dispatch(startGetDataDB());
+  }, [dispatch]);
 
   return {
     // Method
@@ -273,16 +274,16 @@ const useWalletStore = () => {
     resetFilter,
     setCloseModal,
     setSaveAccount,
-    setSaveAllUserAccounts,
     setSaveAllNotesDB,
     setEditAccount,
     setResetAccount,
     setSaveEditAccount,
     setDeleteAccount,
-    activeAccountMemo,
     keyWordFilter,
     filterBy,
     startApplication,
+    setUpdateAccount,
+    setOpenModalDelete,
     //state store
     filter,
     notes,
@@ -290,6 +291,7 @@ const useWalletStore = () => {
     isOpenModal,
     Accounts,
     activeAccount,
+    isOpenModalDelete,
   };
 };
 

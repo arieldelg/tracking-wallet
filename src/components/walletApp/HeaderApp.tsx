@@ -1,10 +1,11 @@
 import { twMerge } from "tailwind-merge";
 import { useAppSelector } from "../../store/hooks";
-import { useWalletStore } from "../../hooks";
+// import { useWalletStore } from "../../hooks";
+import { activeAccountHelper } from "../../helpers/wallet";
 
 const HeaderApp = ({ classNameLine }: { classNameLine?: string }) => {
   const headerName = useAppSelector((state) => state.ui.headerName);
-  const { activeAccountMemo } = useWalletStore();
+  // const { activeAccountMemo } = useWalletStore();
   const className = twMerge(`
     mt-1 pb-4 ${classNameLine}
     `);
@@ -13,10 +14,10 @@ const HeaderApp = ({ classNameLine }: { classNameLine?: string }) => {
       <div className="flex justify-between items-center w-full">
         <h1 className="text-3xl xl:text-5xl">{headerName}</h1>
         <div className="text-right 2xl:text-3xl md:max-2xl:text-xl">
-          <h2 className="capitalize">{activeAccountMemo({})?.title}</h2>
+          <h2 className="capitalize">{activeAccountHelper({})?.title}</h2>
           <p>
-            {activeAccountMemo({})?.quantity}
-            <span>{activeAccountMemo({})?.currency}</span>
+            {activeAccountHelper({})?.quantity}
+            <span>{activeAccountHelper({})?.currency}</span>
           </p>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { getEnvirables } from "../../helpers";
+import { activeAccountHelper } from "../../helpers/wallet";
 import {
   NoteProps,
   UsersAccount,
@@ -16,6 +18,124 @@ import {
   setSaveNote,
   setUpdateAccount,
 } from "./walletSlice";
+
+const { VITE_API_URL } = getEnvirables();
+
+export const startGetDataDB = () => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount[] | NoteProps[];
+      type: "wallet/setSaveAllUserAccounts" | "wallet/setNotes";
+    }) => void
+  ) => {
+    try {
+      const responseAccounts = await fetch(VITE_API_URL);
+      const { data } = (await responseAccounts.json()) as {
+        data: UsersAccount[];
+      };
+      dispatch(setSaveAllUserAccounts(data));
+      const getNotes = activeAccountHelper({ init: data }) as UsersAccount;
+      const responseNotes = await fetch(
+        `${VITE_API_URL}/notes/${getNotes._id}`
+      );
+      const { notes } = (await responseNotes.json()) as { notes: NoteProps[] };
+      dispatch(setNotes(notes));
+    } catch (error) {
+      console.log(error, "startGetDataDB");
+    }
+  };
+};
+
+export const startSavingActiveAccount = (account: UsersAccount | undefined) => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount | undefined | NoteProps[];
+      type: "wallet/setActiveAccount" | "wallet/setNotes";
+    }) => void
+  ) => {
+    dispatch(setActiveAccount(account));
+    try {
+      const idAccount = activeAccountHelper({ account }) as UsersAccount;
+      const responseNotes = await fetch(
+        `${VITE_API_URL}/notes/${idAccount._id}`
+      );
+      const { notes } = (await responseNotes.json()) as { notes: NoteProps[] };
+      dispatch(setNotes(notes));
+    } catch (error) {
+      console.log(error, "startSavingActiveAccount");
+    }
+  };
+};
+
+export const startUpdateAccount = (account: UsersAccount) => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount;
+      type: "wallet/setUpdateAccount";
+    }) => void
+  ) => {
+    console.log(account);
+    dispatch(setUpdateAccount(account));
+    try {
+      const response = await fetch(`${VITE_API_URL}/account/update`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(account),
+      });
+      const result = await response.json();
+      if (result.ok) {
+        activeAccountHelper({ account });
+      }
+    } catch (error) {
+      console.log(error, "startUpdateAccount");
+    }
+  };
+};
+
+export const startSavingAccount = (account: UsersAccountFormik) => {
+  return async (
+    dispatch: (arg0: {
+      payload: UsersAccount;
+      type: "wallet/setSaveNewAccount";
+    }) => void
+  ) => {
+    try {
+      const response = await fetch(`${VITE_API_URL}/account/new`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(account),
+      });
+      const data = await response.json();
+      if (data.ok) {
+        const newAccount = {
+          ...account,
+          _id: data._id,
+        };
+        dispatch(setSaveNewAccount(newAccount as UsersAccount));
+        activeAccountHelper({ account: newAccount });
+      }
+    } catch (error) {
+      console.log(error, "startSavingAccount");
+    }
+  };
+};
+
+export const startDeleteAccount = (id: string) => {
+  return async (
+    dispatch: (arg0: {
+      payload: string;
+      type: "wallet/setDeleteAccount";
+    }) => void
+  ) => {
+    dispatch(setDeleteAccount(id));
+  };
+};
+
+// !checar
 
 export const startSavingActiveNote = (note: NoteProps) => {
   return async (
@@ -60,7 +180,7 @@ export const startDeleteNote = (id: string) => {
     getState: () => RootState
   ) => {
     const notes = getState().wallet.notes;
-    const newNotes = notes?.filter((idNote) => idNote.id !== id);
+    const newNotes = notes?.filter((idNote) => idNote._id !== id);
     dispatch(setNotes(newNotes as NoteProps[]));
     dispatch(setActiveNote(undefined));
   };
@@ -85,65 +205,5 @@ export const startFilteringState = (value: string) => {
     dispatch: (arg0: { payload: string; type: "wallet/setFilterState" }) => void
   ) => {
     dispatch(setFilterState(value));
-  };
-};
-
-export const startSavingAccount = (account: UsersAccountFormik) => {
-  return async (
-    dispatch: (arg0: {
-      payload: UsersAccount | undefined;
-      type: "wallet/setSaveNewAccount" | "wallet/setActiveAccount";
-    }) => void
-  ) => {
-    const data = {
-      ...account,
-      id: JSON.stringify(new Date().getTime()),
-    };
-    dispatch(setSaveNewAccount(data as UsersAccount));
-    dispatch(setActiveAccount(data));
-  };
-};
-
-export const startGetAccountsDB = (account: UsersAccount[]) => {
-  return async (
-    dispatch: (arg0: {
-      payload: UsersAccount[];
-      type: "wallet/setSaveAllUserAccounts";
-    }) => void
-  ) => {
-    dispatch(setSaveAllUserAccounts(account));
-  };
-};
-
-export const startSavingActiveAccount = (account: UsersAccount | undefined) => {
-  return async (
-    dispatch: (arg0: {
-      payload: UsersAccount | undefined;
-      type: "wallet/setActiveAccount";
-    }) => void
-  ) => {
-    dispatch(setActiveAccount(account));
-  };
-};
-
-export const startSavingEditAccount = (account: UsersAccount) => {
-  return async (
-    dispatch: (arg0: {
-      payload: UsersAccount;
-      type: "wallet/setUpdateAccount";
-    }) => void
-  ) => {
-    dispatch(setUpdateAccount(account));
-  };
-};
-
-export const startDeleteAccount = (id: string) => {
-  return async (
-    dispatch: (arg0: {
-      payload: string;
-      type: "wallet/setDeleteAccount";
-    }) => void
-  ) => {
-    dispatch(setDeleteAccount(id));
   };
 };
