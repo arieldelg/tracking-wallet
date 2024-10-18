@@ -17,7 +17,6 @@ const AccountsPage = () => {
     Accounts,
     setEditAccount,
     setResetAccount,
-    setDeleteAccount,
     setOpenModalDelete,
     isOpenModalDelete,
   } = useWalletStore();
@@ -43,7 +42,6 @@ const AccountsPage = () => {
               active={props._id === activeAccountHelper({})?._id ? true : false}
               setEditAccount={setEditAccount}
               setOpenModal={setOpenModal}
-              setDeleteAccount={setDeleteAccount}
               setOpenDelete={setOpenModalDelete}
             />
           ))

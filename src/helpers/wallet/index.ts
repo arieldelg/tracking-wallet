@@ -6,10 +6,9 @@ import { UsersAccount } from "../../interface/walletApp";
 
 const activeAccountHelper = ({
   account,
-  //   id,
+  deleteAccount,
   init,
-}: //   deleteAccount,
-{
+}: {
   account?: UsersAccount;
   id?: string;
   init?: UsersAccount[];
@@ -31,16 +30,10 @@ const activeAccountHelper = ({
     return account;
   }
 
-  //   const activeCompare = JSON.parse(
-  //     localStorage.getItem("activeAccount") as string
-  //   ) as UsersAccount;
-
-  //   if (id && deleteAccount) {
-  //     if (id === activeCompare._id) {
-  //       localStorage.setItem("activeAccount", JSON.stringify(init[0]));
-  //       return init[0];
-  //     }
-  //   }
+  if (deleteAccount && init) {
+    localStorage.setItem("activeAccount", JSON.stringify(init[0]));
+    return init[0];
+  }
 
   return JSON.parse(localStorage.getItem("activeAccount") as string);
 };

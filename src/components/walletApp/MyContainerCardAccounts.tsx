@@ -12,7 +12,6 @@ const MyContainerCardAccounts = ({
   setEditAccount,
   setOpenModal,
   setOpenDelete,
-  setDeleteAccount,
   ...props
 }: PropsCardAccounts) => {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -55,7 +54,7 @@ const MyContainerCardAccounts = ({
             className="w-14 text-black"
             onClick={() => {
               setOpenDelete();
-              // setDeleteAccount(props._id);
+              setEditAccount(props);
             }}
           />
         </div>

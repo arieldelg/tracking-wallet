@@ -124,14 +124,39 @@ export const startSavingAccount = (account: UsersAccountFormik) => {
   };
 };
 
-export const startDeleteAccount = (id: string) => {
+// ! falta get notes hacer un fetch y subirlo a la store
+export const startDeleteAccount = () => {
   return async (
     dispatch: (arg0: {
-      payload: string;
-      type: "wallet/setDeleteAccount";
-    }) => void
+      payload: string | UsersAccount | undefined;
+      type: "wallet/setDeleteAccount" | "wallet/setActiveAccount";
+    }) => void,
+    getState: () => RootState
   ) => {
-    dispatch(setDeleteAccount(id));
+    const { _id } = activeAccountHelper({}) as UsersAccount;
+    try {
+      const response = await fetch(`${VITE_API_URL}/account/delete/${_id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+
+      if (data.ok) {
+        dispatch(setDeleteAccount(data.id ? data.id : _id));
+        const accounts = getState().wallet.accounts;
+
+        dispatch(
+          setActiveAccount(
+            activeAccountHelper({ deleteAccount: true, init: accounts })
+          )
+        );
+        // dispatch(setActiveAccount())
+      }
+    } catch (error) {
+      console.log(error, "startDeleteAccount");
+    }
   };
 };
 

@@ -48,7 +48,6 @@ export interface PropsCardAccounts {
   active: boolean;
   setEditAccount: (value: UsersAccount) => void;
   setOpenModal: ({ note }: { note?: NoteProps }) => void;
-  setDeleteAccount: (id: string) => void;
   setOpenDelete: () => void;
 }
 

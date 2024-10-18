@@ -9,6 +9,7 @@ import {
   OpenModalDeleteSelector,
   OpenModalSelector,
   setClose,
+  setCloseDelete,
   setOpen,
   setOpenDelete,
 } from "../store/ui/uiSlice";
@@ -210,6 +211,9 @@ const useWalletStore = () => {
   const setOpenModalDelete = () => {
     dispatch(setOpenDelete());
   };
+  const setCloseModalDelete = () => {
+    dispatch(setCloseDelete());
+  };
 
   const deleteNote = (id: string) => {
     dispatch(startDeleteNote(id));
@@ -254,10 +258,9 @@ const useWalletStore = () => {
     dispatch(startSavingEditAccount(account));
     dispatch(setClose());
   };
-  const setDeleteAccount = (id: string) => {
-    dispatch(startDeleteAccount(id));
-
-    // activeAccountMemo({ id, deleteAccount: true });
+  const setDeleteAccount = () => {
+    dispatch(startDeleteAccount());
+    dispatch(setCloseDelete());
   };
 
   const startApplication = useCallback(() => {
@@ -284,6 +287,7 @@ const useWalletStore = () => {
     startApplication,
     setUpdateAccount,
     setOpenModalDelete,
+    setCloseModalDelete,
     //state store
     filter,
     notes,
