@@ -2,6 +2,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import { NoteProps } from "../../interface/walletApp";
 import { useNavigate } from "react-router-dom";
 import { useHeaderName } from "../../hooks";
+import { date } from "../../helpers/wallet";
 
 type Props = {
   activeNote: NoteProps;
@@ -57,7 +58,9 @@ const MyBillComponent = ({
           </div>
           <div className="gap-3 h-auto flex flex-col justify-between">
             <h2 className="first-letter:capitalize">date</h2>
-            <p className="text-[#7C7676] ">{activeNote?.date}</p>
+            <p className="text-[#7C7676] ">
+              {date({ props: activeNote.date })}
+            </p>
           </div>
           <div className="gap-3 h-auto flex flex-col justify-between">
             <h2 className="first-letter:capitalize">tag</h2>

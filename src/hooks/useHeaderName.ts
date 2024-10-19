@@ -7,8 +7,7 @@ const useHeaderName = () => {
   const setHeaderName = (name: string) => {
     let header;
     if (name !== "Home") header = name;
-    else header = "Dashboard";
-    dispatch(setHeader(header));
+    dispatch(setHeader(header as string));
   };
 
   return {

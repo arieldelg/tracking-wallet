@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import { BillPreviewCard, MyBillComponent, MyNewButton } from "../components";
-import { useWalletStore, useWindowDimensions } from "../hooks";
+import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
+import { keyWordFilter } from "../helpers/wallet";
 
 const BillsPage = () => {
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
   const {
     deleteNote,
     setActiveNote,
@@ -11,13 +12,13 @@ const BillsPage = () => {
     setFilter,
     activeNote,
     notes,
-    keyWordFilter,
     filterBy,
   } = useWalletStore();
-
+  const { setHeaderName } = useHeaderName();
   useEffect(() => {
     setActiveNote({ allNote: notes });
-  }, [notes, setActiveNote]);
+    setHeaderName("Bill Page");
+  }, [notes, setActiveNote, setHeaderName]);
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -91,7 +92,7 @@ const BillsPage = () => {
               </ul>
               <hr />
             </div>
-            <MyNewButton headerName="Edit" to="/newbill" reset={reset} />
+            <MyNewButton to="/newbill" reset={reset} />
           </div>
         </div>
         <div
@@ -103,12 +104,13 @@ const BillsPage = () => {
           {filterBy()?.notes.map(({ ...props }) => (
             <BillPreviewCard
               props={props}
-              key={props.id}
+              key={props._id}
               deleteNote={deleteNote}
               onClick={setActiveNote}
+              width={width}
               className={`${
-                activeNote?.id === props.id ? "animate-translateCard" : ""
-              } sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[480px] 2xl:max-w-[565px] ultraWide:max-w-[700px]`}
+                activeNote?._id === props._id ? "animate-translateCard" : ""
+              } sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[480px] 2xl:max-w-[565px] ultraWide:max-w-[700px] xl:max-2xl:px-4 h-auto xl:max-2xl:py-4`}
             />
           ))}
         </div>
@@ -120,7 +122,11 @@ const BillsPage = () => {
         className="place-content-center h-full"
       >
         {activeNote ? (
-          <MyBillComponent activeNote={activeNote} editPathTo={"/newBill"} />
+          <MyBillComponent
+            activeNote={activeNote}
+            editPathTo={"/newBill"}
+            nameHeader="Edit Bill"
+          />
         ) : filterBy().notes.length > 0 ? (
           <MyBillComponent activeNote={filterBy().firstValues} />
         ) : null}

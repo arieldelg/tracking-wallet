@@ -16,12 +16,10 @@ import {
 import * as Yup from "yup";
 import ArrayTypePayment from "../data/typePayment.json";
 import CurrencyTypeMoney from "../data/currencyType.json";
-import { useAppDispatch, useAppSelector } from "../store/hooks";
-import { ActiveNoteSelector } from "../store/wallet/walletSlice";
 import { useNavigate } from "react-router-dom";
 import { InitialValues, NoteProps } from "../interface/walletApp";
-import { useHeaderName } from "../hooks";
-import { startSavingNewNote } from "../store/wallet/thunk";
+import { useHeaderName, useWalletStore } from "../hooks";
+import { activeNoteCallback } from "../helpers/wallet";
 
 const validationTypePayment: string[] = [];
 
@@ -42,10 +40,16 @@ const initialValues: InitialValues = {
 
 const NewBill = () => {
   const imgRef = useRef<HTMLInputElement | null>(null);
-  const activeNote = useAppSelector(ActiveNoteSelector);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { setHeaderName } = useHeaderName();
+  const { setSavingNewNote, setSavingUpdateNote } = useWalletStore();
+
+  const activeNote = activeNoteCallback({})
+    ? ({
+        ...activeNoteCallback({}),
+        date: new Date(activeNoteCallback({})?.date),
+      } as NoteProps)
+    : initialValues;
 
   return (
     <>
@@ -59,9 +63,10 @@ const NewBill = () => {
             console.log(values);
             const newValues = {
               ...values,
-              images: [],
             };
-            dispatch(startSavingNewNote(newValues as NoteProps));
+            //TODO checar imagenes
+            if (activeNote) setSavingUpdateNote(newValues as NoteProps);
+            else setSavingNewNote(values as InitialValues);
           }}
           validationSchema={Yup.object({
             typePayment: Yup.string().required().oneOf(validationTypePayment),
@@ -164,7 +169,11 @@ const NewBill = () => {
                     classnamelabel="inputLabel"
                     classnameinput="w-full h-8 input text-sm ultraWide:text-base"
                     name="date"
-                    value={JSON.stringify(new Date())}
+                    value={
+                      activeNote
+                        ? JSON.stringify(activeNote.date)
+                        : JSON.stringify(new Date())
+                    }
                     label="Date"
                     onBlur={() => null}
                     id="date"
@@ -206,12 +215,11 @@ const NewBill = () => {
                   />
                 </div>
               </div>
-              <div className="w-full h-8 ultraWide:h-10 flex justify-between">
+              <div className="w-full h-8 ultraWide:h-10 flex justify-between gap-4">
                 <button
                   type="button"
                   className="w-52 ultraWide:w-64 h-full bg-customRed rounded-full ring-2 ring-customRed hover:bg-red-500 hover:ring-red-300"
                   onClick={() => {
-                    // dispatch(startResetActiveNote());
                     setHeaderName("Dashboard");
                     navigate(-1);
                   }}
@@ -246,9 +254,9 @@ const NewBill = () => {
               + upload an image
             </button>
           </div>
-          {(activeNote?.images?.length as number) > 0 ? (
+          {(activeNote.images?.length as number) > 0 ? (
             <div className="grid grid-cols-3 gap-8 overflow-auto p-2 bg-customBGDark1 rounded-lg h-96 ultraWide:h-full scrollbar">
-              {activeNote?.images?.map(({ id, img, name }) => (
+              {activeNote.images?.map(({ id, img, name }) => (
                 <div className="imageContainerUpload" key={id}>
                   <img src={img} alt={name} className="w-full rounded-xl" />
                   <button

@@ -4,14 +4,15 @@ import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
 import { useAppSelector } from "../store/hooks";
 import { OpenModalSelector } from "../store/ui/uiSlice";
-import { useHeaderName, useWalletStore } from "../hooks";
+import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
 import { GetNotesDBSelector } from "../store/wallet/walletSlice";
 
 const Home = () => {
   const openModal = useAppSelector(OpenModalSelector);
   const notes = useAppSelector(GetNotesDBSelector);
   const { setHeaderName } = useHeaderName();
-  const { deleteNote, reset, setOpenModal, setFilter } = useWalletStore();
+  const { deleteNote, reset, setOpenModal } = useWalletStore();
+  const { width } = useWindowDimensions();
   return (
     <>
       {/* 
@@ -102,9 +103,10 @@ const Home = () => {
             {notes?.slice(0, 4).map(({ ...props }) => (
               <BillPreviewCard
                 props={props}
-                key={props.id}
+                key={props._id}
                 onClick={setOpenModal}
                 deleteNote={deleteNote}
+                width={width}
               />
             ))}
           </div>
@@ -112,7 +114,6 @@ const Home = () => {
             <NavLink
               to={"bills"}
               onClick={() => {
-                setFilter({ props: "reset" });
                 setHeaderName("Bills");
               }}
             >

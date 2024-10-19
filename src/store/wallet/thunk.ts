@@ -1,6 +1,10 @@
+import axios from "axios";
+import { walletAPI } from "../../api/walletAPI";
 import { getEnvirables } from "../../helpers";
-import { activeAccountHelper } from "../../helpers/wallet";
+import { activeAccountHelper, activeNoteCallback } from "../../helpers/wallet";
 import {
+  DataAxiosNote,
+  InitialValues,
   NoteProps,
   UsersAccount,
   UsersAccountFormik,
@@ -15,37 +19,65 @@ import {
   setNotes,
   setSaveAllUserAccounts,
   setSaveNewAccount,
-  setSaveNote,
   setUpdateAccount,
+  setUpdateNote,
 } from "./walletSlice";
 
 const { VITE_API_URL } = getEnvirables();
 
+/**
+ * @param none
+ * @returns none
+ * @summary get all the user Data account and in a near future all the settings when entering the app
+ */
 export const startGetDataDB = () => {
   return async (
     dispatch: (arg0: {
-      payload: UsersAccount[] | NoteProps[];
-      type: "wallet/setSaveAllUserAccounts" | "wallet/setNotes";
+      payload:
+        | UsersAccount[]
+        | NoteProps[]
+        | UsersAccount
+        | undefined
+        | NoteProps;
+      type:
+        | "wallet/setSaveAllUserAccounts"
+        | "wallet/setNotes"
+        | "wallet/setActiveAccount"
+        | "wallet/setActiveNote";
     }) => void
   ) => {
     try {
-      const responseAccounts = await fetch(VITE_API_URL);
-      const { data } = (await responseAccounts.json()) as {
-        data: UsersAccount[];
+      const {
+        data: { accounts },
+      } = (await axios.get(VITE_API_URL)) as {
+        data: { accounts: UsersAccount[] };
       };
-      dispatch(setSaveAllUserAccounts(data));
-      const getNotes = activeAccountHelper({ init: data }) as UsersAccount;
+
+      dispatch(setSaveAllUserAccounts(accounts));
+
+      const getNotes = activeAccountHelper({ init: accounts }) as UsersAccount;
+      dispatch(setActiveAccount(getNotes));
+
       const responseNotes = await fetch(
         `${VITE_API_URL}/notes/${getNotes._id}`
       );
       const { notes } = (await responseNotes.json()) as { notes: NoteProps[] };
+      console.log(notes);
       dispatch(setNotes(notes));
+
+      //! estar al pendiente de esta funcion
+      dispatch(setActiveNote(activeNoteCallback({})));
     } catch (error) {
       console.log(error, "startGetDataDB");
     }
   };
 };
 
+/**
+ * @param account / UsersAccount
+ * @returns null
+ * @summary Active account when selecting it and get all the notes related to it
+ */
 export const startSavingActiveAccount = (account: UsersAccount | undefined) => {
   return async (
     dispatch: (arg0: {
@@ -60,13 +92,26 @@ export const startSavingActiveAccount = (account: UsersAccount | undefined) => {
         `${VITE_API_URL}/notes/${idAccount._id}`
       );
       const { notes } = (await responseNotes.json()) as { notes: NoteProps[] };
-      dispatch(setNotes(notes));
+      if (notes.length === 0) {
+        // ! is not a new account but makes the same job as deleting active acount on local storage when no notes found on the account
+        dispatch(setNotes(activeNoteCallback({ newAccount: true })));
+      } else {
+        activeNoteCallback({ note: notes[0] });
+        dispatch(setNotes(notes));
+      }
     } catch (error) {
       console.log(error, "startSavingActiveAccount");
     }
   };
 };
 
+// * creo que puedo sacar el active Account helper para afuera ya que no ocupo sacra el estado para actualizarlo
+/**
+ * @param account type UsersAccount
+ * @returns null
+ * @todo falta active note????
+ * @summary Update changes made to account
+ */
 export const startUpdateAccount = (account: UsersAccount) => {
   return async (
     dispatch: (arg0: {
@@ -94,11 +139,16 @@ export const startUpdateAccount = (account: UsersAccount) => {
   };
 };
 
+/**
+ * @param account / UsersAccount
+ * @returns null
+ * @summary Active account saving a new and get all the notes related to it
+ */
 export const startSavingAccount = (account: UsersAccountFormik) => {
   return async (
     dispatch: (arg0: {
-      payload: UsersAccount;
-      type: "wallet/setSaveNewAccount";
+      payload: UsersAccount | [] | NoteProps[];
+      type: "wallet/setSaveNewAccount" | "wallet/setNotes";
     }) => void
   ) => {
     try {
@@ -110,53 +160,132 @@ export const startSavingAccount = (account: UsersAccountFormik) => {
         body: JSON.stringify(account),
       });
       const data = await response.json();
-      if (data.ok) {
-        const newAccount = {
-          ...account,
-          _id: data._id,
-        };
-        dispatch(setSaveNewAccount(newAccount as UsersAccount));
-        activeAccountHelper({ account: newAccount });
+      if (!data.ok) {
+        throw new Response("", {
+          status: 400,
+          statusText: "Error en llamado API startDeleteAccount/Delete Account",
+        });
       }
+      const newAccount = {
+        ...account,
+        _id: data._id,
+      };
+      dispatch(setSaveNewAccount(newAccount as UsersAccount));
+      activeAccountHelper({ account: newAccount });
+
+      dispatch(setNotes([]));
+
+      activeNoteCallback({ newAccount: true });
     } catch (error) {
       console.log(error, "startSavingAccount");
     }
   };
 };
 
-// ! falta get notes hacer un fetch y subirlo a la store
+/**
+ * @param none
+ * @returns null
+ * @todo falta active note
+ * @summary Deletes account and all the bills that are related to the account
+ */
 export const startDeleteAccount = () => {
   return async (
     dispatch: (arg0: {
-      payload: string | UsersAccount | undefined;
-      type: "wallet/setDeleteAccount" | "wallet/setActiveAccount";
+      payload: string | UsersAccount | undefined | NoteProps[];
+      type:
+        | "wallet/setDeleteAccount"
+        | "wallet/setActiveAccount"
+        | "wallet/setNotes";
     }) => void,
     getState: () => RootState
   ) => {
     const { _id } = activeAccountHelper({}) as UsersAccount;
     try {
-      const response = await fetch(`${VITE_API_URL}/account/delete/${_id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
+      const { data } = await walletAPI.delete(`/account/delete/${_id}`);
 
-      if (data.ok) {
-        dispatch(setDeleteAccount(data.id ? data.id : _id));
-        const accounts = getState().wallet.accounts;
-
-        dispatch(
-          setActiveAccount(
-            activeAccountHelper({ deleteAccount: true, init: accounts })
-          )
-        );
-        // dispatch(setActiveAccount())
+      if (!data.ok) {
+        throw new Response("", {
+          status: 400,
+          statusText: "Error en llamado API startDeleteAccount/Delete Account",
+        });
       }
+
+      dispatch(setDeleteAccount(data.id ? data.id : _id));
+      const accounts = getState().wallet.accounts;
+
+      const activeAccount = activeAccountHelper({
+        deleteAccount: true,
+        init: accounts,
+      }) as UsersAccount;
+      dispatch(setActiveAccount(activeAccount));
+
+      const notesData = (await walletAPI.get(
+        `/notes/${activeAccount._id}`
+      )) as DataAxiosNote;
+
+      if (!notesData.data.ok) {
+        throw new Response("", {
+          status: 400,
+          statusText: "Error en llamado API startDeleteAccount/Delete Notes",
+        });
+      }
+
+      dispatch(setNotes(notesData.data.notes));
     } catch (error) {
       console.log(error, "startDeleteAccount");
     }
+  };
+};
+
+export const startSavingUpdatingNote = (value: NoteProps) => {
+  return async (
+    dispatch: (arg0: {
+      payload: NoteProps | undefined;
+      type: "wallet/setUpdateNote" | "wallet/setActiveNote";
+    }) => void
+  ) => {
+    const updatedNote = {
+      ...value,
+      date: new Date(value.date).getTime(),
+    };
+    try {
+      const { data } = await walletAPI.put(
+        `${VITE_API_URL}/note/update/${value._id}`,
+        updatedNote
+      );
+
+      if (!data.ok) {
+        throw new Response("", {
+          status: 400,
+          statusText:
+            "Error en llamado API startSavingUpdatingNote/Updated Notes",
+        });
+      }
+
+      const internalNote = {
+        ...value,
+        date: new Date(updatedNote.date).getTime() as unknown as Date,
+      };
+
+      dispatch(setUpdateNote(internalNote));
+      dispatch(setActiveNote(activeNoteCallback({ note: internalNote })));
+    } catch (error) {
+      console.log(error, "startSavingUpdatingNote");
+    }
+  };
+};
+
+export const startSavingNewNote = (NoteProps: InitialValues) => {
+  return async (
+    dispatch: (arg0: { payload: NoteProps; type: "wallet/setSaveNote" }) => void
+  ) => {
+    const { date } = NoteProps;
+    const newDate = new Date(date).getTime();
+    const note = {
+      ...NoteProps,
+      date: newDate,
+    };
+    // dispatch(setSaveNote(note));
   };
 };
 
@@ -169,6 +298,7 @@ export const startSavingActiveNote = (note: NoteProps) => {
       type: "wallet/setActiveNote";
     }) => void
   ) => {
+    console.log("startSavingActiveNote");
     dispatch(setActiveNote(note));
   };
 };
@@ -185,17 +315,6 @@ export const startResetActiveNote = () => {
   };
 };
 
-export const startGetNotesDB = (data: NoteProps[]) => {
-  return async (
-    dispatch: (arg0: {
-      payload: NoteProps[] | [];
-      type: "wallet/setNotes";
-    }) => void
-  ) => {
-    dispatch(setNotes(data));
-  };
-};
-
 export const startDeleteNote = (id: string) => {
   return async (
     dispatch: (arg0: {
@@ -208,20 +327,6 @@ export const startDeleteNote = (id: string) => {
     const newNotes = notes?.filter((idNote) => idNote._id !== id);
     dispatch(setNotes(newNotes as NoteProps[]));
     dispatch(setActiveNote(undefined));
-  };
-};
-
-export const startSavingNewNote = (NoteProps: NoteProps) => {
-  return async (
-    dispatch: (arg0: { payload: NoteProps; type: "wallet/setSaveNote" }) => void
-  ) => {
-    const { date } = NoteProps;
-    const newDate = new Date(date).getTime();
-    const note = {
-      ...NoteProps,
-      date: newDate,
-    };
-    dispatch(setSaveNote(note));
   };
 };
 

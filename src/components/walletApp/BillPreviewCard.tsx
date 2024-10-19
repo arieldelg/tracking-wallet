@@ -2,6 +2,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { NoteProps } from "../../interface/walletApp";
 import { CSSProperties } from "react";
 import { twMerge } from "tailwind-merge";
+import { date } from "../../helpers/wallet";
 
 interface Props {
   props: NoteProps;
@@ -15,6 +16,7 @@ interface Props {
   deleteNote?: (id: string) => void;
   style?: CSSProperties;
   className?: string;
+  width: number;
 }
 
 const BillPreviewCard = ({
@@ -23,6 +25,7 @@ const BillPreviewCard = ({
   deleteNote,
   style,
   className,
+  width,
 }: Props) => {
   const classes = twMerge(`
     w-full 
@@ -40,6 +43,7 @@ const BillPreviewCard = ({
     cursor-pointer 
     ${className ?? ""}
     `);
+
   return (
     <div
       style={style}
@@ -52,11 +56,15 @@ const BillPreviewCard = ({
         if (onClick) onClick({ note: props });
       }}
     >
-      <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full">
+      <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full xl:max-2xl:text-[16px]">
         <div className="h-full flex flex-col justify-between overflow-hidden text-start ">
           <h3 className="first-letter:capitalize">{props?.title}</h3>
           <p className="text-ellipsis first-letter:capitalize">
-            {props?.note.slice(0, 18).trimEnd()}...
+            {width <= 1366 ? (
+              <span>{props?.note.slice(0, 10).trimEnd()}...</span>
+            ) : (
+              <span>{props?.note.slice(0, 18).trimEnd()}...</span>
+            )}
           </p>
         </div>
         <div className="h-full flex flex-col justify-between">
@@ -69,14 +77,14 @@ const BillPreviewCard = ({
         </div>
         <div className="h-full flex flex-col justify-between">
           <h3>Date</h3>
-          <p>{props?.date}</p>
+          <p>{date({ props: props.date })}</p>
         </div>
       </div>
       <TrashIcon
         className="w-12 text-black"
         onClick={(e) => {
           e.stopPropagation();
-          if (deleteNote) deleteNote(props.id);
+          if (deleteNote) deleteNote(props._id);
         }}
       />
     </div>

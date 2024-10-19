@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import {
+  InitialValues,
   NoteProps,
   UsersAccount,
   UsersAccountFormik,
@@ -18,11 +19,12 @@ import {
   startDeleteNote,
   startFilteringState,
   startGetDataDB,
-  startGetNotesDB,
   startResetActiveNote,
   startSavingAccount,
   startSavingActiveAccount,
   startSavingActiveNote,
+  startSavingNewNote,
+  startSavingUpdatingNote,
   startUpdateAccount,
 } from "../store/wallet/thunk";
 import {
@@ -32,6 +34,7 @@ import {
   GetAllUserAccountsDB,
   GetNotesDBSelector,
 } from "../store/wallet/walletSlice";
+import { activeNoteCallback, keyWordFilter } from "../helpers/wallet";
 
 const useWalletStore = () => {
   const dispatch = useAppDispatch();
@@ -42,21 +45,6 @@ const useWalletStore = () => {
   const isOpenModalDelete = useAppSelector(OpenModalDeleteSelector);
   const Accounts = useAppSelector(GetAllUserAccountsDB);
   const activeAccount = useAppSelector(GetActiveAcountSelector);
-
-  const keyWordFilter = useCallback(({ key }: { key?: string }) => {
-    const istrue = !!localStorage.getItem("filter");
-    if (!istrue) {
-      localStorage.setItem("filter", "init");
-      return "init";
-    }
-    if (key) {
-      localStorage.setItem("filter", key);
-      return key;
-    }
-    const keyWord = localStorage.getItem("filter");
-
-    return keyWord;
-  }, []);
 
   const filterBy = useCallback(() => {
     switch (keyWordFilter({})) {
@@ -103,109 +91,52 @@ const useWalletStore = () => {
           firstValues: notes[0],
         };
     }
-  }, [keyWordFilter, notes]);
-
-  // const activeAccountMemo = useCallback(
-  //   ({
-  //     account,
-  //     id,
-  //     init,
-  //     deleteAccount,
-  //   }: {
-  //     account?: UsersAccount;
-  //     id?: string;
-  //     init?: UsersAccount[];
-  //     deleteAccount?: boolean;
-  //   }) => {
-  //     const istrue = localStorage.getItem("activeAccount");
-  //     if (init?.length === 0) {
-  //       return false;
-  //     }
-
-  //     if (init) {
-  //       if (!istrue && init?.length > 0) {
-  //         localStorage.setItem("activeAccount", JSON.stringify(init[0]));
-
-  //         return init[0];
-  //       }
-  //     }
-
-  //     if (account) {
-  //       localStorage.setItem("activeAccount", JSON.stringify(account));
-  //       return account;
-  //     }
-
-  //     const activeCompare = JSON.parse(
-  //       localStorage.getItem("activeAccount") as string
-  //     ) as UsersAccount;
-
-  //     if (id && deleteAccount) {
-  //       if (id === activeCompare._id) {
-  //         localStorage.setItem("activeAccount", JSON.stringify(Accounts[0]));
-  //         return Accounts[0];
-  //       }
-  //     }
-
-  //     return JSON.parse(localStorage.getItem("activeAccount") as string);
-  //   },
-
-  //   [Accounts]
-  // );
-
-  const activeNoteCallback = useCallback(
-    ({ note, initialValue }: { note?: NoteProps; initialValue?: boolean }) => {
-      const isTrue = !!localStorage.getItem("activeNote");
-      if (!isTrue) {
-        console.log(note);
-        localStorage.setItem("activeNote", JSON.stringify(note));
-        return note;
-      }
-
-      if (note) {
-        localStorage.setItem("activeNote", JSON.stringify(note));
-        return note;
-      }
-
-      if (initialValue) {
-        // console.log(notes);
-      }
-
-      return JSON.parse(localStorage.getItem("activeNote") as string);
-    },
-    []
-  );
+  }, [notes]);
 
   const setFilter = useCallback(
     ({ props }: { props?: string }) => {
       if (props) {
         dispatch(startFilteringState(props));
         keyWordFilter({ key: props });
+        console.log("setFilter");
         dispatch(startSavingActiveNote(filterBy().firstValues));
         activeNoteCallback({ note: filterBy().firstValues });
       }
     },
-    [activeNoteCallback, dispatch, filterBy, keyWordFilter]
+    [dispatch, filterBy]
   );
+  //! si desactivo el active note cuando salga del modal puede servir de algo
 
+  //* si no existe el estado activeNote y recibe un array de notas, agrega el active note del array[0], si nomas recibe la nota y si existe el active note saca el active note del parametro note enviado
   const setActiveNote = useCallback(
     ({ note, allNote }: { note?: NoteProps; allNote?: NoteProps[] }) => {
       if (!activeNote) {
-        dispatch(
-          startSavingActiveNote(
-            activeNoteCallback({ initialValue: true, note: allNote![0] })
-          )
-        );
+        if (allNote) {
+          console.log("ariel2e1");
+          dispatch(
+            startSavingActiveNote(
+              activeNoteCallback({ note: allNote[0] }) as NoteProps
+            )
+          );
+        }
       }
       if (note) {
-        dispatch(startSavingActiveNote(activeNoteCallback({ note: note })));
+        console.log("ariel");
+        dispatch(
+          startSavingActiveNote(activeNoteCallback({ note: note }) as NoteProps)
+        );
       }
     },
-    [activeNote, activeNoteCallback, dispatch]
+    [activeNote, dispatch]
   );
 
+  //* para abrir el modal con id #modal y si tiene parametro de note que lo agrege al estado y al locale
   const setOpenModal = ({ note }: { note?: NoteProps }) => {
     dispatch(setOpen());
-    if (note) dispatch(startSavingActiveNote(note));
+    if (note) {
+      activeNoteCallback({ note });
+      dispatch(startSavingActiveNote(note));
+    }
   };
 
   const setOpenModalDelete = () => {
@@ -218,51 +149,62 @@ const useWalletStore = () => {
   const deleteNote = (id: string) => {
     dispatch(startDeleteNote(id));
   };
-  const reset = () => {
-    dispatch(startResetActiveNote());
+
+  //* para actualizar la nota
+  const setSavingUpdateNote = (values: NoteProps) => {
+    dispatch(startSavingUpdatingNote(values));
   };
 
-  const resetFilter = () => {
+  //* para guardar nueva nota a DB y Store
+  const setSavingNewNote = (newValues: InitialValues) => {
+    dispatch(startSavingNewNote(newValues));
+  };
+
+  //* resetea active note en la store, localstorage, y el estado filterState
+  const reset = () => {
+    dispatch(startResetActiveNote());
+    activeNoteCallback({ newAccount: true });
+    keyWordFilter({ key: "reset" });
     dispatch(startFilteringState("reset"));
   };
+
+  //* para cerrar el modal con id #modal
   const setCloseModal = () => {
     dispatch(setClose());
   };
+
+  //* para crear un nuevo account, agregarlo a DB y al store y activarlo
   const setSaveAccount = (account: UsersAccountFormik) => {
     dispatch(startSavingAccount(account));
     dispatch(setClose());
   };
 
-  const setSaveAllNotesDB = useCallback(
-    (notes: NoteProps[]) => {
-      dispatch(startGetNotesDB(notes));
-    },
-    [dispatch]
-  );
-
+  //* para guardar los cambios hechos al acount
   const setUpdateAccount = (account: UsersAccount) => {
     dispatch(startUpdateAccount(account));
     dispatch(setClose());
   };
 
+  //* para tener como active acount en el store
   const setEditAccount = useCallback(
     (account?: UsersAccount) => {
       dispatch(startSavingActiveAccount(account));
     },
     [dispatch]
   );
+
+  //* para resetear el actual active account
   const setResetAccount = () => {
     dispatch(startSavingActiveAccount(undefined));
   };
-  const setSaveEditAccount = (account: UsersAccount) => {
-    dispatch(startSavingEditAccount(account));
-    dispatch(setClose());
-  };
+
+  //* para eliminar una cuenta
   const setDeleteAccount = () => {
     dispatch(startDeleteAccount());
     dispatch(setCloseDelete());
   };
 
+  //* cuando se regarga la pagina
   const startApplication = useCallback(() => {
     dispatch(startGetDataDB());
   }, [dispatch]);
@@ -274,20 +216,18 @@ const useWalletStore = () => {
     reset,
     setActiveNote,
     setFilter,
-    resetFilter,
     setCloseModal,
     setSaveAccount,
-    setSaveAllNotesDB,
     setEditAccount,
     setResetAccount,
-    setSaveEditAccount,
     setDeleteAccount,
-    keyWordFilter,
     filterBy,
     startApplication,
     setUpdateAccount,
     setOpenModalDelete,
     setCloseModalDelete,
+    setSavingNewNote,
+    setSavingUpdateNote,
     //state store
     filter,
     notes,

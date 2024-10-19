@@ -16,6 +16,7 @@ export interface InitialValues {
   quantity: number;
   currency: Currency;
   typeCurrency: TypeCurrency;
+  images?: IMG[] | null;
 }
 
 interface IMG {
@@ -24,19 +25,10 @@ interface IMG {
   name: string;
 }
 
-export type NoteProps = {
+export interface NoteProps extends InitialValues {
   _id: string;
-  typeCurrency: TypeCurrency;
-  title: string;
-  note: string;
-  typePayment: PaymentType | "";
   account: string;
-  quantity: number;
-  tag: string;
-  date: number;
-  currency: Currency;
-  images?: IMG[] | null;
-};
+}
 
 export interface PropsCardAccounts {
   title: string;
@@ -65,4 +57,11 @@ export interface UsersAccountFormik {
   description: string;
   quantity: number;
   currency: Currency;
+}
+
+export interface DataAxiosNote {
+  data: {
+    ok: boolean;
+    notes: NoteProps[];
+  };
 }
