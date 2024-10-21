@@ -1,4 +1,7 @@
+import { walletAPI } from "../../api/walletAPI";
 import { NoteProps, UsersAccount } from "../../interface/walletApp";
+import { getEnvirables } from "../getEnvirables";
+const { VITE_API_URL } = getEnvirables();
 
 /**
  * TODO queda pendiente activeAccountHelper, (delete)
@@ -58,11 +61,13 @@ const activeNoteCallback = ({
 }) => {
   const isTrue = localStorage.getItem("activeNote");
   if (isTrue === null && newAccount === false) {
+    console.log("activeNoteCallback / isTrue === null");
     localStorage.setItem("activeNote", JSON.stringify(note));
     return note;
   }
 
   if (note) {
+    console.log("activeNoteCallback / note");
     localStorage.setItem("activeNote", JSON.stringify(note));
     return note;
   }
@@ -71,7 +76,7 @@ const activeNoteCallback = ({
     localStorage.removeItem("activeNote");
     return [];
   }
-
+  console.log("activeNoteCallback / llegue al final");
   return JSON.parse(localStorage.getItem("activeNote") as string);
 };
 
@@ -85,7 +90,7 @@ const date = ({
   props,
   format = "en-US",
 }: {
-  props: number;
+  props: Date;
   format?: string;
 }) => {
   const rawDate = new Date(props);
@@ -93,4 +98,51 @@ const date = ({
   return date;
 };
 
-export { activeAccountHelper, keyWordFilter, activeNoteCallback, date };
+const ifActiveNoteExist = () => {
+  const istrue = !!activeNoteCallback({});
+  const activeNote = istrue
+    ? ({
+        ...activeNoteCallback({}),
+        date: new Date(activeNoteCallback({})?.date),
+      } as NoteProps)
+    : false;
+
+  return activeNote;
+};
+
+const savingImages = async (files: FileList[]) => {
+  if (files.length === 0) return;
+  const form = new FormData();
+
+  for (const image of files) {
+    form.append("image", image as unknown as Blob);
+  }
+
+  try {
+    const { data } = await walletAPI.post(`${VITE_API_URL}/image/new`, form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (!data.ok) {
+      throw new Response("", {
+        status: 500,
+        statusText: "error en el backend",
+      });
+    }
+
+    return data.images;
+  } catch (error) {
+    console.log(error, "startSavingImages");
+  }
+};
+
+export {
+  activeAccountHelper,
+  keyWordFilter,
+  activeNoteCallback,
+  date,
+  ifActiveNoteExist,
+  savingImages,
+};

@@ -56,7 +56,7 @@ export const walletSlice = createSlice({
       state.notes = action.payload;
     },
     setSaveNote: (state, action: PayloadAction<NoteProps>) => {
-      state.notes.push(action.payload);
+      state.notes.unshift(action.payload);
     },
     setFilterState: (state, action: PayloadAction<string>) => {
       state.filterState = action.payload;

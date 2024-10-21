@@ -56,24 +56,26 @@ const BillPreviewCard = ({
         if (onClick) onClick({ note: props });
       }}
     >
-      <div className="flex justify-between items-center text-center w-full max-w-[600px] h-full xl:max-2xl:text-[16px]">
-        <div className="h-full flex flex-col justify-between overflow-hidden text-start ">
+      <div className="flex justify-between items-center w-full max-w-[600px] h-full xl:max-2xl:text-[14px] text-start gap-0 tracking-tighter">
+        <div className="h-full flex flex-col justify-between overflow-hidden text-start w-auto">
           <h3 className="first-letter:capitalize">{props?.title}</h3>
-          <p className="text-ellipsis first-letter:capitalize">
+          <p className="first-letter:capitalize">
             {width <= 1366 ? (
-              <span>{props?.note.slice(0, 10).trimEnd()}...</span>
+              <span>{props?.note.slice(0, 11).trimEnd()}...</span>
             ) : (
               <span>{props?.note.slice(0, 18).trimEnd()}...</span>
             )}
           </p>
         </div>
-        <div className="h-full flex flex-col justify-between">
+        <div className="h-full flex flex-col justify-between text-start">
           <h3 className="first-letter:capitalize">{props?.typePayment}</h3>
-          <p>{props?.quantity}</p>
+          <p>
+            {props?.quantity} {props.currency}
+          </p>
         </div>
         <div className="h-full flex flex-col justify-between">
           <h3>Tag</h3>
-          <p>{props?.tag}</p>
+          <p>{props?.tag.slice(0, 10)}...</p>
         </div>
         <div className="h-full flex flex-col justify-between">
           <h3>Date</h3>
@@ -81,7 +83,7 @@ const BillPreviewCard = ({
         </div>
       </div>
       <TrashIcon
-        className="w-12 text-black"
+        className="w-10 text-red-800"
         onClick={(e) => {
           e.stopPropagation();
           if (deleteNote) deleteNote(props._id);

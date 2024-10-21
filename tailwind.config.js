@@ -8,7 +8,7 @@ export default {
       screens: {
         ultraWide: "1800px",
         xs: "450px",
-        // "2xl": "1537px",
+        "2xUltraWide": "2700px",
       },
       maxWidth: {
         1920: "1670px",

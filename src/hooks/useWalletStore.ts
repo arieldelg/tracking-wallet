@@ -96,9 +96,9 @@ const useWalletStore = () => {
   const setFilter = useCallback(
     ({ props }: { props?: string }) => {
       if (props) {
+        console.log("setFilter");
         dispatch(startFilteringState(props));
         keyWordFilter({ key: props });
-        console.log("setFilter");
         dispatch(startSavingActiveNote(filterBy().firstValues));
         activeNoteCallback({ note: filterBy().firstValues });
       }
@@ -112,7 +112,7 @@ const useWalletStore = () => {
     ({ note, allNote }: { note?: NoteProps; allNote?: NoteProps[] }) => {
       if (!activeNote) {
         if (allNote) {
-          console.log("ariel2e1");
+          console.log("setActiveNote first if");
           dispatch(
             startSavingActiveNote(
               activeNoteCallback({ note: allNote[0] }) as NoteProps
@@ -121,7 +121,7 @@ const useWalletStore = () => {
         }
       }
       if (note) {
-        console.log("ariel");
+        console.log("setActiveNote second if");
         dispatch(
           startSavingActiveNote(activeNoteCallback({ note: note }) as NoteProps)
         );
@@ -134,6 +134,7 @@ const useWalletStore = () => {
   const setOpenModal = ({ note }: { note?: NoteProps }) => {
     dispatch(setOpen());
     if (note) {
+      console.log("setOpenModal");
       activeNoteCallback({ note });
       dispatch(startSavingActiveNote(note));
     }
@@ -162,6 +163,7 @@ const useWalletStore = () => {
 
   //* resetea active note en la store, localstorage, y el estado filterState
   const reset = () => {
+    console.log("reset");
     dispatch(startResetActiveNote());
     activeNoteCallback({ newAccount: true });
     keyWordFilter({ key: "reset" });

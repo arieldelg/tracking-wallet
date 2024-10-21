@@ -21,8 +21,17 @@ const BillsPage = () => {
   }, [notes, setActiveNote, setHeaderName]);
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="w-full space-y-5">
+    <div className="grid grid-cols-2 gap-4 ">
+      {/* 
+      //* filter and Bill preview Section
+      */}
+      <div
+        // style={{ height: height - 300 }}
+        className="w-full space-y-5 2xUltraWide:place-content-center"
+      >
+        {/* 
+        //* filter section
+        */}
         <div>
           <div className="flex justify-between">
             <h1 className="text-base">Filter By:</h1>
@@ -95,11 +104,14 @@ const BillsPage = () => {
             <MyNewButton to="/newbill" reset={reset} />
           </div>
         </div>
+        {/* 
+        //* Bill Preview section
+        */}
         <div
           style={{
-            height: height - 280,
+            height: height - 250,
           }}
-          className={`flex flex-col gap-6 py-4 px-[2px] overflow-auto scrollbar `}
+          className={`flex flex-col gap-6 xl:max-2xl:gap-4 xl:max-2xl:py-1 py-2 px-[2px] ultraWide:max-h-[460px] overflow-auto scrollbar 2xUltraWide:max-h-[640px]`}
         >
           {filterBy()?.notes.map(({ ...props }) => (
             <BillPreviewCard
@@ -110,16 +122,19 @@ const BillsPage = () => {
               width={width}
               className={`${
                 activeNote?._id === props._id ? "animate-translateCard" : ""
-              } sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[480px] 2xl:max-w-[565px] ultraWide:max-w-[700px] xl:max-2xl:px-4 h-auto xl:max-2xl:py-4`}
+              } sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[480px] 2xl:max-w-[565px] ultraWide:max-w-[700px] xl:max-2xl:px-3 h-auto xl:max-2xl:py-4 max-h-[84px]`}
             />
           ))}
         </div>
       </div>
+      {/* 
+      //* Bill Component View Section
+      */}
       <div
         style={{
-          height: height - 190,
+          height: height - 160,
         }}
-        className="place-content-center h-full"
+        className="2xUltraWide:place-content-center h-full"
       >
         {activeNote ? (
           <MyBillComponent

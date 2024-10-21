@@ -1,7 +1,11 @@
 import axios from "axios";
 import { walletAPI } from "../../api/walletAPI";
 import { getEnvirables } from "../../helpers";
-import { activeAccountHelper, activeNoteCallback } from "../../helpers/wallet";
+import {
+  activeAccountHelper,
+  activeNoteCallback,
+  savingImages,
+} from "../../helpers/wallet";
 import {
   DataAxiosNote,
   InitialValues,
@@ -19,6 +23,7 @@ import {
   setNotes,
   setSaveAllUserAccounts,
   setSaveNewAccount,
+  setSaveNote,
   setUpdateAccount,
   setUpdateNote,
 } from "./walletSlice";
@@ -46,6 +51,7 @@ export const startGetDataDB = () => {
         | "wallet/setActiveNote";
     }) => void
   ) => {
+    console.log("startGetDataDB");
     try {
       const {
         data: { accounts },
@@ -62,7 +68,7 @@ export const startGetDataDB = () => {
         `${VITE_API_URL}/notes/${getNotes._id}`
       );
       const { notes } = (await responseNotes.json()) as { notes: NoteProps[] };
-      console.log(notes);
+
       dispatch(setNotes(notes));
 
       //! estar al pendiente de esta funcion
@@ -85,6 +91,7 @@ export const startSavingActiveAccount = (account: UsersAccount | undefined) => {
       type: "wallet/setActiveAccount" | "wallet/setNotes";
     }) => void
   ) => {
+    console.log("startSavingActiveAccount");
     dispatch(setActiveAccount(account));
     try {
       const idAccount = activeAccountHelper({ account }) as UsersAccount;
@@ -151,6 +158,7 @@ export const startSavingAccount = (account: UsersAccountFormik) => {
       type: "wallet/setSaveNewAccount" | "wallet/setNotes";
     }) => void
   ) => {
+    console.log("startSavingAccount");
     try {
       const response = await fetch(`${VITE_API_URL}/account/new`, {
         method: "POST",
@@ -244,6 +252,7 @@ export const startSavingUpdatingNote = (value: NoteProps) => {
       type: "wallet/setUpdateNote" | "wallet/setActiveNote";
     }) => void
   ) => {
+    console.log("startSavingUpdatingNote");
     const updatedNote = {
       ...value,
       date: new Date(value.date).getTime(),
@@ -277,15 +286,46 @@ export const startSavingUpdatingNote = (value: NoteProps) => {
 
 export const startSavingNewNote = (NoteProps: InitialValues) => {
   return async (
-    dispatch: (arg0: { payload: NoteProps; type: "wallet/setSaveNote" }) => void
+    dispatch: (arg0: {
+      payload: NoteProps | undefined;
+      type: "wallet/setSaveNote" | "wallet/setActiveNote";
+    }) => void,
+    getState: () => RootState
   ) => {
-    const { date } = NoteProps;
-    const newDate = new Date(date).getTime();
-    const note = {
-      ...NoteProps,
-      date: newDate,
-    };
-    // dispatch(setSaveNote(note));
+    const { date, images } = NoteProps;
+    const newDate = new Date(date).getTime() as unknown as Date;
+    const img = images as unknown as FileList[];
+
+    try {
+      const resultImages = await savingImages(img);
+
+      const note = {
+        ...NoteProps,
+        date: newDate,
+        account: getState().wallet.activeAccount?._id as string,
+        images: resultImages,
+      };
+
+      const { data } = await walletAPI.post(`${VITE_API_URL}/note/new`, note);
+
+      if (!data.ok) {
+        throw new Response("", {
+          status: 400,
+          statusText:
+            "Error en llamado API startSavingUpdatingNote/Updated Notes",
+        });
+      }
+
+      const noteID: NoteProps = {
+        ...note,
+        _id: data._id,
+      };
+      const activeNote = activeNoteCallback({ note: noteID });
+      dispatch(setSaveNote(activeNote));
+      dispatch(setActiveNote(activeNote));
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
 

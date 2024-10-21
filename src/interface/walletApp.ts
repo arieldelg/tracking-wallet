@@ -16,13 +16,13 @@ export interface InitialValues {
   quantity: number;
   currency: Currency;
   typeCurrency: TypeCurrency;
-  images?: IMG[] | null;
+  images?: IMG[];
 }
 
-interface IMG {
+export interface IMG {
   id: string;
-  img: string;
-  name: string;
+  url: string;
+  httpURL: string;
 }
 
 export interface NoteProps extends InitialValues {
