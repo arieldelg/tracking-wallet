@@ -4,6 +4,7 @@ import { getEnvirables } from "../../helpers";
 import {
   activeAccountHelper,
   activeNoteCallback,
+  deleteImg,
   savingImages,
 } from "../../helpers/wallet";
 import {
@@ -245,19 +246,48 @@ export const startDeleteAccount = () => {
   };
 };
 
-export const startSavingUpdatingNote = (value: NoteProps) => {
+export const startSavingUpdatingNote = (
+  value: NoteProps,
+  files: File[],
+  deleteImages: string[],
+  optimistic: NoteProps
+) => {
   return async (
     dispatch: (arg0: {
       payload: NoteProps | undefined;
       type: "wallet/setUpdateNote" | "wallet/setActiveNote";
     }) => void
   ) => {
-    console.log("startSavingUpdatingNote");
-    const updatedNote = {
-      ...value,
-      date: new Date(value.date).getTime(),
-    };
+    dispatch(setActiveNote(optimistic));
+    const tempArray = [];
+
+    for (const img of value.images) {
+      let validation = 0;
+      for (const id of deleteImages) {
+        if (img.id === id) validation += 1;
+      }
+      if (validation > 0) continue;
+      tempArray.push(img);
+    }
+
     try {
+      await deleteImg(deleteImages);
+      const images = await savingImages(files);
+
+      const updatedNote =
+        images !== false
+          ? {
+              ...value,
+              date: new Date(value.date).getTime(),
+              images: [...tempArray, ...images],
+            }
+          : {
+              ...value,
+              date: new Date(value.date).getTime(),
+              images: [...tempArray],
+            };
+
+      console.log({ updatedNote });
       const { data } = await walletAPI.put(
         `${VITE_API_URL}/note/update/${value._id}`,
         updatedNote
@@ -272,12 +302,13 @@ export const startSavingUpdatingNote = (value: NoteProps) => {
       }
 
       const internalNote = {
-        ...value,
+        ...updatedNote,
         date: new Date(updatedNote.date).getTime() as unknown as Date,
       };
 
-      dispatch(setUpdateNote(internalNote));
       dispatch(setActiveNote(activeNoteCallback({ note: internalNote })));
+      dispatch(setUpdateNote(internalNote));
+      return true;
     } catch (error) {
       console.log(error, "startSavingUpdatingNote");
     }
@@ -323,6 +354,7 @@ export const startSavingNewNote = (NoteProps: InitialValues) => {
       const activeNote = activeNoteCallback({ note: noteID });
       dispatch(setSaveNote(activeNote));
       dispatch(setActiveNote(activeNote));
+      return true;
     } catch (error) {
       console.log(error);
     }

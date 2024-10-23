@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import {
+  IMG,
   InitialValues,
   NoteProps,
   UsersAccount,
@@ -35,8 +36,10 @@ import {
   GetNotesDBSelector,
 } from "../store/wallet/walletSlice";
 import { activeNoteCallback, keyWordFilter } from "../helpers/wallet";
+import { useNavigate } from "react-router-dom";
 
 const useWalletStore = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const filter = useAppSelector(FilterNotesSelector);
   const notes = useAppSelector(GetNotesDBSelector) as NoteProps[];
@@ -152,13 +155,32 @@ const useWalletStore = () => {
   };
 
   //* para actualizar la nota
-  const setSavingUpdateNote = (values: NoteProps) => {
-    dispatch(startSavingUpdatingNote(values));
+  const setSavingUpdateNote = ({
+    values,
+    files,
+    deleteImages,
+    previewIMG,
+  }: {
+    values: NoteProps;
+    files: File[];
+    deleteImages: string[];
+    previewIMG: IMG[];
+  }) => {
+    const optimistic = {
+      ...values,
+      date: new Date(values.date).getTime() as unknown as Date,
+      images: previewIMG,
+    };
+
+    dispatch(startSavingUpdatingNote(values, files, deleteImages, optimistic));
+
+    navigate(-1);
   };
 
   //* para guardar nueva nota a DB y Store
   const setSavingNewNote = (newValues: InitialValues) => {
     dispatch(startSavingNewNote(newValues));
+    navigate(-1);
   };
 
   //* resetea active note en la store, localstorage, y el estado filterState

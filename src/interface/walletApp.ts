@@ -16,12 +16,11 @@ export interface InitialValues {
   quantity: number;
   currency: Currency;
   typeCurrency: TypeCurrency;
-  images?: IMG[];
+  images: IMG[];
 }
 
 export interface IMG {
   id: string;
-  url: string;
   httpURL: string;
 }
 

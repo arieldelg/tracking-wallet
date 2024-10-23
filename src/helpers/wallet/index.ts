@@ -76,7 +76,7 @@ const activeNoteCallback = ({
     localStorage.removeItem("activeNote");
     return [];
   }
-  console.log("activeNoteCallback / llegue al final");
+  // console.log("activeNoteCallback / llegue al final");
   return JSON.parse(localStorage.getItem("activeNote") as string);
 };
 
@@ -110,8 +110,8 @@ const ifActiveNoteExist = () => {
   return activeNote;
 };
 
-const savingImages = async (files: FileList[]) => {
-  if (files.length === 0) return;
+const savingImages = async (files: FileList[] | File[]) => {
+  if (files.length === 0) return false;
   const form = new FormData();
 
   for (const image of files) {
@@ -138,6 +138,20 @@ const savingImages = async (files: FileList[]) => {
   }
 };
 
+const deleteImg = async (deleteArray: string[]) => {
+  if (deleteArray.length === 0) return;
+
+  try {
+    const response = await walletAPI.post(
+      `${VITE_API_URL}/image/delete`,
+      deleteArray
+    );
+    console.log(response);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export {
   activeAccountHelper,
   keyWordFilter,
@@ -145,4 +159,5 @@ export {
   date,
   ifActiveNoteExist,
   savingImages,
+  deleteImg,
 };

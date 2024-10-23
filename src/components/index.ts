@@ -10,6 +10,7 @@ import MyNewButton from "./walletApp/MyNewButton";
 import MyContainerCardAccounts from "./walletApp/MyContainerCardAccounts";
 import MyNewAccount from "./walletApp/MyNewAccount";
 import MyNewEmptySection from "./walletApp/MyNewEmptySection";
+import MyImage from "./walletApp/MyImage";
 export {
   HeaderApp,
   ButtonsTypeCurrency,
@@ -23,4 +24,5 @@ export {
   MyContainerCardAccounts,
   MyNewAccount,
   MyNewEmptySection,
+  MyImage,
 };

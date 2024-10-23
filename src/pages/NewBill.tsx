@@ -2,11 +2,12 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import {
   ButtonsTypeCurrency,
   MyDate,
+  MyImage,
   MySelect,
   MyTextArea,
   MyTextInput,
 } from "../components";
-import { ReactNode, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   TrashIcon,
   PlusIcon,
@@ -36,6 +37,7 @@ const initialValues: InitialValues = {
   quantity: 0,
   currency: "MXN",
   typeCurrency: "income",
+  images: [],
 };
 
 const NewBill = () => {
@@ -48,7 +50,14 @@ const NewBill = () => {
   const [previewIMG, setPreviewIMG] = useState(
     activeNote ? activeNote.images : []
   );
+  const [deleteImages, setDeleteImages] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleDeleteImages = (value: string) => {
+    setDeleteImages((prev) => [...prev, value]);
+  };
+
   const executeImage = (): boolean => {
     if (activeNote) {
       if ((activeNote.images?.length as number) > 0) {
@@ -59,8 +68,9 @@ const NewBill = () => {
     }
     return false;
   };
-  console.log(previewIMG);
-  //TODO how to get the values on submit
+
+  if (loading) return <p>Saving...</p>;
+
   return (
     <>
       <div className=" grid grid-rows-2 items-center gap-4 max-lg:gap-8 lg:grid-cols-2 lg:grid-rows-1 ">
@@ -69,23 +79,22 @@ const NewBill = () => {
         */}
         <Formik
           initialValues={activeNote ? activeNote : initialValues}
-          onSubmit={({ images, ...values }) => {
+          onSubmit={(values) => {
+            setLoading(true);
+
             if (activeNote) {
-              const updateValues = {
-                ...values,
-                images: [...(images as IMG[]), files],
-              };
-              console.log(updateValues);
-              // console.log("New Bill, activeNote");
-              // setSavingUpdateNote(newValues as NoteProps);
-              return navigate(-1);
+              setSavingUpdateNote({
+                values: values as NoteProps,
+                files,
+                deleteImages,
+                previewIMG,
+              });
             } else {
               const newValues = {
                 ...values,
                 images: [...(files as unknown as IMG[])],
               };
               setSavingNewNote(newValues as InitialValues);
-              return navigate(-1);
             }
           }}
           validationSchema={Yup.object({
@@ -284,13 +293,13 @@ const NewBill = () => {
                   const img = URL.createObjectURL(image);
                   const object = {
                     url: img,
-                    id: img,
+                    id: image.name,
                     httpURL: img,
                   };
                   tempArray.push(object);
                 }
                 setFiles((prev) => [...prev, ...files]);
-                console.log(tempArray);
+
                 setPreviewIMG((prev) => [...(prev as IMG[]), ...tempArray]);
               }}
             />
@@ -304,28 +313,17 @@ const NewBill = () => {
             className="grid grid-cols-3 gap-8 overflow-auto p-5 bg-customBGDark1 rounded-xl ultraWide:h-full scrollbar "
           >
             {executeImage() ? (
-              ((previewIMG as IMG[]).map((props) => {
-                return (
-                  <div className="imageContainerUpload" key={props.id}>
-                    <img
-                      src={props.url}
-                      alt={props.id}
-                      className="w-full rounded-xl"
-                    />
-                    <button
-                      className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
-                      onClick={() => console.log("delete image")}
-                    >
-                      <TrashIcon className="w-5 text-red-500" />
-                    </button>
-                  </div>
-                );
-              }) as ReactNode)
+              <MyImage
+                images={previewIMG as IMG[]}
+                setImage={setPreviewIMG}
+                setFiles={setFiles}
+                setDeleteImages={handleDeleteImages}
+              />
             ) : (previewIMG as IMG[]).length > 0 ? (
               (previewIMG as IMG[]).map((props, index) => (
                 <div className="imageContainerUpload" key={index}>
                   <img
-                    src={props.url}
+                    src={props.httpURL}
                     alt={props.id}
                     className="w-full rounded-xl"
                   />
@@ -333,10 +331,19 @@ const NewBill = () => {
                     className="w-7 h-7 rounded-full bg-white flex justify-center items-center absolute top-1 right-1 ring-2 ring-red-500"
                     onClick={() => {
                       const newArray = (previewIMG as IMG[]).filter(
-                        (img) => img !== props
+                        (img) => img.httpURL !== props.httpURL
                       );
+
+                      setFiles((prev) => {
+                        const filter = prev.filter(
+                          (img) => img.name !== props.id
+                        );
+                        console.log(filter);
+                        return [...filter];
+                      });
+
                       setPreviewIMG(newArray);
-                      URL.revokeObjectURL(props.url);
+                      URL.revokeObjectURL(props.httpURL);
                     }}
                   >
                     <TrashIcon className="w-5 text-red-500" />

@@ -25,7 +25,7 @@ const MyBillComponent = ({
   };
   return (
     <div
-      className={`bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 w-full h-full max-h-[750px] max-w-[600px] text-lg relative flex flex-col justify-between animate-fadeInBillModal ultraWide:max-w-[730px] ultraWide:text-xl xl:max-2xl:px-5 ultraWide:px-7 ultraWide:py-3 ultraWide:max-h-[550px] 2xUltraWide:max-h-[680px] ${
+      className={`bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 w-full h-full max-h-[750px] max-w-[800px] text-lg relative flex flex-col justify-between animate-fadeInBillModal xl:max-2xl:px-5 xl:h-[510px] xl:w-[500px] 2xl:w-[550px] 2xl:h-[600px] ultraWide:px-7 ultraWide:py-3 ultraWide:h-[650px] ultraWide:w-[650px] ultraWide:text-xl 2xUltraWide:max-h-[680px]  ${
         activeNote?.typeCurrency === "income"
           ? "ring-customGreen"
           : "ring-customRed"
@@ -45,7 +45,7 @@ const MyBillComponent = ({
         <p className="text-4xl ultraWide:text-6xl">{activeNote?.quantity}</p>
         <p className="text-2xl ultraWide:text-4xl">{activeNote?.currency}</p>
       </div>
-      <div className="grid grid-flow-col ultraWide:grid-cols-[235px_auto] xl:grid-cols-[165px_auto] items-start gap-10 pt-2">
+      <div className="grid grid-flow-col xl:grid-cols-[100px_auto] ultraWide:grid-cols-[150px_auto] items-start gap-10 pt-2">
         {/* 
       // * seccion 1 ( type, date, tag )
       */}
@@ -90,19 +90,19 @@ const MyBillComponent = ({
       */}
 
           <div
-            className={`max-w-[450px] ultraWide:w-full grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 ultraWide:gap-x-2 gap-y-4 items-center justify-items-center overflow-auto scrollbar rounded-md  ${
+            className={`max-w-[450px] ultraWide:w-full grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 py-2 ultraWide:gap-x-2 gap-y-4 items-center justify-items-center overflow-auto scrollbar rounded-md  ${
               activeNote?.images?.length === 0
                 ? "h-[80px] ultraWide:h-[130px]"
-                : "xl:h-[140px] 2xl:h-[150px] ultraWide:h-[160px] 2xUltraWide:h-[220px]"
+                : "xl:h-[170px] 2xl:h-[210px] ultraWide:h-[200px] 2xUltraWide:h-[220px]"
             }`}
           >
-            {activeNote?.images?.map(({ id, url }) => (
+            {activeNote?.images?.map(({ id, httpURL }) => (
               <img
                 key={id}
-                src={url}
+                src={httpURL}
                 alt="headphones"
                 className="w-[80px] h-[80px]  2xl:w-[100px] 2xl:h-[100px] ultraWide:w-[120px] ultraWide:h-[120px] 2xUltraWide:h-[140px] 2xUltraWide:w-[140px] rounded-lg cursor-pointer"
-                onClick={() => saveImage(url)}
+                onClick={() => saveImage(httpURL)}
               />
             ))}
           </div>

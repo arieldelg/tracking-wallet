@@ -15,6 +15,7 @@ const BillsPage = () => {
     filterBy,
   } = useWalletStore();
   const { setHeaderName } = useHeaderName();
+
   useEffect(() => {
     setActiveNote({ allNote: notes });
     setHeaderName("Bill Page");
