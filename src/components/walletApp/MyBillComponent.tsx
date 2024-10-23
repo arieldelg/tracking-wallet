@@ -3,12 +3,15 @@ import { NoteProps } from "../../interface/walletApp";
 import { useNavigate } from "react-router-dom";
 import { useHeaderName } from "../../hooks";
 import { date } from "../../helpers/wallet";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
   activeNote: NoteProps;
   nameHeader?: string;
   getImage?: (value: string) => void;
   editPathTo?: string;
+  classNameContainer?: string;
+  style?: object;
 };
 
 const MyBillComponent = ({
@@ -16,6 +19,8 @@ const MyBillComponent = ({
   nameHeader = "New Bill",
   getImage,
   editPathTo,
+  classNameContainer,
+  style,
 }: Props) => {
   const navigate = useNavigate();
   const { setHeaderName } = useHeaderName();
@@ -23,9 +28,14 @@ const MyBillComponent = ({
   const saveImage = (img: string) => {
     if (getImage) return getImage(img);
   };
+  const className = twMerge(`
+    bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 w-full h-full max-h-[750px] max-w-[800px] text-lg relative flex flex-col justify-between animate-fadeInBillModal xl:max-2xl:px-5 2xl:w-[550px] 2xl:h-[600px] ultraWide:px-7 ultraWide:py-3 ultraWide:h-[650px] ultraWide:w-[650px] ultraWide:text-xl 2xUltraWide:max-h-[680px] ${classNameContainer}
+    `);
+
   return (
     <div
-      className={`bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 w-full h-full max-h-[750px] max-w-[800px] text-lg relative flex flex-col justify-between animate-fadeInBillModal xl:max-2xl:px-5 xl:h-[510px] xl:w-[500px] 2xl:w-[550px] 2xl:h-[600px] ultraWide:px-7 ultraWide:py-3 ultraWide:h-[650px] ultraWide:w-[650px] ultraWide:text-xl 2xUltraWide:max-h-[680px]  ${
+      style={style}
+      className={` ${className} ${
         activeNote?.typeCurrency === "income"
           ? "ring-customGreen"
           : "ring-customRed"

@@ -7,7 +7,7 @@ const HeaderApp = ({ classNameLine }: { classNameLine?: string }) => {
   const headerName = useAppSelector((state) => state.ui.headerName);
   // const { activeAccountMemo } = useWalletStore();
   const className = twMerge(`
-    mt-1 pb-4 ${classNameLine}
+    mt-1 ${classNameLine}
     `);
   return (
     <header className="flex flex-col">

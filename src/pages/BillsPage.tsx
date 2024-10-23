@@ -5,6 +5,7 @@ import { keyWordFilter } from "../helpers/wallet";
 
 const BillsPage = () => {
   const { height, width } = useWindowDimensions();
+  console.log({ height });
   const {
     deleteNote,
     setActiveNote,
@@ -110,7 +111,7 @@ const BillsPage = () => {
         */}
         <div
           style={{
-            height: height - 250,
+            height: height - 230,
           }}
           className={`flex flex-col gap-6 xl:max-2xl:gap-4 xl:max-2xl:py-1 py-2 px-[2px] ultraWide:max-h-[460px] overflow-auto scrollbar 2xUltraWide:max-h-[640px]`}
         >
@@ -131,22 +132,18 @@ const BillsPage = () => {
       {/* 
       //* Bill Component View Section
       */}
-      <div
-        style={{
-          height: height - 160,
-        }}
-        className="2xUltraWide:place-content-center h-full"
-      >
-        {activeNote ? (
-          <MyBillComponent
-            activeNote={activeNote}
-            editPathTo={"/newBill"}
-            nameHeader="Edit Bill"
-          />
-        ) : filterBy().notes.length > 0 ? (
-          <MyBillComponent activeNote={filterBy().firstValues} />
-        ) : null}
-      </div>
+
+      {activeNote ? (
+        <MyBillComponent
+          activeNote={activeNote}
+          editPathTo={"/newBill"}
+          nameHeader="Edit Bill"
+          classNameContainer=""
+          style={{ height: height - 180 }}
+        />
+      ) : filterBy().notes.length > 0 ? (
+        <MyBillComponent activeNote={filterBy().firstValues} />
+      ) : null}
     </div>
   );
 };

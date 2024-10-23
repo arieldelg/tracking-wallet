@@ -49,7 +49,7 @@ html {
     @apply transition-all animate-active text-gray-500;
   }
   .layoutMargins {
-    @apply w-full h-full font-bold font-mono p-8 max-lg:h-auto;
+    @apply w-full h-full font-bold font-mono p-8;
   }
   .imageContainerUpload {
     @apply sm:max-lg:w-36 sm:max-lg:h-36 xl:w-28 xl:h-28 2xl:w-36 2xl:h-36 ultraWide:w-48 ultraWide:h-48 relative;
