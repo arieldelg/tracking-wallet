@@ -38,7 +38,10 @@ export const walletSlice = createSlice({
     setEntryPay: (state, action: PayloadAction<TypeEntryPay>) => {
       state.entryPay = action.payload;
     },
-    setActiveNote: (state, action: PayloadAction<NoteProps | undefined>) => {
+    setActiveNoteSlice: (
+      state,
+      action: PayloadAction<NoteProps | undefined>
+    ) => {
       state.activeNote = action.payload;
     },
     setUpdateNote: (state, action: PayloadAction<NoteProps>) => {
@@ -95,7 +98,7 @@ export const walletSlice = createSlice({
 /*!exportamos las acciones del slice*/
 export const {
   setEntryPay,
-  setActiveNote,
+  setActiveNoteSlice,
   setNotes,
   setSaveNote,
   setFilterState,

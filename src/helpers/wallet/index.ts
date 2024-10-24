@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { walletAPI } from "../../api/walletAPI";
 import { NoteProps, UsersAccount } from "../../interface/walletApp";
 import { getEnvirables } from "../getEnvirables";
@@ -11,17 +12,19 @@ const activeAccountHelper = ({
   account,
   deleteAccount,
   init,
+  updateAccount,
 }: {
-  account?: UsersAccount;
+  account?: string;
   id?: string;
   init?: UsersAccount[];
   deleteAccount?: boolean;
-}) => {
+  updateAccount?: boolean;
+}): UsersAccount | undefined | string => {
   const istrue = localStorage.getItem("activeAccount");
 
   if (init && istrue === null) {
-    localStorage.setItem("activeAccount", JSON.stringify(init[0]));
-    return init[0];
+    localStorage.setItem("activeAccount", JSON.stringify(init[0]._id));
+    return init[0]._id;
   }
 
   if (account) {
@@ -32,6 +35,11 @@ const activeAccountHelper = ({
   if (deleteAccount && init) {
     localStorage.setItem("activeAccount", JSON.stringify(init[0]));
     return init[0];
+  }
+
+  if (updateAccount) {
+    localStorage.removeItem("activeAccount");
+    return;
   }
 
   return JSON.parse(localStorage.getItem("activeAccount") as string);
@@ -111,7 +119,7 @@ const ifActiveNoteExist = () => {
 };
 
 const savingImages = async (files: FileList[] | File[]) => {
-  if (files.length === 0) return false;
+  if (files.length === 0) return [];
   const form = new FormData();
 
   for (const image of files) {
@@ -138,6 +146,12 @@ const savingImages = async (files: FileList[] | File[]) => {
   }
 };
 
+/**
+ *
+ * @param deleteArray array of strings
+ * @returns void
+ * @summary need to send array of id or single id to delete images
+ */
 const deleteImg = async (deleteArray: string[]) => {
   if (deleteArray.length === 0) return;
 
@@ -152,6 +166,41 @@ const deleteImg = async (deleteArray: string[]) => {
   }
 };
 
+const getAccounts = async (): Promise<UsersAccount[]> => {
+  try {
+    const {
+      data: { accounts },
+    } = (await walletAPI.get(VITE_API_URL)) as AxiosResponse<{
+      accounts: UsersAccount[];
+    }>;
+
+    return accounts;
+  } catch (error) {
+    const message = handleErrors(error);
+    throw new Error(message);
+  }
+};
+
+const getNotes = async (id: string): Promise<NoteProps[]> => {
+  try {
+    const { data } = (await walletAPI.get(
+      `${VITE_API_URL}/notes/${id}`
+    )) as AxiosResponse<{ ok: boolean; notes: NoteProps[] }>;
+
+    if (!data.ok) throw new Error(handleErrors("Error Api getNotes"));
+
+    return data.notes;
+  } catch (error) {
+    const message = handleErrors(error);
+    throw new Error(message);
+  }
+};
+
+const handleErrors = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  else return String(error);
+};
+
 export {
   activeAccountHelper,
   keyWordFilter,
@@ -160,4 +209,6 @@ export {
   ifActiveNoteExist,
   savingImages,
   deleteImg,
+  getAccounts,
+  getNotes,
 };

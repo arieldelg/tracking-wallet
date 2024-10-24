@@ -4,8 +4,7 @@ import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
 import { keyWordFilter } from "../helpers/wallet";
 
 const BillsPage = () => {
-  const { height, width } = useWindowDimensions();
-  console.log({ height });
+  const { width } = useWindowDimensions();
   const {
     deleteNote,
     setActiveNote,
@@ -23,7 +22,7 @@ const BillsPage = () => {
   }, [notes, setActiveNote, setHeaderName]);
 
   return (
-    <div className="grid grid-cols-2 gap-4 items-center">
+    <div className="grid grid-cols-2 gap-4 items-start ">
       {/* 
       //* filter and Bill preview Section
       */}
@@ -110,7 +109,7 @@ const BillsPage = () => {
           style={{
             height: "auto",
           }}
-          className={`flex flex-col gap-6 xl:max-2xl:gap-4 pt-1 px-[2px] overflow-auto scrollbar xl:max-h-[374px] 2xl:max-h-[477px] ultraWide:max-h-[479px] 2xUltraWide:max-h-[640px] `}
+          className={`flex flex-col gap-6 xl:max-2xl:gap-4 pt-1 px-[2px] overflow-auto scrollbar xl:max-h-[374px] 2xl:max-h-[477px] ultraWide:max-h-[479px] 2xUltraWide:max-h-[640px] pb-2`}
         >
           {filterBy()?.notes.map(({ ...props }) => (
             <BillPreviewCard
@@ -137,7 +136,7 @@ const BillsPage = () => {
           classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px]"
           style={{ height: "100%" }}
         />
-      ) : filterBy().notes.length > 0 ? (
+      ) : filterBy()?.notes?.length > 0 ? (
         <MyBillComponent activeNote={filterBy().firstValues} />
       ) : null}
     </div>

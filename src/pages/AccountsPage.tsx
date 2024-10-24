@@ -7,7 +7,6 @@ import Modal from "../modals/Modal";
 import { toogleClass } from "../helpers";
 import { NewAccount, WarningView } from "./views";
 import { useWalletStore, useWindowDimensions } from "../hooks";
-import { activeAccountHelper } from "../helpers/wallet";
 import ModalDelete from "../modals/ModalDelete";
 
 const AccountsPage = () => {
@@ -15,10 +14,11 @@ const AccountsPage = () => {
     setOpenModal,
     isOpenModal,
     Accounts,
-    setEditAccount,
+    activeAccountHK,
     setResetAccount,
     setOpenModalDelete,
     isOpenModalDelete,
+    activeAccount,
   } = useWalletStore();
   const { height } = useWindowDimensions();
   return (
@@ -39,8 +39,8 @@ const AccountsPage = () => {
               {...props}
               key={props._id}
               toogleClass={toogleClass}
-              active={props._id === activeAccountHelper({})?._id ? true : false}
-              setEditAccount={setEditAccount}
+              active={props._id === activeAccount?._id ? true : false}
+              activeAccountHK={activeAccountHK}
               setOpenModal={setOpenModal}
               setOpenDelete={setOpenModalDelete}
             />

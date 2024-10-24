@@ -17,7 +17,7 @@ const NewAccount = () => {
     useWalletStore();
   return (
     <div
-      className="bg-customBGDark1 rounded-2xl ring-2 px-4 md:px-8 py-5 ultraWide:p-8 text-lg ultraWide:text-xl animate-fadeInBillModal ring-white min-w-[400px] xl:min-w-[600px] ultraWide:min-w-[730px] max-h-[600px] ultraWide:max-h-[750px] h-5/6 flex flex-col ultraWide:justify-evenly justify-between"
+      className="bg-customBGDark1 rounded-2xl ring-2 px-6 py-5 text-lg animate-fadeInBillModal ring-white w-full max-h-[600px] place-self-center h-5/6 flex flex-col justify-between xl:max-w-[550px] ultraWide:p-8 ultraWide:text-xl ultraWide:min-w-[730px] ultraWide:max-h-[750px] ultraWide:justify-evenly "
       onClick={(e) => e.stopPropagation()}
     >
       <h1 className="text-3xl md:text-5xl ultraWide:text-7xl text-center w-full">
@@ -75,7 +75,7 @@ const NewAccount = () => {
                 ))}
               </MySelect>
             </div>
-            <div className="h-auto my-10 ultraWide::my-14">
+            <div className="h-auto mb-6 2xl:mb-10 ultraWide:my-6">
               <MyTextInput
                 id="title"
                 label="Name"

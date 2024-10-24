@@ -1,8 +1,11 @@
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setHeader } from "../store/ui/uiSlice";
+import { GetActiveAcountSelector } from "../store/wallet/walletSlice";
 
 const useHeaderName = () => {
   const dispatch = useAppDispatch();
+  const activeAccount = useAppSelector(GetActiveAcountSelector);
+  const headerName = useAppSelector((state) => state.ui.headerName);
 
   const setHeaderName = (name: string) => {
     let header;
@@ -11,6 +14,9 @@ const useHeaderName = () => {
   };
 
   return {
+    //states
+    activeAccount,
+    headerName,
     // methods
     setHeaderName,
   };

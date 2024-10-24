@@ -92,9 +92,9 @@ const NewBill = () => {
             } else {
               const newValues = {
                 ...values,
-                images: [...(files as unknown as IMG[])],
+                images: [...previewIMG],
               };
-              setSavingNewNote(newValues as InitialValues);
+              setSavingNewNote({ newValues, newImg: files });
             }
           }}
           validationSchema={Yup.object({
@@ -178,7 +178,7 @@ const NewBill = () => {
                   <MySelect
                     name="typePayment"
                     placeholder="type payment"
-                    classnameinput="input px-4 2xl:h-8 xl:h-6 xl:max-2xl:text-sm"
+                    classnameinput="input 2xl:h-8 xl:h-6 xl:max-2xl:text-sm"
                     classnamelabel="inputLabel xl:max-2xl:text-base"
                     label="Type Payment"
                     onBlur={() => null}

@@ -9,7 +9,7 @@ import { useRef } from "react";
 const MyContainerCardAccounts = ({
   toogleClass,
   active,
-  setEditAccount,
+  activeAccountHK,
   setOpenModal,
   setOpenDelete,
   ...props
@@ -24,7 +24,7 @@ const MyContainerCardAccounts = ({
         <div
           className="h-full w-24 bg-customBlue rounded-l-xl flex items-center justify-center cursor-pointer"
           onClick={() => {
-            setEditAccount(props);
+            activeAccountHK(props);
             setOpenModal({});
           }}
         >
@@ -38,7 +38,7 @@ const MyContainerCardAccounts = ({
             active ? "text-green-400" : ""
           }`}
           onClick={() => {
-            setEditAccount(props);
+            activeAccountHK(props);
           }}
         >
           <p className="capitalize">{props.title}</p>
@@ -54,7 +54,7 @@ const MyContainerCardAccounts = ({
             className="w-14 text-black"
             onClick={() => {
               setOpenDelete();
-              setEditAccount(props);
+              activeAccountHK(props);
             }}
           />
         </div>
