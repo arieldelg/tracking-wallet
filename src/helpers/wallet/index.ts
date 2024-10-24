@@ -4,10 +4,6 @@ import { NoteProps, UsersAccount } from "../../interface/walletApp";
 import { getEnvirables } from "../getEnvirables";
 const { VITE_API_URL } = getEnvirables();
 
-/**
- * TODO queda pendiente activeAccountHelper, (delete)
- */
-
 const activeAccountHelper = ({
   account,
   deleteAccount,
@@ -28,6 +24,8 @@ const activeAccountHelper = ({
   }
 
   if (account) {
+    const compare = localStorage.getItem("activeAccount");
+    if (compare === account) console.log("es el mismo");
     localStorage.setItem("activeAccount", JSON.stringify(account));
     return account;
   }
@@ -89,7 +87,6 @@ const activeNoteCallback = ({
 };
 
 /**
- *
  * @param  ({ props: number , format: string }) example ({props: 12319310, format: 'en-US'})
  * @returns date in Intl.DateTimeFormat('en-US') by default
  */
@@ -147,7 +144,6 @@ const savingImages = async (files: FileList[] | File[]) => {
 };
 
 /**
- *
  * @param deleteArray array of strings
  * @returns void
  * @summary need to send array of id or single id to delete images

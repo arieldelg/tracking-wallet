@@ -118,20 +118,15 @@ export const startUpdateAccount = (account: UsersAccount) => {
       type: "wallet/setUpdateAccount";
     }) => void
   ) => {
-    console.log(account);
     dispatch(setUpdateAccount(account));
     try {
-      const response = await fetch(`${VITE_API_URL}/account/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(account),
-      });
-      const result = await response.json();
-      if (result.ok) {
-        activeAccountHelper({ account });
-      }
+      const { data } = (await walletAPI.put(
+        `${VITE_API_URL}/account/update`,
+        account
+      )) as AxiosResponse<{ ok: boolean }>;
+
+      activeAccountHelper({ account: account._id });
+      if (!data.ok) throw new Error("Error Enpoint account update");
     } catch (error) {
       console.log(error, "startUpdateAccount");
     }
