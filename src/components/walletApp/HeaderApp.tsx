@@ -1,14 +1,8 @@
-import { twMerge } from "tailwind-merge";
 import { useAppSelector } from "../../store/hooks";
-// import { useWalletStore } from "../../hooks";
 import { activeAccountHelper } from "../../helpers/wallet";
 
-const HeaderApp = ({ classNameLine }: { classNameLine?: string }) => {
+const HeaderApp = () => {
   const headerName = useAppSelector((state) => state.ui.headerName);
-  // const { activeAccountMemo } = useWalletStore();
-  const className = twMerge(`
-    mt-1 ${classNameLine}
-    `);
   return (
     <header className="flex flex-col">
       <div className="flex justify-between items-center w-full">
@@ -21,7 +15,7 @@ const HeaderApp = ({ classNameLine }: { classNameLine?: string }) => {
           </p>
         </div>
       </div>
-      <hr className={className} />
+      <hr />
     </header>
   );
 };

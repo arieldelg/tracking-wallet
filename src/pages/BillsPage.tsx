@@ -23,18 +23,15 @@ const BillsPage = () => {
   }, [notes, setActiveNote, setHeaderName]);
 
   return (
-    <div className="grid grid-cols-2 gap-4 ">
+    <div className="grid grid-cols-2 gap-4 items-center">
       {/* 
       //* filter and Bill preview Section
       */}
-      <div
-        // style={{ height: height - 300 }}
-        className="w-full space-y-5 2xUltraWide:place-content-center"
-      >
+      <div className="grid grid-rows-[80px_auto]">
         {/* 
         //* filter section
         */}
-        <div>
+        <div className="h-full w-full">
           <div className="flex justify-between">
             <h1 className="text-base">Filter By:</h1>
             {keyWordFilter({}) !== "reset" ? (
@@ -50,8 +47,8 @@ const BillsPage = () => {
               </button>
             ) : null}
           </div>
-          <div className="flex items-center gap-4">
-            <div className="w-[540px]">
+          <div className="grid grid-cols-[auto_110px] gap-6 items-center">
+            <div>
               <ul className="flex text-base ultraWide:text-xl justify-between">
                 <li>
                   <button
@@ -111,9 +108,9 @@ const BillsPage = () => {
         */}
         <div
           style={{
-            height: height - 230,
+            height: "auto",
           }}
-          className={`flex flex-col gap-6 xl:max-2xl:gap-4 xl:max-2xl:py-1 py-2 px-[2px] ultraWide:max-h-[460px] overflow-auto scrollbar 2xUltraWide:max-h-[640px]`}
+          className={`flex flex-col gap-6 xl:max-2xl:gap-4 pt-1 px-[2px] overflow-auto scrollbar xl:max-h-[374px] 2xl:max-h-[477px] ultraWide:max-h-[479px] 2xUltraWide:max-h-[640px] `}
         >
           {filterBy()?.notes.map(({ ...props }) => (
             <BillPreviewCard
@@ -132,14 +129,13 @@ const BillsPage = () => {
       {/* 
       //* Bill Component View Section
       */}
-
       {activeNote ? (
         <MyBillComponent
           activeNote={activeNote}
           editPathTo={"/newBill"}
           nameHeader="Edit Bill"
-          classNameContainer=""
-          style={{ height: height - 180 }}
+          classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px]"
+          style={{ height: "100%" }}
         />
       ) : filterBy().notes.length > 0 ? (
         <MyBillComponent activeNote={filterBy().firstValues} />

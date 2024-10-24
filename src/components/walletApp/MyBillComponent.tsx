@@ -29,7 +29,7 @@ const MyBillComponent = ({
     if (getImage) return getImage(img);
   };
   const className = twMerge(`
-    bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 w-full h-full max-h-[750px] max-w-[800px] text-lg relative flex flex-col justify-between animate-fadeInBillModal xl:max-2xl:px-5 2xl:w-[550px] 2xl:h-[600px] ultraWide:px-7 ultraWide:py-3 ultraWide:h-[650px] ultraWide:w-[650px] ultraWide:text-xl 2xUltraWide:max-h-[680px] ${classNameContainer}
+    bg-customBGDark1 rounded-2xl ring-2 px-8 py-5 w-full max-w-[800px] text-lg relative flex flex-col justify-between animate-fadeInBillModal m-auto ultraWide:px-7 ultraWide:py-3 ultraWide:max-h-[650px] ultraWide:max-w-[650px] ultraWide:text-xl 2xUltraWide:max-h-[680px] ${classNameContainer}
     `);
 
   return (
