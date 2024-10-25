@@ -6,38 +6,24 @@ const { VITE_API_URL } = getEnvirables();
 
 const activeAccountHelper = ({
   account,
-  deleteAccount,
-  init,
-  updateAccount,
+  refresh,
 }: {
   account?: string;
   id?: string;
-  init?: UsersAccount[];
-  deleteAccount?: boolean;
-  updateAccount?: boolean;
+  refresh?: boolean;
 }): UsersAccount | undefined | string => {
-  const istrue = localStorage.getItem("activeAccount");
+  const isTrue = localStorage.getItem("activeAccount");
 
-  if (init && istrue === null) {
-    localStorage.setItem("activeAccount", JSON.stringify(init[0]._id));
-    return init[0]._id;
-  }
-
-  if (account) {
-    const compare = localStorage.getItem("activeAccount");
-    if (compare === account) console.log("es el mismo");
+  if (isTrue === null) {
     localStorage.setItem("activeAccount", JSON.stringify(account));
     return account;
   }
 
-  if (deleteAccount && init) {
-    localStorage.setItem("activeAccount", JSON.stringify(init[0]));
-    return init[0];
-  }
+  if (refresh) return JSON.parse(isTrue);
 
-  if (updateAccount) {
-    localStorage.removeItem("activeAccount");
-    return;
+  if (account !== undefined) {
+    localStorage.setItem("activeAccount", JSON.stringify(account));
+    return account;
   }
 
   return JSON.parse(localStorage.getItem("activeAccount") as string);
@@ -58,31 +44,36 @@ const keyWordFilter = ({ key }: { key?: string }) => {
   return keyWord;
 };
 
-const activeNoteCallback = ({
+const activeNoteHelper = ({
   note,
   newAccount,
+  refresh,
 }: {
-  note?: NoteProps;
+  note?: string;
   newAccount?: boolean;
+  refresh?: boolean;
 }) => {
   const isTrue = localStorage.getItem("activeNote");
-  if (isTrue === null && newAccount === false) {
-    console.log("activeNoteCallback / isTrue === null");
-    localStorage.setItem("activeNote", JSON.stringify(note));
-    return note;
-  }
-
-  if (note) {
-    console.log("activeNoteCallback / note");
-    localStorage.setItem("activeNote", JSON.stringify(note));
-    return note;
-  }
 
   if (newAccount === true) {
     localStorage.removeItem("activeNote");
     return [];
   }
-  // console.log("activeNoteCallback / llegue al final");
+
+  if (isTrue === null) {
+    localStorage.setItem("activeNote", JSON.stringify(note));
+    return note;
+  }
+
+  if (refresh) {
+    return JSON.parse(isTrue);
+  }
+
+  if (note !== undefined) {
+    localStorage.setItem("activeNote", JSON.stringify(note));
+    return note;
+  }
+
   return JSON.parse(localStorage.getItem("activeNote") as string);
 };
 
@@ -104,11 +95,11 @@ const date = ({
 };
 
 const ifActiveNoteExist = () => {
-  const istrue = !!activeNoteCallback({});
+  const istrue = !!activeNoteHelper({});
   const activeNote = istrue
     ? ({
-        ...activeNoteCallback({}),
-        date: new Date(activeNoteCallback({})?.date),
+        ...activeNoteHelper({}),
+        date: new Date(activeNoteHelper({})?.date),
       } as NoteProps)
     : false;
 
@@ -200,7 +191,7 @@ const handleErrors = (error: unknown): string => {
 export {
   activeAccountHelper,
   keyWordFilter,
-  activeNoteCallback,
+  activeNoteHelper as activeNoteCallback,
   date,
   ifActiveNoteExist,
   savingImages,

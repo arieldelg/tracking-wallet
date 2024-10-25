@@ -21,6 +21,7 @@ const AccountsPage = () => {
     activeAccount,
   } = useWalletStore();
   const { height } = useWindowDimensions();
+
   return (
     <div className="flex flex-col items-end gap-5">
       <MyNewButton

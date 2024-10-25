@@ -8,18 +8,17 @@ const BillsPage = () => {
   const {
     deleteNote,
     setActiveNote,
-    reset,
+    resetNewButton,
     setFilter,
     activeNote,
-    notes,
     filterBy,
   } = useWalletStore();
   const { setHeaderName } = useHeaderName();
 
   useEffect(() => {
-    setActiveNote({ allNote: notes });
+    // setActiveNote();
     setHeaderName("Bill Page");
-  }, [notes, setActiveNote, setHeaderName]);
+  }, [setHeaderName]);
 
   return (
     <div className="grid grid-cols-2 gap-4 items-start ">
@@ -99,7 +98,7 @@ const BillsPage = () => {
               </ul>
               <hr />
             </div>
-            <MyNewButton to="/newbill" reset={reset} />
+            <MyNewButton to="/newbill" reset={resetNewButton} />
           </div>
         </div>
         {/* 

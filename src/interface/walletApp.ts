@@ -38,7 +38,7 @@ export interface PropsCardAccounts {
   toogleClass?: (event: HTMLDivElement | null) => void;
   active: boolean;
   activeAccountHK: (value: UsersAccount) => void;
-  setOpenModal: ({ note }: { note?: NoteProps }) => void;
+  setOpenModal: ({ id }: { id?: string }) => void;
   setOpenDelete: () => void;
 }
 

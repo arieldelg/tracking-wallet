@@ -65,7 +65,7 @@ export const walletSlice = createSlice({
       state.filterState = action.payload;
     },
     setSaveNewAccount: (state, action: PayloadAction<UsersAccount>) => {
-      state.accounts.unshift(action.payload);
+      state.accounts.push(action.payload);
     },
     setSaveAllUserAccounts: (state, action: PayloadAction<UsersAccount[]>) => {
       state.accounts = action.payload;

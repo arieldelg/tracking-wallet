@@ -13,8 +13,13 @@ const initialValues: UsersAccountFormik = {
 };
 
 const NewAccount = () => {
-  const { setCloseModal, setSaveAccount, activeAccount, setUpdateAccount } =
-    useWalletStore();
+  const {
+    setCloseModal,
+    setSaveAccount,
+    activeAccount,
+    setUpdateAccount,
+    getActiveAcountLocaleStorage,
+  } = useWalletStore();
   return (
     <div
       className="bg-customBGDark1 rounded-2xl ring-2 px-6 py-5 text-lg animate-fadeInBillModal ring-white w-full max-h-[600px] place-self-center h-5/6 flex flex-col justify-between xl:max-w-[550px] ultraWide:p-8 ultraWide:text-xl ultraWide:min-w-[730px] ultraWide:max-h-[750px] ultraWide:justify-evenly "
@@ -99,7 +104,10 @@ const NewAccount = () => {
               <button
                 type="button"
                 className="w-52 ultraWide:w-64 h-full bg-customRed rounded-full ring-2 ring-customRed hover:bg-red-500 hover:ring-red-300"
-                onClick={() => setCloseModal()}
+                onClick={() => {
+                  getActiveAcountLocaleStorage();
+                  setCloseModal();
+                }}
               >
                 Cancelar
               </button>

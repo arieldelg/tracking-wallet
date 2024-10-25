@@ -6,13 +6,7 @@ import { date } from "../../helpers/wallet";
 
 interface Props {
   props: NoteProps;
-  onClick?: ({
-    note,
-    allNote,
-  }: {
-    note?: NoteProps;
-    allNote?: NoteProps[];
-  }) => void;
+  onClick?: (id: string) => void;
   deleteNote?: (id: string) => void;
   style?: CSSProperties;
   className?: string;
@@ -53,7 +47,7 @@ const BillPreviewCard = ({
           : "bg-customRed ring-customRed"
       }`}
       onClick={() => {
-        if (onClick) onClick({ note: props });
+        if (onClick) onClick(props._id);
       }}
     >
       <div className="flex justify-between items-center w-full max-w-[600px] h-full xl:max-2xl:text-[14px] text-start gap-0 tracking-tighter">

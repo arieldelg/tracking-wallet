@@ -21,13 +21,14 @@ import {
   startGetDataDB,
   startFilteringState,
   startSavingActiveNote,
-  startResetActiveNote,
+  // startResetActiveNote,
   startSavingAccount,
   startSavingActiveAccount,
   startSavingNewNote,
   startSavingUpdatingNote,
   startUpdateAccount,
   startSavingImage,
+  startResetActiveNote,
 } from "../store/wallet/thunk";
 import {
   ActiveNoteSelector,
@@ -35,10 +36,15 @@ import {
   GetActiveAcountSelector,
   GetAllUserAccountsDB,
   GetNotesDBSelector,
+  setActiveAccount,
   setActiveNoteSlice,
   setSaveNote,
 } from "../store/wallet/walletSlice";
-import { activeNoteCallback, keyWordFilter } from "../helpers/wallet";
+import {
+  activeAccountHelper,
+  activeNoteCallback,
+  keyWordFilter,
+} from "../helpers/wallet";
 import { useNavigate } from "react-router-dom";
 
 const useWalletStore = () => {
@@ -106,44 +112,35 @@ const useWalletStore = () => {
         dispatch(startFilteringState(props));
         keyWordFilter({ key: props });
         dispatch(startSavingActiveNote(filterBy().firstValues));
-        activeNoteCallback({ note: filterBy().firstValues });
+        activeNoteCallback({ note: filterBy().firstValues._id });
       }
     },
     [dispatch, filterBy]
   );
+
   //! si desactivo el active note cuando salga del modal puede servir de algo
 
   //* si no existe el estado activeNote y recibe un array de notas, agrega el active note del array[0], si nomas recibe la nota y si existe el active note saca el active note del parametro note enviado
-  const setActiveNote = ({
-    note,
-    allNote,
-  }: {
-    note?: NoteProps;
-    allNote?: NoteProps[];
-  }) => {
-    if (!activeNote && allNote) {
-      console.log("setActiveNote first if");
-      dispatch(
-        startSavingActiveNote(
-          activeNoteCallback({ note: allNote[0] }) as NoteProps
-        )
-      );
+  const setActiveNote = (id?: string) => {
+    if (activeNote === undefined) {
+      activeNoteCallback({ note: notes[0]._id });
+      dispatch(startSavingActiveNote(notes[0]));
     }
-    if (note) {
-      console.log("setActiveNote second if");
-      dispatch(
-        startSavingActiveNote(activeNoteCallback({ note: note }) as NoteProps)
-      );
+    if (id) {
+      const filterNote = notes.find((note) => note._id === id);
+      console.log(id);
+      activeNoteCallback({ note: id });
+      if (filterNote) dispatch(startSavingActiveNote(filterNote));
     }
   };
 
   //* para abrir el modal con id #modal y si tiene parametro de note que lo agrege al estado y al locale
-  const setOpenModal = ({ note }: { note?: NoteProps }) => {
+  const setOpenModal = ({ id }: { id?: string }) => {
     dispatch(setOpen());
-    if (note) {
-      console.log("setOpenModal");
-      activeNoteCallback({ note });
-      dispatch(startSavingActiveNote(note));
+    if (id) {
+      activeNoteCallback({ note: id });
+      const filterNotes = notes.find((note) => note._id === id) as NoteProps;
+      dispatch(startSavingActiveNote(filterNotes));
     }
   };
 
@@ -196,7 +193,7 @@ const useWalletStore = () => {
       _id: JSON.stringify(new Date().getTime()),
       account: activeAccount?._id as string,
     };
-    const activeNote = activeNoteCallback({ note: noteID });
+    const activeNote = activeNoteCallback({ note: noteID._id });
     dispatch(setSaveNote(activeNote));
     dispatch(setActiveNoteSlice(activeNote));
     //! saving note database
@@ -208,11 +205,13 @@ const useWalletStore = () => {
 
   //* resetea active note en la store, localstorage, y el estado filterState
   const reset = () => {
-    console.log("reset");
-    dispatch(startResetActiveNote());
-    activeNoteCallback({ newAccount: true });
     keyWordFilter({ key: "reset" });
     dispatch(startFilteringState("reset"));
+  };
+
+  const resetNewButton = () => {
+    dispatch(startResetActiveNote());
+    activeNoteCallback({ newAccount: true });
   };
 
   //* para cerrar el modal con id #modal
@@ -233,13 +232,13 @@ const useWalletStore = () => {
   };
 
   //* para tener como active acount en el store
-  const activeAccountHK = (account?: UsersAccount) => {
+  const activeAccountHK = (account: UsersAccount) => {
     dispatch(startSavingActiveAccount(account));
   };
 
   //* para resetear el actual active account
   const setResetAccount = () => {
-    dispatch(startSavingActiveAccount(undefined));
+    dispatch(setActiveAccount(undefined));
   };
 
   //* para eliminar una cuenta
@@ -252,6 +251,12 @@ const useWalletStore = () => {
   const startApplication = useCallback(() => {
     dispatch(startGetDataDB());
   }, [dispatch]);
+
+  const getActiveAcountLocaleStorage = () => {
+    const id = activeAccountHelper({});
+    const filterAccounts = Accounts.find((account) => account._id === id);
+    dispatch(setActiveAccount(filterAccounts));
+  };
 
   return {
     // Method
@@ -272,6 +277,8 @@ const useWalletStore = () => {
     setCloseModalDelete,
     setSavingNewNote,
     setSavingUpdateNote,
+    getActiveAcountLocaleStorage,
+    resetNewButton,
     //state store
     filter,
     notes,
