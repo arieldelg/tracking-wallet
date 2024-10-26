@@ -17,14 +17,16 @@ const MyContainerCardAccounts = ({
   const divRef = useRef<HTMLDivElement | null>(null);
   return (
     <div className="w-full h-auto flex flex-col items-center">
-      <div className="flex w-full h-20 z-10">
+      <div
+        className="flex w-full h-20 z-10"
+        onClick={() => activeAccountHK(props)}
+      >
         {/* 
         //* Para editar Cuenta
         */}
         <div
           className="h-full w-24 bg-customBlue rounded-l-xl flex items-center justify-center cursor-pointer"
           onClick={() => {
-            activeAccountHK(props);
             setOpenModal({});
           }}
         >
@@ -37,9 +39,6 @@ const MyContainerCardAccounts = ({
           className={`flex text-4xl justify-between items-center w-full px-8 bg-customBGDark1 h-full cursor-pointer ${
             active ? "text-green-400" : ""
           }`}
-          onClick={() => {
-            activeAccountHK(props);
-          }}
         >
           <p className="capitalize">{props.title}</p>
           <p>
@@ -54,7 +53,6 @@ const MyContainerCardAccounts = ({
             className="w-14 text-black"
             onClick={() => {
               setOpenDelete();
-              activeAccountHK(props);
             }}
           />
         </div>

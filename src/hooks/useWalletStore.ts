@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import {
   IMG,
-  InitialValues,
   NoteProps,
   UsersAccount,
   UsersAccountFormik,
@@ -21,7 +20,6 @@ import {
   startGetDataDB,
   startFilteringState,
   startSavingActiveNote,
-  // startResetActiveNote,
   startSavingAccount,
   startSavingActiveAccount,
   startSavingNewNote,
@@ -37,18 +35,18 @@ import {
   GetAllUserAccountsDB,
   GetNotesDBSelector,
   setActiveAccount,
-  setActiveNoteSlice,
-  setSaveNote,
+  // setActiveNoteSlice,
+  // setSaveNote,
 } from "../store/wallet/walletSlice";
 import {
   activeAccountHelper,
-  activeNoteCallback,
+  activeNoteHelper,
   keyWordFilter,
 } from "../helpers/wallet";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const useWalletStore = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const filter = useAppSelector(FilterNotesSelector);
   const notes = useAppSelector(GetNotesDBSelector) as NoteProps[];
@@ -112,7 +110,7 @@ const useWalletStore = () => {
         dispatch(startFilteringState(props));
         keyWordFilter({ key: props });
         dispatch(startSavingActiveNote(filterBy().firstValues));
-        activeNoteCallback({ note: filterBy().firstValues._id });
+        activeNoteHelper({ note: filterBy().firstValues._id });
       }
     },
     [dispatch, filterBy]
@@ -123,22 +121,22 @@ const useWalletStore = () => {
   //* si no existe el estado activeNote y recibe un array de notas, agrega el active note del array[0], si nomas recibe la nota y si existe el active note saca el active note del parametro note enviado
   const setActiveNote = (id?: string) => {
     if (activeNote === undefined) {
-      activeNoteCallback({ note: notes[0]._id });
+      activeNoteHelper({ note: notes[0]._id });
       dispatch(startSavingActiveNote(notes[0]));
     }
     if (id) {
       const filterNote = notes.find((note) => note._id === id);
       console.log(id);
-      activeNoteCallback({ note: id });
+      activeNoteHelper({ note: id });
       if (filterNote) dispatch(startSavingActiveNote(filterNote));
     }
   };
 
   //* para abrir el modal con id #modal y si tiene parametro de note que lo agrege al estado y al locale
-  const setOpenModal = ({ id }: { id?: string }) => {
+  const setOpenModal = (id?: string) => {
     dispatch(setOpen());
     if (id) {
-      activeNoteCallback({ note: id });
+      activeNoteHelper({ note: id });
       const filterNotes = notes.find((note) => note._id === id) as NoteProps;
       dispatch(startSavingActiveNote(filterNotes));
     }
@@ -156,7 +154,7 @@ const useWalletStore = () => {
   };
 
   //* para actualizar la nota
-  const setSavingUpdateNote = ({
+  const setSaveNoteHK = ({
     values,
     files,
     deleteImages,
@@ -167,40 +165,30 @@ const useWalletStore = () => {
     deleteImages: string[];
     previewIMG: IMG[];
   }) => {
-    const optimistic = {
-      ...values,
-      date: new Date(values.date).getTime() as unknown as Date,
-      images: previewIMG,
-    };
-
-    dispatch(startSavingUpdatingNote(values, files, deleteImages, optimistic));
-
-    navigate(-1);
-  };
-
-  //* para guardar nueva nota a DB y Store
-  const setSavingNewNote = ({
-    newValues,
-    newImg,
-  }: {
-    newValues: InitialValues;
-    newImg: File[];
-  }) => {
-    //! optimistic
-    const noteID = {
-      ...newValues,
-      date: new Date(newValues.date).getTime() as unknown as Date,
-      _id: JSON.stringify(new Date().getTime()),
-      account: activeAccount?._id as string,
-    };
-    const activeNote = activeNoteCallback({ note: noteID._id });
-    dispatch(setSaveNote(activeNote));
-    dispatch(setActiveNoteSlice(activeNote));
-    //! saving note database
-    dispatch(startSavingImage(newImg));
-    dispatch(startSavingNewNote(newValues));
-    console.log("ariel");
-    navigate(-1);
+    if (!values._id) {
+      //* Database image and notes
+      dispatch(startSavingImage(files));
+      dispatch(startSavingNewNote(values, files));
+      //* optimistic
+      // const noteID = {
+      //   ...values,
+      //   date: new Date(values.date).getTime() as unknown as Date,
+      //   _id: activeNoteHelper({}) as string,
+      //   account: activeAccount?._id as string,
+      //   images: [...previewIMG],
+      // };
+      // dispatch(setActiveNoteSlice(noteID));
+      // dispatch(setSaveNote(noteID));
+    } else {
+      const optimistic = {
+        ...values,
+        date: new Date(values.date).getTime() as unknown as Date,
+        images: previewIMG,
+      };
+      dispatch(
+        startSavingUpdatingNote(values, files, deleteImages, optimistic)
+      );
+    }
   };
 
   //* resetea active note en la store, localstorage, y el estado filterState
@@ -211,7 +199,7 @@ const useWalletStore = () => {
 
   const resetNewButton = () => {
     dispatch(startResetActiveNote());
-    activeNoteCallback({ newAccount: true });
+    activeNoteHelper({ newNote: true });
   };
 
   //* para cerrar el modal con id #modal
@@ -275,8 +263,7 @@ const useWalletStore = () => {
     setUpdateAccount,
     setOpenModalDelete,
     setCloseModalDelete,
-    setSavingNewNote,
-    setSavingUpdateNote,
+    setSaveNoteHK,
     getActiveAcountLocaleStorage,
     resetNewButton,
     //state store

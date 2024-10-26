@@ -2,6 +2,7 @@ import { AxiosResponse } from "axios";
 import { walletAPI } from "../../api/walletAPI";
 import { NoteProps, UsersAccount } from "../../interface/walletApp";
 import { getEnvirables } from "../getEnvirables";
+import { setActiveNoteSlice } from "../../store/wallet/walletSlice";
 const { VITE_API_URL } = getEnvirables();
 
 const activeAccountHelper = ({
@@ -9,24 +10,23 @@ const activeAccountHelper = ({
   refresh,
 }: {
   account?: string;
-  id?: string;
   refresh?: boolean;
-}): UsersAccount | undefined | string => {
+}): string => {
   const isTrue = localStorage.getItem("activeAccount");
 
   if (isTrue === null) {
-    localStorage.setItem("activeAccount", JSON.stringify(account));
-    return account;
+    localStorage.setItem("activeAccount", account!);
+    return account as string;
   }
 
-  if (refresh) return JSON.parse(isTrue);
+  if (refresh) return localStorage.getItem("activeAccount") as string;
 
   if (account !== undefined) {
-    localStorage.setItem("activeAccount", JSON.stringify(account));
+    localStorage.setItem("activeAccount", account);
     return account;
   }
 
-  return JSON.parse(localStorage.getItem("activeAccount") as string);
+  return localStorage.getItem("activeAccount") as string;
 };
 
 const keyWordFilter = ({ key }: { key?: string }) => {
@@ -46,35 +46,48 @@ const keyWordFilter = ({ key }: { key?: string }) => {
 
 const activeNoteHelper = ({
   note,
-  newAccount,
+  emptyNotes,
   refresh,
+  newNote,
 }: {
   note?: string;
-  newAccount?: boolean;
+  emptyNotes?: boolean;
   refresh?: boolean;
+  newNote?: boolean;
 }) => {
-  const isTrue = localStorage.getItem("activeNote");
+  const isTrue = !!localStorage.getItem("activeNote");
 
-  if (newAccount === true) {
+  if (newNote) {
+    return localStorage.setItem("activeNote", "newNote");
+  }
+
+  if (emptyNotes === true) {
     localStorage.removeItem("activeNote");
     return [];
   }
 
-  if (isTrue === null) {
-    localStorage.setItem("activeNote", JSON.stringify(note));
-    return note;
+  if (isTrue === false) {
+    if (note) {
+      localStorage.setItem("activeNote", note);
+      return note;
+    } else {
+      return localStorage.removeItem("activeNote");
+    }
   }
 
   if (refresh) {
-    return JSON.parse(isTrue);
+    if (isTrue === true) {
+      console.log("here");
+      return localStorage.getItem("activeNote");
+    }
   }
 
   if (note !== undefined) {
-    localStorage.setItem("activeNote", JSON.stringify(note));
+    localStorage.setItem("activeNote", note);
     return note;
   }
 
-  return JSON.parse(localStorage.getItem("activeNote") as string);
+  return localStorage.getItem("activeNote");
 };
 
 /**
@@ -92,18 +105,6 @@ const date = ({
   const rawDate = new Date(props);
   const date = new Intl.DateTimeFormat(format).format(rawDate);
   return date;
-};
-
-const ifActiveNoteExist = () => {
-  const istrue = !!activeNoteHelper({});
-  const activeNote = istrue
-    ? ({
-        ...activeNoteHelper({}),
-        date: new Date(activeNoteHelper({})?.date),
-      } as NoteProps)
-    : false;
-
-  return activeNote;
 };
 
 const savingImages = async (files: FileList[] | File[]) => {
@@ -188,14 +189,36 @@ const handleErrors = (error: unknown): string => {
   else return String(error);
 };
 
+/**
+ * @param notes (array: NotePropes)
+ * @returns void
+ * @summary checks if exist notes or note in the active account
+ */
+const ifExistOrNotExist = (
+  notes: NoteProps[],
+  dispatch: (arg0: {
+    payload: NoteProps | undefined;
+    type: "wallet/setActiveNoteSlice";
+  }) => void
+) => {
+  if (notes.length === 0) {
+    activeNoteHelper({ emptyNotes: true });
+    dispatch(setActiveNoteSlice(undefined));
+  } else {
+    const firstNote = notes[0];
+    activeNoteHelper({ note: firstNote._id });
+    dispatch(setActiveNoteSlice(firstNote));
+  }
+};
+
 export {
   activeAccountHelper,
   keyWordFilter,
-  activeNoteHelper as activeNoteCallback,
+  activeNoteHelper,
   date,
-  ifActiveNoteExist,
   savingImages,
   deleteImg,
   getAccounts,
   getNotes,
+  ifExistOrNotExist,
 };

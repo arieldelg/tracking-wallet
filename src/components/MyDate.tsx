@@ -1,5 +1,5 @@
 import { ErrorMessage, useField } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -23,14 +23,13 @@ const MyDate = ({
   ...props
 }: Props) => {
   const [field, , helpers] = useField(props);
-  // const newField = {
-  //   ...field,
-  //   value: new Date(field.value),
-  // };
-
   const { setValue } = helpers;
   const [startDate, setStartDate] = useState(field.value);
-
+  useEffect(() => {
+    return () => {
+      setStartDate(field.value);
+    };
+  });
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor="date" className={classnamelabel}>

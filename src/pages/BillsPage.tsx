@@ -136,7 +136,10 @@ const BillsPage = () => {
           style={{ height: "100%" }}
         />
       ) : filterBy()?.notes?.length > 0 ? (
-        <MyBillComponent activeNote={filterBy().firstValues} />
+        <MyBillComponent
+          activeNote={filterBy().firstValues}
+          classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px]"
+        />
       ) : null}
     </div>
   );

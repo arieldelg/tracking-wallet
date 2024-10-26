@@ -11,7 +11,7 @@ const Home = () => {
   const openModal = useAppSelector(OpenModalSelector);
   const notes = useAppSelector(GetNotesDBSelector);
   const { setHeaderName } = useHeaderName();
-  const { deleteNote, reset, setOpenModal } = useWalletStore();
+  const { deleteNote, resetNewButton, setOpenModal } = useWalletStore();
   const { width } = useWindowDimensions();
   return (
     <>
@@ -95,7 +95,11 @@ const Home = () => {
     */}
       <div className="w-full flex items-center justify-between pb-6">
         <h2 className="text-4xl">Bills</h2>
-        <MyNewButton reset={reset} headerName="New Bill" to="newbill" />
+        <MyNewButton
+          reset={resetNewButton}
+          headerName="New Bill"
+          to="newbill"
+        />
       </div>
       {notes?.length !== 0 ? (
         <div>

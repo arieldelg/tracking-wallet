@@ -6,6 +6,7 @@ import "./index.css";
 import { AccountsPage, BillsPage, Home, NewBill } from "./pages/index.ts";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
+import { loaderNewBills } from "./routes/loaders/index.ts";
 
 const route = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const route = createBrowserRouter([
       {
         path: "newBill",
         element: <NewBill />,
+        loader: loaderNewBills,
       },
       {
         path: "accounts",

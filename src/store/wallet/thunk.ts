@@ -3,10 +3,11 @@ import { walletAPI } from "../../api/walletAPI";
 import { getEnvirables } from "../../helpers";
 import {
   activeAccountHelper,
-  activeNoteCallback as activeNoteHelper,
+  activeNoteHelper,
   deleteImg,
   getAccounts,
   getNotes,
+  ifExistOrNotExist,
   savingImages,
 } from "../../helpers/wallet";
 import {
@@ -23,8 +24,10 @@ import {
   setDeleteAccount,
   setFilterState,
   setNotes,
+  setRemoveFirstElement,
   setSaveAllUserAccounts,
   setSaveNewAccount,
+  setSaveNote,
   setUpdateAccount,
   setUpdateNote,
 } from "./walletSlice";
@@ -69,7 +72,7 @@ export const startGetDataDB = () => {
 
       if (getAccountActive) {
         const notes = await getNotes(getAccountActive as string);
-        const id = activeNoteHelper({ refresh: true, note: notes[0]._id });
+        const id = activeNoteHelper({ refresh: true, note: notes[0]?._id });
         const filterNote = notes.find((note) => note._id === id);
         dispatch(setNotes(notes));
         dispatch(setActiveNoteSlice(filterNote));
@@ -84,12 +87,16 @@ export const startGetDataDB = () => {
  * @param account / UsersAccount
  * @returns null
  * @summary Active account when selecting it and get all the notes related to it
+ * @summary2 Ready
  */
 export const startSavingActiveAccount = (account: UsersAccount) => {
   return async (
     dispatch: (arg0: {
-      payload: UsersAccount | undefined | NoteProps[];
-      type: "wallet/setActiveAccount" | "wallet/setNotes";
+      payload: UsersAccount | undefined | NoteProps[] | NoteProps;
+      type:
+        | "wallet/setActiveAccount"
+        | "wallet/setNotes"
+        | "wallet/setActiveNoteSlice";
     }) => void
   ) => {
     dispatch(setActiveAccount(account));
@@ -100,40 +107,34 @@ export const startSavingActiveAccount = (account: UsersAccount) => {
     try {
       const notes = await getNotes(account._id);
       dispatch(setNotes(notes));
-
-      if (notes.length === 0) {
-        // ! is not a new account but makes the same job as deleting active acount on local storage when no notes found on the account
-        activeNoteHelper({ newAccount: true });
-      } else {
-        activeNoteHelper({ note: notes[0]._id });
-      }
+      ifExistOrNotExist(notes, dispatch);
     } catch (error) {
       console.log(error, "startSavingActiveAccount");
     }
   };
 };
 
-// * creo que puedo sacar el active Account helper para afuera ya que no ocupo sacra el estado para actualizarlo
 /**
  * @param account type UsersAccount
  * @returns null
  * @summary Update changes made to account
+ * @summary Ready
  */
 export const startUpdateAccount = (account: UsersAccount) => {
   return async (
     dispatch: (arg0: {
-      payload: UsersAccount;
-      type: "wallet/setUpdateAccount";
+      payload: UsersAccount | undefined;
+      type: "wallet/setUpdateAccount" | "wallet/setActiveAccount";
     }) => void
   ) => {
     dispatch(setUpdateAccount(account));
+    dispatch(setActiveAccount(account));
     try {
       const { data } = (await walletAPI.put(
         `${VITE_API_URL}/account/update`,
         account
-      )) as AxiosResponse<{ ok: boolean }>;
+      )) as AxiosResponse<{ ok: boolean; account: UsersAccount }>;
 
-      activeAccountHelper({ account: account._id });
       if (!data.ok) throw new Error("Error Enpoint account update");
     } catch (error) {
       console.log(error, "startUpdateAccount");
@@ -145,15 +146,23 @@ export const startUpdateAccount = (account: UsersAccount) => {
  * @param account / UsersAccount
  * @returns null
  * @summary Active account saving a new and get all the notes related to it
+ * @summary Ready
  */
 export const startSavingAccount = (account: UsersAccountFormik) => {
   return async (
     dispatch: (arg0: {
-      payload: UsersAccount | [] | NoteProps[] | UsersAccount | undefined;
+      payload:
+        | UsersAccount
+        | []
+        | NoteProps[]
+        | UsersAccount
+        | undefined
+        | NoteProps;
       type:
         | "wallet/setSaveNewAccount"
         | "wallet/setNotes"
-        | "wallet/setActiveAccount";
+        | "wallet/setActiveAccount"
+        | "wallet/setActiveNoteSlice";
     }) => void
   ) => {
     try {
@@ -175,8 +184,10 @@ export const startSavingAccount = (account: UsersAccountFormik) => {
 
       activeAccountHelper({ account: singleAccount._id });
       dispatch(setActiveAccount(singleAccount));
-      activeNoteHelper({ newAccount: true });
-      dispatch(setNotes([]));
+
+      const newNotes: NoteProps[] = [];
+      dispatch(setNotes(newNotes));
+      ifExistOrNotExist(newNotes, dispatch);
     } catch (error) {
       console.log(error, "startSavingAccount");
     }
@@ -186,22 +197,29 @@ export const startSavingAccount = (account: UsersAccountFormik) => {
 /**
  * @param none
  * @returns null
- * @todo falta active note
  * @summary Deletes account and all the bills that are related to the account
+ * @summary Ready
  */
 export const startDeleteAccount = () => {
   return async (
     dispatch: (arg0: {
-      payload: string | UsersAccount | undefined | NoteProps[];
+      payload: string | UsersAccount | undefined | NoteProps[] | NoteProps;
       type:
         | "wallet/setDeleteAccount"
         | "wallet/setActiveAccount"
-        | "wallet/setNotes";
+        | "wallet/setNotes"
+        | "wallet/setActiveNoteSlice";
     }) => void,
     getState: () => RootState
   ) => {
     const account = activeAccountHelper({}) as string;
     dispatch(setDeleteAccount(account));
+
+    const [accounts] = getState().wallet.accounts;
+    const activeAccount = activeAccountHelper({
+      account: accounts._id,
+    }) as string;
+    dispatch(setActiveAccount(accounts));
 
     try {
       const { data } = await walletAPI.delete(`/account/delete/${account}`);
@@ -213,36 +231,35 @@ export const startDeleteAccount = () => {
         });
       }
 
-      const [accounts] = getState().wallet.accounts;
-
-      const activeAccount = activeAccountHelper({
-        account: accounts._id,
-      }) as string;
-      dispatch(setActiveAccount(accounts));
-
       const notes = await getNotes(activeAccount);
-
       dispatch(setNotes(notes));
-      activeNoteHelper({ newAccount: true });
+      ifExistOrNotExist(notes, dispatch);
     } catch (error) {
       console.log(error, "startDeleteAccount");
     }
   };
 };
 
-export const startSavingNewNote = (NoteProps: InitialValues) => {
+/**
+ *
+ * @param NoteProps InitialValues
+ * @returns void
+ * @summary save note to DB and return note updated and account updated
+ * @summary Ready
+ */
+export const startSavingNewNote = (NoteProps: InitialValues, files: File[]) => {
   return async (
     dispatch: (arg0: {
       payload: NoteProps | undefined | UsersAccount | NoteProps[];
       type:
-        | "wallet/setNotes"
+        | "wallet/setActiveAccount"
+        | "wallet/setUpdateAccount"
         | "wallet/setActiveNoteSlice"
-        | "wallet/setActiveAccount";
+        | "wallet/setSaveNote";
     }) => void,
     getState: () => RootState
   ) => {
     const accountID = getState().wallet.activeAccount?._id as string;
-    const Notes = getState().wallet.notes;
 
     const { date, ...props } = NoteProps;
     const newDate = new Date(date).getTime() as unknown as Date;
@@ -255,33 +272,32 @@ export const startSavingNewNote = (NoteProps: InitialValues) => {
       };
 
       const {
-        data: { account, message, note: newNote, ok },
+        data: { account, message, _id, ok },
       } = (await walletAPI.post(
         `${VITE_API_URL}/note/new`,
         note
       )) as AxiosResponse<{
         ok: boolean;
-        note: NoteProps;
+        _id: string;
         account: UsersAccount;
         message: string;
       }>;
 
       if (!ok) throw new Error(message);
 
-      const activeNote = activeNoteHelper({ note: newNote._id });
-
-      // const index = Notes.findIndex((note) => note._id === newNote._id);
-      const notes = Notes.splice(0, 1, newNote);
-
-      dispatch(setActiveNoteSlice(activeNote));
-      dispatch(setNotes(notes));
-
-      // const { data: accountData } = (await walletAPI.get(
-      //   `${VITE_API_URL}/account/${accountID}`
-      // )) as AxiosResponse<{ account: UsersAccount; ok: boolean }>;
-
-      activeAccountHelper({ account: account._id });
       dispatch(setActiveAccount(account));
+      dispatch(setUpdateAccount(account));
+
+      activeNoteHelper({ newNote: true });
+      const IDnote = {
+        ...note,
+        _id,
+      };
+      dispatch(setActiveNoteSlice(IDnote));
+
+      if (files.length === 0) {
+        dispatch(setSaveNote(IDnote));
+      }
     } catch (error) {
       console.log(error);
     }
@@ -389,25 +405,42 @@ export const startDeleteNote = (id: string) => {
   };
 };
 
+/**
+ *
+ * @param newImg : File[]
+ * @returns void
+ * @summary if array lenght is 0 return, else save image to database and patch to note created
+ * @summary Ready
+ */
 export const startSavingImage = (newImg: File[]) => {
-  return async () => {
+  return async (
+    dispatch: (arg0: {
+      payload: NoteProps | undefined;
+      type:
+        | "wallet/setActiveNoteSlice"
+        | "wallet/setRemoveFirstElement"
+        | "wallet/setSaveNote";
+    }) => void,
+    getState: () => RootState
+  ) => {
+    if (newImg.length === 0) return;
     const resultImages = await savingImages(newImg);
-    const { _id } = activeNoteHelper({}) as NoteProps;
+    const id = getState().wallet.activeNote?._id;
+    // const id = activeNoteHelper({}) as string;
 
-    // const images = {
-    //   images: resultImages,
-    // };
+    try {
+      const {
+        data: { note },
+      } = (await walletAPI.patch(
+        `${VITE_API_URL}/note/imgs/${id}`,
+        resultImages
+      )) as AxiosResponse<{ ok: boolean; note: NoteProps }>;
 
-    // console.log(images);
-    const {
-      data: { note },
-    } = (await walletAPI.patch(
-      `${VITE_API_URL}/note/imgs/${_id}`,
-      resultImages
-    )) as AxiosResponse<{ ok: boolean; note: NoteProps }>;
-
-    console.log(note);
-    activeNoteHelper({ note });
+      dispatch(setActiveNoteSlice(note));
+      dispatch(setSaveNote(note));
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
 

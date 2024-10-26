@@ -17,10 +17,9 @@ import {
 import * as Yup from "yup";
 import ArrayTypePayment from "../data/typePayment.json";
 import CurrencyTypeMoney from "../data/currencyType.json";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { IMG, InitialValues, NoteProps } from "../interface/walletApp";
 import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
-import { ifActiveNoteExist } from "../helpers/wallet";
 
 const validationTypePayment: string[] = [];
 
@@ -28,28 +27,14 @@ for (const type of ArrayTypePayment) {
   validationTypePayment.push(type.name);
 }
 
-const initialValues: InitialValues = {
-  typePayment: "",
-  date: new Date(),
-  tag: "",
-  title: "",
-  note: "",
-  quantity: 0,
-  currency: "MXN",
-  typeCurrency: "income",
-  images: [],
-};
-
 const NewBill = () => {
+  const loader = useLoaderData() as NoteProps | InitialValues;
   const imgRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const { setHeaderName } = useHeaderName();
-  const { setSavingNewNote, setSavingUpdateNote } = useWalletStore();
+  const { setSaveNoteHK } = useWalletStore();
   const { height } = useWindowDimensions();
-  const activeNote = ifActiveNoteExist();
-  const [previewIMG, setPreviewIMG] = useState(
-    activeNote ? activeNote.images : []
-  );
+  const [previewIMG, setPreviewIMG] = useState(loader.images);
   const [deleteImages, setDeleteImages] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -59,17 +44,14 @@ const NewBill = () => {
   };
 
   const executeImage = (): boolean => {
-    if (activeNote) {
-      if ((activeNote.images?.length as number) > 0) {
-        return true;
-      } else {
-        return false;
-      }
+    if (loader.images.length > 0) {
+      return true;
+    } else {
+      return false;
     }
-    return false;
   };
 
-  if (loading) return <p>Saving...</p>;
+  if (loading) return <p>loading</p>;
 
   return (
     <>
@@ -78,24 +60,20 @@ const NewBill = () => {
         //* seccion de formulario
         */}
         <Formik
-          initialValues={activeNote ? activeNote : initialValues}
-          onSubmit={(values) => {
+          initialValues={loader}
+          enableReinitialize={true}
+          onSubmit={(values, e) => {
             setLoading(true);
 
-            if (activeNote) {
-              setSavingUpdateNote({
-                values: values as NoteProps,
-                files,
-                deleteImages,
-                previewIMG,
-              });
-            } else {
-              const newValues = {
-                ...values,
-                images: [...previewIMG],
-              };
-              setSavingNewNote({ newValues, newImg: files });
-            }
+            setSaveNoteHK({
+              values: values as NoteProps,
+              files,
+              deleteImages,
+              previewIMG,
+            });
+            setPreviewIMG(loader.images);
+            e.resetForm();
+            setLoading(false);
           }}
           validationSchema={Yup.object({
             typePayment: Yup.string().required().oneOf(validationTypePayment),
@@ -113,7 +91,7 @@ const NewBill = () => {
                 height: height - 165,
               }}
               className={`h-full w-full p-7 xl:p-4 min-w-[350px] xl:w-[480px] 2xl:w-[550px] 2xl:h-[550px] ultraWide:h-auto ultraWide:max-h-[550px] 2xUltraWide:max-h-[700px] ultraWide:w-[700px] bg-customBGDark1 rounded-lg ring-2 flex flex-col justify-between  ${
-                values.typeCurrency === "income"
+                values?.typeCurrency === "income"
                   ? "ring-customGreen "
                   : "ring-customRed"
               }`}
@@ -128,7 +106,7 @@ const NewBill = () => {
               //* here goes the quantity and currency inputs
               */}
               <div className="flex justify-center items-center w-full h-auto gap-4 relative ultraWide:mb-2 2xUltraWide:mb-8 transition-all">
-                {values.typeCurrency === "income" ? (
+                {values?.typeCurrency === "income" ? (
                   <PlusIcon className="w-10 ultraWide:w-16 absolute left-6 text-green-400 animate-fadeIn" />
                 ) : (
                   <MinusIcon className="w-10 ultraWide:w-16 absolute left-6 text-red-400 animate-fadeIn" />
@@ -201,11 +179,7 @@ const NewBill = () => {
                     classnamelabel="inputLabel xl:max-2xl:text-base"
                     classnameinput="input w-full h-8 text-sm ultraWide:text-base 2xl:h-8 xl:h-6 tracking-tighter"
                     name="date"
-                    value={
-                      activeNote
-                        ? JSON.stringify(activeNote.date)
-                        : JSON.stringify(new Date())
-                    }
+                    value={JSON.stringify(new Date(values.date))}
                     label="Date"
                     onBlur={() => null}
                     id="date"
@@ -319,7 +293,7 @@ const NewBill = () => {
                 setFiles={setFiles}
                 setDeleteImages={handleDeleteImages}
               />
-            ) : (previewIMG as IMG[]).length > 0 ? (
+            ) : (previewIMG as IMG[])?.length > 0 ? (
               (previewIMG as IMG[]).map((props, index) => (
                 <div className="imageContainerUpload" key={index}>
                   <img
