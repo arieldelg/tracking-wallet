@@ -1,24 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BillPreviewCard, MyBillComponent, MyNewButton } from "../components";
 import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
-import { keyWordFilter } from "../helpers/wallet";
+import { filterBy, keyWordFilter } from "../helpers/wallet";
+import { useLoaderData, useNavigation } from "react-router-dom";
+import { NoteProps } from "../interface/walletApp";
 
 const BillsPage = () => {
-  const { width } = useWindowDimensions();
-  const {
-    deleteNote,
-    setActiveNote,
-    resetNewButton,
-    setFilter,
-    activeNote,
-    filterBy,
-  } = useWalletStore();
+  const navegation = useNavigation();
+  const { notes, title, activeNoteLoader } = useLoaderData() as {
+    notes: NoteProps[];
+    title: string;
+    activeNoteLoader: NoteProps;
+  };
+  console.log(navegation);
   const { setHeaderName } = useHeaderName();
+  const { deleteNote, setActiveNote, resetNewButton, reset, activeNote } =
+    useWalletStore(activeNoteLoader);
 
   useEffect(() => {
-    // setActiveNote();
-    setHeaderName("Bill Page");
-  }, [setHeaderName]);
+    setHeaderName(title);
+  }, [setHeaderName, title]);
+
+  useEffect(() => {
+    return setActiveNote();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [filter, setFilter] = useState("init");
+  const { width } = useWindowDimensions();
+  const notesFiltered = filterBy({ notes, filterKeyword: filter });
 
   return (
     <div className="grid grid-cols-2 gap-4 items-start ">
@@ -38,7 +48,8 @@ const BillsPage = () => {
                   keyWordFilter({}) === "reset" ? "text-[#F99A00]" : ""
                 }
                 onClick={() => {
-                  setFilter({ props: "reset" });
+                  keyWordFilter({ key: "reset" });
+                  setFilter("reset");
                 }}
               >
                 Reset Filter
@@ -51,7 +62,8 @@ const BillsPage = () => {
                 <li>
                   <button
                     onClick={() => {
-                      setFilter({ props: "income" });
+                      keyWordFilter({ key: "income" });
+                      setFilter("income");
                     }}
                     className={`${
                       keyWordFilter({}) === "income" ? "text-[#F99A00]" : ""
@@ -63,7 +75,8 @@ const BillsPage = () => {
                 <li>
                   <button
                     onClick={() => {
-                      setFilter({ props: "expense" });
+                      keyWordFilter({ key: "expense" });
+                      setFilter("expense");
                     }}
                     className={`${
                       keyWordFilter({}) === "expense" ? "text-[#F99A00]" : ""
@@ -81,7 +94,9 @@ const BillsPage = () => {
                           : keyWordFilter({}) === "quantity"
                           ? "quantity2"
                           : "quantity";
-                      setFilter({ props: filterValue });
+                      keyWordFilter({ key: filterValue });
+
+                      setFilter(filterValue);
                     }}
                     className={`${
                       keyWordFilter({}) === "quantity"
@@ -98,7 +113,11 @@ const BillsPage = () => {
               </ul>
               <hr />
             </div>
-            <MyNewButton to="/newbill" reset={resetNewButton} />
+            <MyNewButton
+              to="/newbill"
+              reset={resetNewButton}
+              resetFilter={reset}
+            />
           </div>
         </div>
         {/* 
@@ -110,7 +129,7 @@ const BillsPage = () => {
           }}
           className={`flex flex-col gap-6 xl:max-2xl:gap-4 pt-1 px-[2px] overflow-auto scrollbar xl:max-h-[374px] 2xl:max-h-[477px] ultraWide:max-h-[479px] 2xUltraWide:max-h-[640px] pb-2`}
         >
-          {filterBy()?.notes.map(({ ...props }) => (
+          {notesFiltered.notes.map(({ ...props }) => (
             <BillPreviewCard
               props={props}
               key={props._id}
@@ -135,12 +154,14 @@ const BillsPage = () => {
           classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px]"
           style={{ height: "100%" }}
         />
-      ) : filterBy()?.notes?.length > 0 ? (
-        <MyBillComponent
-          activeNote={filterBy().firstValues}
-          classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px]"
-        />
-      ) : null}
+      ) : // : notesFiltered.notes.length > 0 ? (
+      //   <MyBillComponent
+      //     activeNote={notesFiltered.firstValues}
+      //     classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px]"
+      //     style={{ height: "100%" }}
+      //   />
+      // )
+      null}
     </div>
   );
 };

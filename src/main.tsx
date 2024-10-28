@@ -6,7 +6,14 @@ import "./index.css";
 import { AccountsPage, BillsPage, Home, NewBill } from "./pages/index.ts";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
-import { loaderNewBills } from "./routes/loaders/index.ts";
+import {
+  loaderBillsPage,
+  loaderHeader,
+  loaderHome,
+  loaderNewBills,
+} from "./routes/loaders/index.ts";
+import LayoutHeader from "./pages/layout/LayoutHeader.tsx";
+import { actionHome, actionNewBills } from "./routes/actions/index.ts";
 
 const route = createBrowserRouter([
   {
@@ -14,25 +21,35 @@ const route = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "newBill",
-        element: <NewBill />,
-        loader: loaderNewBills,
-      },
-      {
-        path: "accounts",
-        element: <AccountsPage />,
-      },
-      {
-        path: "bills",
-        element: <BillsPage />,
-      },
-      {
-        path: "settings",
-        element: <p>settings</p>,
+        element: <LayoutHeader />,
+        loader: loaderHeader,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+            loader: loaderHome,
+            action: actionHome,
+          },
+          {
+            path: "newBill",
+            element: <NewBill />,
+            loader: loaderNewBills,
+            action: actionNewBills,
+          },
+          {
+            path: "accounts",
+            element: <AccountsPage />,
+          },
+          {
+            path: "bills",
+            element: <BillsPage />,
+            loader: loaderBillsPage,
+          },
+          {
+            path: "settings",
+            element: <p>settings</p>,
+          },
+        ],
       },
     ],
   },

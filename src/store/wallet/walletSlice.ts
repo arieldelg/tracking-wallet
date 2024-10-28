@@ -55,8 +55,8 @@ export const walletSlice = createSlice({
         return element;
       });
     },
-    setRemoveFirstElement: (state, action: PayloadAction<NoteProps>) => {
-      state.notes.splice(0, 1, action.payload);
+    setRemoveNote: (state, action: PayloadAction<string>) => {
+      state.notes = state.notes.filter((note) => note._id !== action.payload);
     },
     setNotes: (state, action: PayloadAction<NoteProps[] | []>) => {
       state.notes = action.payload;
@@ -111,7 +111,7 @@ export const {
   setUpdateAccount,
   setDeleteAccount,
   setUpdateNote,
-  setRemoveFirstElement,
+  setRemoveNote,
 } = walletSlice.actions;
 
 /* ! esto lo qu exportamos al store*/

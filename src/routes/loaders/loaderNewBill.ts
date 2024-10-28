@@ -12,7 +12,10 @@ const loader = async () => {
 
   if (validateValue !== "newNote") {
     const note = await walletAPI(`${VITE_API_URL}/note/${locale}`);
-    return note.data.note;
+    return {
+      note: note.data.note,
+      title: "Edit Bill",
+    };
   } else {
     const initialValues: InitialValues = {
       typePayment: "",
@@ -26,7 +29,10 @@ const loader = async () => {
       images: [],
     };
 
-    return initialValues;
+    return {
+      note: initialValues,
+      title: "New Bill",
+    };
   }
 };
 

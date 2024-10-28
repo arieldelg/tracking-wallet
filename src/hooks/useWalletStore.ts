@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+// import { useCallback } from "react";
 import {
   IMG,
   NoteProps,
@@ -17,16 +17,15 @@ import {
 import {
   startDeleteAccount,
   startDeleteNote,
-  startGetDataDB,
   startFilteringState,
   startSavingActiveNote,
   startSavingAccount,
   startSavingActiveAccount,
   startSavingNewNote,
-  startSavingUpdatingNote,
+  // startSavingUpdatingNote,
   startUpdateAccount,
-  startSavingImage,
-  startResetActiveNote,
+  // startSavingImage,
+  // startResetActiveNote,
 } from "../store/wallet/thunk";
 import {
   ActiveNoteSelector,
@@ -35,18 +34,19 @@ import {
   GetAllUserAccountsDB,
   GetNotesDBSelector,
   setActiveAccount,
+  setActiveNoteSlice,
+  // setFilterState,
   // setActiveNoteSlice,
   // setSaveNote,
 } from "../store/wallet/walletSlice";
 import {
   activeAccountHelper,
   activeNoteHelper,
+  filterBy,
   keyWordFilter,
 } from "../helpers/wallet";
-// import { useNavigate } from "react-router-dom";
 
-const useWalletStore = () => {
-  // const navigate = useNavigate();
+const useWalletStore = (noteLoader?: NoteProps) => {
   const dispatch = useAppDispatch();
   const filter = useAppSelector(FilterNotesSelector);
   const notes = useAppSelector(GetNotesDBSelector) as NoteProps[];
@@ -56,89 +56,31 @@ const useWalletStore = () => {
   const Accounts = useAppSelector(GetAllUserAccountsDB);
   const activeAccount = useAppSelector(GetActiveAcountSelector);
 
-  const filterBy = useCallback(() => {
-    switch (keyWordFilter({})) {
-      case "income":
-      case "expense": {
-        const filter = notes!.filter(
-          (element) => element.typeCurrency === keyWordFilter({})
-        );
-
-        return {
-          notes: filter,
-          firstValues: filter[0],
-        };
-      }
-      case "quantity": {
-        const array = [...notes!];
-        const sortedBills = array.sort((a, b) =>
-          a.quantity < b.quantity ? -1 : a.quantity > b.quantity ? 1 : 0
-        );
-        return {
-          notes: sortedBills,
-          firstValues: sortedBills[0],
-        };
-      }
-      case "quantity2": {
-        const array = [...notes];
-        const sortedBills = array.sort((a, b) =>
-          a.quantity < b.quantity ? 1 : a.quantity > b.quantity ? -1 : 0
-        );
-        return {
-          notes: sortedBills,
-          firstValues: sortedBills[0],
-        };
-      }
-      case "reset": {
-        return {
-          notes,
-          firstValues: notes[0],
-        };
-      }
-      default:
-        return {
-          notes,
-          firstValues: notes[0],
-        };
-    }
-  }, [notes]);
-
-  const setFilter = useCallback(
-    ({ props }: { props?: string }) => {
-      if (props) {
-        console.log("setFilter");
-        dispatch(startFilteringState(props));
-        keyWordFilter({ key: props });
-        dispatch(startSavingActiveNote(filterBy().firstValues));
-        activeNoteHelper({ note: filterBy().firstValues._id });
-      }
-    },
-    [dispatch, filterBy]
-  );
-
   //! si desactivo el active note cuando salga del modal puede servir de algo
 
   //* si no existe el estado activeNote y recibe un array de notas, agrega el active note del array[0], si nomas recibe la nota y si existe el active note saca el active note del parametro note enviado
-  const setActiveNote = (id?: string) => {
+
+  const setActiveNote = (note?: NoteProps) => {
     if (activeNote === undefined) {
-      activeNoteHelper({ note: notes[0]._id });
-      dispatch(startSavingActiveNote(notes[0]));
+      console.log("a");
+      activeNoteHelper({ note: noteLoader?._id });
+      dispatch(startSavingActiveNote(noteLoader as NoteProps));
     }
-    if (id) {
-      const filterNote = notes.find((note) => note._id === id);
-      console.log(id);
-      activeNoteHelper({ note: id });
-      if (filterNote) dispatch(startSavingActiveNote(filterNote));
+    if (note) {
+      console.log("b");
+
+      activeNoteHelper({ note: note._id });
+      dispatch(startSavingActiveNote(note));
     }
   };
 
   //* para abrir el modal con id #modal y si tiene parametro de note que lo agrege al estado y al locale
-  const setOpenModal = (id?: string) => {
+  const setOpenModal = (note?: NoteProps) => {
     dispatch(setOpen());
-    if (id) {
-      activeNoteHelper({ note: id });
-      const filterNotes = notes.find((note) => note._id === id) as NoteProps;
-      dispatch(startSavingActiveNote(filterNotes));
+    if (note) {
+      activeNoteHelper({ note: note._id });
+      // const filterNotes = notes.find((note) => note._id === id) as NoteProps;
+      dispatch(startSavingActiveNote(note));
     }
   };
 
@@ -149,46 +91,46 @@ const useWalletStore = () => {
     dispatch(setCloseDelete());
   };
 
-  const deleteNote = (id: string) => {
-    dispatch(startDeleteNote(id));
+  const deleteNote = (id: string, images: IMG[]) => {
+    dispatch(startDeleteNote(id, images));
   };
 
   //* para actualizar la nota
   const setSaveNoteHK = ({
     values,
+    // previewIMG,
     files,
-    deleteImages,
-    previewIMG,
-  }: {
+  }: // deleteImages,
+  {
     values: NoteProps;
     files: File[];
-    deleteImages: string[];
-    previewIMG: IMG[];
+    // deleteImages: string[];
+    // previewIMG: IMG[];
   }) => {
-    if (!values._id) {
-      //* Database image and notes
-      dispatch(startSavingImage(files));
-      dispatch(startSavingNewNote(values, files));
-      //* optimistic
-      // const noteID = {
-      //   ...values,
-      //   date: new Date(values.date).getTime() as unknown as Date,
-      //   _id: activeNoteHelper({}) as string,
-      //   account: activeAccount?._id as string,
-      //   images: [...previewIMG],
-      // };
-      // dispatch(setActiveNoteSlice(noteID));
-      // dispatch(setSaveNote(noteID));
-    } else {
-      const optimistic = {
-        ...values,
-        date: new Date(values.date).getTime() as unknown as Date,
-        images: previewIMG,
-      };
-      dispatch(
-        startSavingUpdatingNote(values, files, deleteImages, optimistic)
-      );
-    }
+    // if (!values._id) {
+    //* Database image and notes
+    dispatch(startSavingNewNote(values, files));
+    // dispatch(startSavingImage(files));
+    //* optimistic
+    // const noteID = {
+    //   ...values,
+    //   date: new Date(values.date).getTime() as unknown as Date,
+    //   _id: activeNoteHelper({}) as string,
+    //   account: activeAccount?._id as string,
+    //   images: [...previewIMG],
+    // };
+    // dispatch(setActiveNoteSlice(noteID));
+    // dispatch(setSaveNote(noteID));
+    // } else {
+    //   const optimistic = {
+    //     ...values,
+    //     date: new Date(values.date).getTime() as unknown as Date,
+    //     images: previewIMG,
+    //   };
+    //   dispatch(
+    //     startSavingUpdatingNote(values, files, deleteImages, optimistic)
+    //   );
+    // }
   };
 
   //* resetea active note en la store, localstorage, y el estado filterState
@@ -198,7 +140,8 @@ const useWalletStore = () => {
   };
 
   const resetNewButton = () => {
-    dispatch(startResetActiveNote());
+    // dispatch(startResetActiveNote());
+    dispatch(setActiveNoteSlice(undefined));
     activeNoteHelper({ newNote: true });
   };
 
@@ -236,9 +179,9 @@ const useWalletStore = () => {
   };
 
   //* cuando se regarga la pagina
-  const startApplication = useCallback(() => {
-    dispatch(startGetDataDB());
-  }, [dispatch]);
+  // const startApplication = useCallback(() => {
+  //   dispatch(startGetDataDB());
+  // }, [dispatch]);
 
   const getActiveAcountLocaleStorage = () => {
     const id = activeAccountHelper({});
@@ -252,14 +195,13 @@ const useWalletStore = () => {
     deleteNote,
     reset,
     setActiveNote,
-    setFilter,
     setCloseModal,
     setSaveAccount,
     activeAccountHK,
     setResetAccount,
     setDeleteAccount,
     filterBy,
-    startApplication,
+    // startApplication,
     setUpdateAccount,
     setOpenModalDelete,
     setCloseModalDelete,

@@ -7,7 +7,7 @@ import {
   MyTextArea,
   MyTextInput,
 } from "../components";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   TrashIcon,
   PlusIcon,
@@ -17,9 +17,10 @@ import {
 import * as Yup from "yup";
 import ArrayTypePayment from "../data/typePayment.json";
 import CurrencyTypeMoney from "../data/currencyType.json";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useFetcher, useLoaderData, useNavigate } from "react-router-dom";
 import { IMG, InitialValues, NoteProps } from "../interface/walletApp";
-import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
+import { useHeaderName, useWindowDimensions } from "../hooks";
+import { formData } from "../helpers/wallet";
 
 const validationTypePayment: string[] = [];
 
@@ -28,13 +29,21 @@ for (const type of ArrayTypePayment) {
 }
 
 const NewBill = () => {
-  const loader = useLoaderData() as NoteProps | InitialValues;
+  const { note, title } = useLoaderData() as {
+    note: NoteProps | InitialValues;
+    title: string;
+  };
+  const { setHeaderName } = useHeaderName();
+
+  useEffect(() => {
+    setHeaderName(title);
+  }, [title]);
+
+  const fetcher = useFetcher({ key: "newBillPage" });
   const imgRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
-  const { setHeaderName } = useHeaderName();
-  const { setSaveNoteHK } = useWalletStore();
   const { height } = useWindowDimensions();
-  const [previewIMG, setPreviewIMG] = useState(loader.images);
+  const [previewIMG, setPreviewIMG] = useState(note.images);
   const [deleteImages, setDeleteImages] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -44,7 +53,7 @@ const NewBill = () => {
   };
 
   const executeImage = (): boolean => {
-    if (loader.images.length > 0) {
+    if (note.images.length > 0) {
       return true;
     } else {
       return false;
@@ -60,20 +69,24 @@ const NewBill = () => {
         //* seccion de formulario
         */}
         <Formik
-          initialValues={loader}
+          initialValues={note}
           enableReinitialize={true}
           onSubmit={(values, e) => {
-            setLoading(true);
+            const formValues = formData(files, values, previewIMG);
 
-            setSaveNoteHK({
-              values: values as NoteProps,
-              files,
-              deleteImages,
-              previewIMG,
+            fetcher.submit(formValues, {
+              method: "post",
+              action: "/newbill",
+              encType: "multipart/form-data",
             });
-            setPreviewIMG(loader.images);
+
+            for (const img of previewIMG) {
+              URL.revokeObjectURL(img.httpURL);
+            }
+
+            setPreviewIMG([]);
+            setFiles([]);
             e.resetForm();
-            setLoading(false);
           }}
           validationSchema={Yup.object({
             typePayment: Yup.string().required().oneOf(validationTypePayment),
@@ -312,7 +325,6 @@ const NewBill = () => {
                         const filter = prev.filter(
                           (img) => img.name !== props.id
                         );
-                        console.log(filter);
                         return [...filter];
                       });
 

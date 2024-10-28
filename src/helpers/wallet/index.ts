@@ -1,6 +1,11 @@
 import { AxiosResponse } from "axios";
 import { walletAPI } from "../../api/walletAPI";
-import { NoteProps, UsersAccount } from "../../interface/walletApp";
+import {
+  IMG,
+  InitialValues,
+  NoteProps,
+  UsersAccount,
+} from "../../interface/walletApp";
 import { getEnvirables } from "../getEnvirables";
 import { setActiveNoteSlice } from "../../store/wallet/walletSlice";
 const { VITE_API_URL } = getEnvirables();
@@ -58,6 +63,7 @@ const activeNoteHelper = ({
   const isTrue = !!localStorage.getItem("activeNote");
 
   if (newNote) {
+    console.log(newNote);
     return localStorage.setItem("activeNote", "newNote");
   }
 
@@ -94,7 +100,6 @@ const activeNoteHelper = ({
  * @param  ({ props: number , format: string }) example ({props: 12319310, format: 'en-US'})
  * @returns date in Intl.DateTimeFormat('en-US') by default
  */
-
 const date = ({
   props,
   format = "en-US",
@@ -129,7 +134,11 @@ const savingImages = async (files: FileList[] | File[]) => {
       });
     }
 
-    return data.images;
+    const id = activeNoteHelper({});
+    await walletAPI.patch(`${VITE_API_URL}/note/imgs/${id}`, data.images);
+
+    return activeNoteHelper({ newNote: true });
+    // return data.images;
   } catch (error) {
     console.log(error, "startSavingImages");
   }
@@ -140,15 +149,20 @@ const savingImages = async (files: FileList[] | File[]) => {
  * @returns void
  * @summary need to send array of id or single id to delete images
  */
-const deleteImg = async (deleteArray: string[]) => {
-  if (deleteArray.length === 0) return;
+const deleteImg = async (images: string[]) => {
+  // const tempArray: string[] = [];
+
+  // for (const idIMG of JSON.parse(images)) {
+  //   tempArray.push(idIMG.id);
+  // }
+  // if (deleteArray.length === 0) return;
 
   try {
     const response = await walletAPI.post(
       `${VITE_API_URL}/image/delete`,
-      deleteArray
+      images
     );
-    console.log(response);
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -211,6 +225,180 @@ const ifExistOrNotExist = (
   }
 };
 
+/**
+ * @param notes NoteProps[]
+ * @returns the array of notes filtered
+ */
+const filterBy = ({
+  notes,
+  filterKeyword,
+}: {
+  notes: NoteProps[];
+  filterKeyword?: string;
+}) => {
+  switch (filterKeyword) {
+    case "income":
+    case "expense": {
+      const filter = notes!.filter(
+        (element) => element.typeCurrency === keyWordFilter({})
+      );
+
+      return {
+        notes: filter,
+        firstValues: filter[0],
+      };
+    }
+    case "quantity": {
+      const array = [...notes!];
+      const sortedBills = array.sort((a, b) =>
+        a.quantity < b.quantity ? -1 : a.quantity > b.quantity ? 1 : 0
+      );
+      return {
+        notes: sortedBills,
+        firstValues: sortedBills[0],
+      };
+    }
+    case "quantity2": {
+      const array = [...notes!];
+      const sortedBills = array.sort((a, b) =>
+        a.quantity < b.quantity ? 1 : a.quantity > b.quantity ? -1 : 0
+      );
+      return {
+        notes: sortedBills,
+        firstValues: sortedBills[0],
+      };
+    }
+    case "reset": {
+      return {
+        notes,
+        firstValues: notes![0],
+      };
+    }
+    default:
+      return {
+        notes,
+        firstValues: notes![0],
+      };
+  }
+};
+
+const getSingleAccount = async (id: string) => {
+  try {
+    const { data } = (await walletAPI(
+      `${VITE_API_URL}/account/${id}`
+    )) as AxiosResponse<{ ok: boolean; account: UsersAccount }>;
+
+    if (!data.ok) throw new Error("Error calling api single account");
+    return data.account;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const notesHome = async (accountId: string) => {
+  try {
+    const { data } = (await walletAPI.get(
+      `${VITE_API_URL}/notes/preview/${accountId}`
+    )) as AxiosResponse<{ ok: boolean; notes: NoteProps[] }>;
+
+    if (!data.ok) throw new Error("Error on Response notes Home");
+
+    return data.notes;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteNote = async (idNote: string) => {
+  try {
+    const response = await fetch(`${VITE_API_URL}/note/delete/${idNote}`, {
+      method: "DELETE",
+    });
+    const data = await response.json();
+    // const {
+    //   data: { ok },
+    // } = (await walletAPI.delete(
+    //   `${VITE_API_URL}/note/delete/${idNote}`
+    // )) as AxiosResponse<{ ok: boolean; results: unknown }>;
+    return data.ok;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const saveNote = async (formData: object, files: File[]) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { date, quantity, image, images, ...props } = formData as {
+    date: string;
+    quantity: string;
+    images: string;
+    image: File;
+  };
+
+  const accountID = activeAccountHelper({});
+  const note = {
+    ...props,
+    date: JSON.parse(date),
+    quantity: JSON.parse(quantity),
+    account: accountID,
+    images: JSON.parse(images),
+  };
+
+  try {
+    const {
+      data: { account, message, _id, ok },
+    } = (await walletAPI.post(
+      `${VITE_API_URL}/note/new`,
+      note
+    )) as AxiosResponse<{
+      ok: boolean;
+      _id: string;
+      account: UsersAccount;
+      message: string;
+    }>;
+    if (!ok) throw new Error(message);
+    console.log(account);
+    if (files.length === 0) return;
+    return activeNoteHelper({ note: _id });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const formData = (files: File[], values: InitialValues, previewIMG: IMG[]) => {
+  const optimisticNote = {
+    ...values,
+    images: JSON.stringify([...previewIMG]) as unknown as IMG[],
+  };
+
+  const formData = new FormData();
+
+  if (files.length > 0) {
+    for (let index = 0; index < files.length; index++) {
+      formData.append("image", files[index]);
+    }
+  }
+
+  for (const item in optimisticNote as InitialValues) {
+    const val = optimisticNote[item as keyof InitialValues];
+
+    if (item === "date") {
+      const time = new Date(values.date).getTime();
+      formData.append(item, time as unknown as string);
+      continue;
+    }
+
+    if (item === "images" && previewIMG.length === 0) {
+      formData.append(item, "false");
+      continue;
+    }
+
+    formData.append(item, val as string);
+  }
+
+  return formData;
+};
+
 export {
   activeAccountHelper,
   keyWordFilter,
@@ -221,4 +409,10 @@ export {
   getAccounts,
   getNotes,
   ifExistOrNotExist,
+  filterBy,
+  getSingleAccount,
+  notesHome,
+  deleteNote,
+  saveNote,
+  formData,
 };

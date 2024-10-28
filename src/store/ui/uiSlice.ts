@@ -1,8 +1,6 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-export type ValuesAccountTab = "init" | "open" | "close";
-
 interface InitialState {
   open: boolean;
   headerName: string;
@@ -12,7 +10,7 @@ interface InitialState {
 /*!initialState*/
 const initialState: InitialState = {
   open: false,
-  headerName: "Dashboard",
+  headerName: "",
   openDelete: false,
 };
 
@@ -48,6 +46,7 @@ export default uiSlice.reducer;
 
 const OPENMODAL = (state: RootState) => state;
 const OPENMODALDELETE = (state: RootState) => state;
+const HEADERNAME = (state: RootState) => state;
 
 export const OpenModalSelector = createSelector(
   [OPENMODAL],
@@ -57,4 +56,9 @@ export const OpenModalSelector = createSelector(
 export const OpenModalDeleteSelector = createSelector(
   [OPENMODALDELETE],
   (OPENMODALDELETE) => OPENMODALDELETE.ui.openDelete
+);
+
+export const GetHeaderNameSelector = createSelector(
+  [HEADERNAME],
+  (HEADERNAME) => HEADERNAME.ui.headerName
 );

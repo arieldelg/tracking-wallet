@@ -1,7 +1,12 @@
 import { useHeaderName } from "../../hooks";
+import { UsersAccount } from "../../interface/walletApp";
 
-const HeaderApp = () => {
-  const { activeAccount, headerName } = useHeaderName();
+interface Props {
+  activeAccount: UsersAccount;
+}
+
+const HeaderApp = ({ activeAccount }: Props) => {
+  const { headerName } = useHeaderName();
   return (
     <header className="flex flex-col">
       <div className="flex justify-between items-center w-full">

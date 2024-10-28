@@ -1,3 +1,5 @@
 import loaderNewBills from "./loaderNewBill";
-
-export { loaderNewBills };
+import loaderBillsPage from "./loaderBillsPage";
+import loaderHeader from "./loaderHeader";
+import loaderHome from "./loaderHome";
+export { loaderNewBills, loaderBillsPage, loaderHeader, loaderHome };

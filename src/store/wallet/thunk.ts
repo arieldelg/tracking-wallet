@@ -5,12 +5,13 @@ import {
   activeAccountHelper,
   activeNoteHelper,
   deleteImg,
-  getAccounts,
+  // getAccounts,
   getNotes,
   ifExistOrNotExist,
   savingImages,
 } from "../../helpers/wallet";
 import {
+  IMG,
   InitialValues,
   NoteProps,
   UsersAccount,
@@ -24,13 +25,14 @@ import {
   setDeleteAccount,
   setFilterState,
   setNotes,
-  setRemoveFirstElement,
-  setSaveAllUserAccounts,
+  // setRemoveFirstElement,
+  // setSaveAllUserAccounts,
   setSaveNewAccount,
   setSaveNote,
   setUpdateAccount,
   setUpdateNote,
 } from "./walletSlice";
+import { redirect } from "react-router-dom";
 
 const { VITE_API_URL } = getEnvirables();
 
@@ -39,49 +41,45 @@ const { VITE_API_URL } = getEnvirables();
  * @returns none
  * @summary get all the user Data account and in a near future all the settings when entering the app
  */
-export const startGetDataDB = () => {
-  return async (
-    dispatch: (arg0: {
-      payload:
-        | UsersAccount[]
-        | UsersAccount
-        | undefined
-        | NoteProps[]
-        | NoteProps;
-      type:
-        | "wallet/setSaveAllUserAccounts"
-        | "wallet/setActiveAccount"
-        | "wallet/setNotes"
-        | "wallet/setActiveNoteSlice";
-    }) => void
-  ) => {
-    try {
-      const accounts = await getAccounts();
-      dispatch(setSaveAllUserAccounts(accounts));
-
-      const getAccountActive = activeAccountHelper({
-        refresh: true,
-        account: accounts[0]._id,
-      });
-
-      const [account] = accounts.filter(
-        (account) => account._id === getAccountActive
-      );
-
-      dispatch(setActiveAccount(account));
-
-      if (getAccountActive) {
-        const notes = await getNotes(getAccountActive as string);
-        const id = activeNoteHelper({ refresh: true, note: notes[0]?._id });
-        const filterNote = notes.find((note) => note._id === id);
-        dispatch(setNotes(notes));
-        dispatch(setActiveNoteSlice(filterNote));
-      }
-    } catch (error) {
-      console.log(error, "startGetDataDB");
-    }
-  };
-};
+// export const startGetDataDB = () => {
+//   return async (
+//     dispatch: (arg0: {
+//       payload:
+//         | UsersAccount[]
+//         | UsersAccount
+//         | undefined
+//         | NoteProps[]
+//         | NoteProps;
+//       type:
+//         | "wallet/setSaveAllUserAccounts"
+//         | "wallet/setActiveAccount"
+//         | "wallet/setNotes"
+//         | "wallet/setActiveNoteSlice";
+//     }) => void
+//   ) => {
+//     try {
+//       const accounts = await getAccounts();
+//       dispatch(setSaveAllUserAccounts(accounts));
+//       const getAccountActive = activeAccountHelper({
+//         refresh: true,
+//         account: accounts[0]._id,
+//       });
+//       const [account] = accounts.filter(
+//         (account) => account._id === getAccountActive
+//       );
+//       dispatch(setActiveAccount(account));
+//       if (getAccountActive) {
+//         const notes = await getNotes(getAccountActive as string);
+//         const id = activeNoteHelper({ refresh: true, note: notes[0]?._id });
+//         const filterNote = notes.find((note) => note._id === id);
+//         dispatch(setNotes(notes));
+//         dispatch(setActiveNoteSlice(filterNote));
+//       }
+//     } catch (error) {
+//       console.log(error, "startGetDataDB");
+//     }
+//   };
+// };
 
 /**
  * @param account / UsersAccount
@@ -256,10 +254,9 @@ export const startSavingNewNote = (NoteProps: InitialValues, files: File[]) => {
         | "wallet/setUpdateAccount"
         | "wallet/setActiveNoteSlice"
         | "wallet/setSaveNote";
-    }) => void,
-    getState: () => RootState
+    }) => void
   ) => {
-    const accountID = getState().wallet.activeAccount?._id as string;
+    const accountID = activeAccountHelper({});
 
     const { date, ...props } = NoteProps;
     const newDate = new Date(date).getTime() as unknown as Date;
@@ -272,7 +269,7 @@ export const startSavingNewNote = (NoteProps: InitialValues, files: File[]) => {
       };
 
       const {
-        data: { account, message, _id, ok },
+        data: { message, _id, ok },
       } = (await walletAPI.post(
         `${VITE_API_URL}/note/new`,
         note
@@ -285,19 +282,23 @@ export const startSavingNewNote = (NoteProps: InitialValues, files: File[]) => {
 
       if (!ok) throw new Error(message);
 
-      dispatch(setActiveAccount(account));
-      dispatch(setUpdateAccount(account));
+      // dispatch(setActiveAccount(account));
+      // dispatch(setUpdateAccount(account));
 
-      activeNoteHelper({ newNote: true });
-      const IDnote = {
-        ...note,
-        _id,
-      };
-      dispatch(setActiveNoteSlice(IDnote));
-
-      if (files.length === 0) {
-        dispatch(setSaveNote(IDnote));
+      if (files.length > 0) {
+        activeNoteHelper({ note: _id });
       }
+      // activeNoteHelper({ newNote: true });
+      // const IDnote = {
+      //   ...note,
+      //   _id,
+      // };
+      // dispatch(setActiveNoteSlice(IDnote));
+
+      // if (files.length === 0) {
+      //   dispatch(setSaveNote(IDnote));
+      // }
+      return;
     } catch (error) {
       console.log(error);
     }
@@ -366,7 +367,7 @@ export const startSavingUpdatingNote = (
         date: new Date(updatedNote.date).getTime() as unknown as Date,
       };
 
-      dispatch(setActiveNoteSlice(activeNoteHelper({ note: internalNote })));
+      // dispatch(setActiveNoteSlice(activeNoteHelper({ note: internalNote })));
       dispatch(setUpdateNote(internalNote));
       return true;
     } catch (error) {
@@ -375,30 +376,34 @@ export const startSavingUpdatingNote = (
   };
 };
 
-export const startDeleteNote = (id: string) => {
+export const startDeleteNote = (id: string, images: IMG[]) => {
   return async (
     dispatch: (arg0: {
       payload: NoteProps[] | null | undefined | NoteProps;
       type: "wallet/setNotes" | "wallet/setActiveNoteSlice";
-    }) => void,
-    getState: () => RootState
+    }) => void
+    // getState: () => RootState
   ) => {
-    const notes = getState().wallet.notes;
-    const [note] = notes.filter((idNote) => idNote._id === id);
-    const newNotes = notes.filter((idNote) => idNote._id !== id);
+    // const notes = getState().wallet.notes;
+    // const [note] = notes.filter((idNote) => idNote._id === id);
+    // const newNotes = notes.filter((idNote) => idNote._id !== id);
     const tempArray: string[] = [];
-    for (const id of note.images) {
-      tempArray.push(id.id);
+    if (images.length > 0) {
+      for (const id of images) {
+        tempArray.push(id.id);
+      }
     }
-    dispatch(setNotes(newNotes as NoteProps[]));
+    // dispatch(setNotes(newNotes as NoteProps[]));
     dispatch(setActiveNoteSlice(undefined));
-    activeNoteHelper({ newAccount: true });
+    activeNoteHelper({ emptyNotes: true });
     try {
-      await deleteImg(tempArray);
+      if (images.length > 0) await deleteImg(tempArray);
+
       const { data } = await walletAPI.delete(
-        `${VITE_API_URL}/note/delete/${note._id}`
+        `${VITE_API_URL}/note/delete/${id}`
       );
-      console.log(data);
+
+      if (!data.ok) throw new Error("Error delete note");
     } catch (error) {
       console.log(error);
     }
@@ -420,24 +425,19 @@ export const startSavingImage = (newImg: File[]) => {
         | "wallet/setActiveNoteSlice"
         | "wallet/setRemoveFirstElement"
         | "wallet/setSaveNote";
-    }) => void,
-    getState: () => RootState
+    }) => void
   ) => {
     if (newImg.length === 0) return;
     const resultImages = await savingImages(newImg);
-    const id = getState().wallet.activeNote?._id;
+    const id = activeNoteHelper({});
     // const id = activeNoteHelper({}) as string;
 
     try {
-      const {
-        data: { note },
-      } = (await walletAPI.patch(
-        `${VITE_API_URL}/note/imgs/${id}`,
-        resultImages
-      )) as AxiosResponse<{ ok: boolean; note: NoteProps }>;
+      await walletAPI.patch(`${VITE_API_URL}/note/imgs/${id}`, resultImages);
 
-      dispatch(setActiveNoteSlice(note));
-      dispatch(setSaveNote(note));
+      return activeNoteHelper({ newNote: true });
+      // dispatch(setActiveNoteSlice(note));
+      // dispatch(setSaveNote(note));
     } catch (error) {
       console.log(error);
     }
@@ -446,6 +446,11 @@ export const startSavingImage = (newImg: File[]) => {
 
 // !checar
 
+/**
+ * @param note NoteProps
+ * @returns void
+ * @summary save new Active note on the store
+ */
 export const startSavingActiveNote = (note: NoteProps) => {
   return async (
     dispatch: (arg0: {
@@ -453,7 +458,6 @@ export const startSavingActiveNote = (note: NoteProps) => {
       type: "wallet/setActiveNoteSlice";
     }) => void
   ) => {
-    console.log("startSavingActiveNote");
     dispatch(setActiveNoteSlice(note));
   };
 };

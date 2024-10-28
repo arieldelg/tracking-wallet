@@ -7,6 +7,7 @@ type Props = {
   headerName?: string;
   to?: string;
   openModal?: () => void;
+  resetFilter?: () => void;
 };
 
 const MyNewButton = ({
@@ -14,6 +15,7 @@ const MyNewButton = ({
   headerName = "New Bill",
   to,
   openModal,
+  resetFilter,
 }: Props) => {
   const { setHeaderName } = useHeaderName();
   return (
@@ -24,6 +26,7 @@ const MyNewButton = ({
         if (reset) reset();
         if (to) setHeaderName(headerName);
         if (openModal) openModal();
+        if (resetFilter) resetFilter();
       }}
     >
       <PlusIcon className="w-6" />

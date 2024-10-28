@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { HeaderApp } from "../../components";
+import { Outlet, useLoaderData } from "react-router-dom";
+import { UsersAccount } from "../../interface/walletApp";
 
-const LayoutHeader = ({ children }: { children: React.ReactNode }) => {
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    setLoading(false);
-  }, [setLoading]);
+const LayoutHeader = () => {
+  const { account } = useLoaderData() as { account: UsersAccount };
+  // const [loading, setLoading] = useState(true);
+  // useEffect(() => {
+  //   setLoading(false);
+  // }, [setLoading]);
   return (
     <section className="layoutMargins grid xl:grid-rows-[80px_auto] 2xl:grid-rows-[90px_auto] 2xl:gap-4">
-      <HeaderApp />
-      {loading ? <p>Loading</p> : children}
+      <HeaderApp activeAccount={account} />
+      <Outlet />
+      {/* {loading ? <p>Loading</p> : <Outlet />} */}
     </section>
   );
 };

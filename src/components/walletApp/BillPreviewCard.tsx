@@ -1,22 +1,25 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { NoteProps } from "../../interface/walletApp";
+import { IMG, NoteProps } from "../../interface/walletApp";
 import { CSSProperties } from "react";
 import { twMerge } from "tailwind-merge";
 import { date } from "../../helpers/wallet";
 
 interface Props {
   props: NoteProps;
-  onClick?: (id: string) => void;
-  deleteNote?: (id: string) => void;
+  onClick?: (note: NoteProps) => void;
+  deleteNote?: (id: string, images: IMG[]) => void;
   style?: CSSProperties;
   className?: string;
   width: number;
+  openModal?: (note: NoteProps) => void;
 }
 
 const BillPreviewCard = ({
+  openModal,
+
+  // deleteNote,
   props,
   onClick,
-  deleteNote,
   style,
   className,
   width,
@@ -47,7 +50,8 @@ const BillPreviewCard = ({
           : "bg-customRed ring-customRed"
       }`}
       onClick={() => {
-        if (onClick) onClick(props._id);
+        if (onClick) onClick(props);
+        if (openModal) openModal(props);
       }}
     >
       <div className="flex justify-between items-center w-full max-w-[600px] h-full xl:max-2xl:text-[14px] text-start gap-0 tracking-tighter">
@@ -76,13 +80,16 @@ const BillPreviewCard = ({
           <p>{date({ props: props.date })}</p>
         </div>
       </div>
-      <TrashIcon
-        className="w-10 text-red-800"
+      <button
+        type="submit"
         onClick={(e) => {
           e.stopPropagation();
-          if (deleteNote) deleteNote(props._id);
+          // if (revalidator) revalidator();
+          // if (deleteNote) deleteNote(props._id, props.images);
         }}
-      />
+      >
+        <TrashIcon className="w-10 text-red-800" />
+      </button>
     </div>
   );
 };

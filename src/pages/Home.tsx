@@ -1,18 +1,73 @@
-import { NavLink } from "react-router-dom";
+import {
+  Form,
+  NavLink,
+  useFetcher,
+  useLoaderData,
+  // useNavigation,
+  useSubmit,
+} from "react-router-dom";
 import { BillPreviewCard, MyNewButton, MyNewEmptySection } from "../components";
 import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
-import { useAppSelector } from "../store/hooks";
-import { OpenModalSelector } from "../store/ui/uiSlice";
 import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
-import { GetNotesDBSelector } from "../store/wallet/walletSlice";
+import { IMG, NoteProps } from "../interface/walletApp";
+import { FormEvent, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  setNotes,
+  GetNotesDBSelector,
+  setRemoveNote,
+} from "../store/wallet/walletSlice";
 
 const Home = () => {
-  const openModal = useAppSelector(OpenModalSelector);
-  const notes = useAppSelector(GetNotesDBSelector);
+  const { notes, title } = useLoaderData() as {
+    notes: NoteProps[];
+    title: string;
+  };
+
+  const fetcher = useFetcher({ key: "newBillPage" });
+  console.log({ fetcher });
   const { setHeaderName } = useHeaderName();
-  const { deleteNote, resetNewButton, setOpenModal } = useWalletStore();
+  const dispatchStore = useAppDispatch();
+  const optimisticStore = useAppSelector(GetNotesDBSelector);
+
+  useEffect(() => {
+    setHeaderName(title);
+  }, [setHeaderName, title]);
+
+  useEffect(() => {
+    dispatchStore(setNotes(notes));
+  }, [dispatchStore, notes]);
+
+  const submit = useSubmit();
+  // const navigation = useNavigation();
+
+  // const optimsticNotes =
+  //   navigation.state !== "idle" && navigation.formData ? state : notes;
+
+  const { deleteNote, resetNewButton, setOpenModal, isOpenModal } =
+    useWalletStore();
   const { width } = useWindowDimensions();
+
+  //* function that handle delete preview card
+  const handleSumbit = (
+    id: string,
+    images: IMG[],
+    e: FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("id", id);
+    for (const image of images) {
+      formData.append("images", image.id);
+    }
+    dispatchStore(setRemoveNote(id));
+    submit(formData, {
+      method: "delete",
+      action: "/?index",
+    });
+  };
+  // console.log(optimsticNotes);
   return (
     <>
       {/* 
@@ -93,6 +148,7 @@ const Home = () => {
       {/* 
         //* Bills Section
     */}
+      {/* <code>{JSON.stringify(state)}</code> */}
       <div className="w-full flex items-center justify-between pb-6">
         <h2 className="text-4xl">Bills</h2>
         <MyNewButton
@@ -101,26 +157,27 @@ const Home = () => {
           to="newbill"
         />
       </div>
-      {notes?.length !== 0 ? (
+      {optimisticStore.length !== 0 ? (
         <div>
           <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
-            {notes?.slice(0, 4).map(({ ...props }) => (
-              <BillPreviewCard
-                props={props}
+            {optimisticStore.map(({ ...props }) => (
+              <Form
+                // method="post"
+                onSubmit={(e) => handleSumbit(props._id, props.images, e)}
                 key={props._id}
-                onClick={setOpenModal}
-                deleteNote={deleteNote}
-                width={width}
-              />
+              >
+                <BillPreviewCard
+                  props={props}
+                  // key={props._id}
+                  openModal={setOpenModal}
+                  deleteNote={deleteNote}
+                  width={width}
+                />
+              </Form>
             ))}
           </div>
           <div className="w-full text-center pt-6">
-            <NavLink
-              to={"bills"}
-              onClick={() => {
-                setHeaderName("Bills");
-              }}
-            >
+            <NavLink to={"bills"} onClick={resetNewButton}>
               + show more...
             </NavLink>
           </div>
@@ -129,7 +186,7 @@ const Home = () => {
         <MyNewEmptySection label="Theres nothing here yet... Try adding a new Bill" />
       )}
 
-      {openModal && (
+      {isOpenModal && (
         <Modal>
           <ViewCard />
         </Modal>
