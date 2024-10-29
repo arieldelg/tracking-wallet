@@ -1,4 +1,4 @@
-import { NoteProps, UsersAccount } from "../interface/walletApp";
+import { IMG, NoteProps, UsersAccount } from "../interface/walletApp";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   OpenModalDeleteSelector,
@@ -17,10 +17,14 @@ import {
   GetActiveAcountSelector,
   setActiveAccount,
   setActiveNoteSlice,
+  setRemoveNote,
 } from "../store/wallet/walletSlice";
 import { activeNoteHelper, keyWordFilter } from "../helpers/wallet";
+import { FormEvent } from "react";
+import { useSubmit } from "react-router-dom";
 
 const useWalletStore = (noteLoader?: NoteProps) => {
+  const submit = useSubmit();
   const dispatch = useAppDispatch();
   const activeNote = useAppSelector(ActiveNoteSelector);
   const isOpenModal = useAppSelector(OpenModalSelector);
@@ -83,6 +87,32 @@ const useWalletStore = (noteLoader?: NoteProps) => {
     dispatch(setActiveAccount(undefined));
   };
 
+  const handleSumbit = ({
+    id,
+    images,
+    e,
+    path,
+  }: {
+    id: string;
+    images?: IMG[];
+    e: FormEvent<HTMLFormElement>;
+    path: string;
+  }) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("id", id);
+    if (images) {
+      for (const image of images) {
+        formData.append("images", image.id);
+      }
+    }
+    dispatch(setRemoveNote(id));
+    submit(formData, {
+      method: "delete",
+      action: path,
+    });
+  };
+
   return {
     // Method
     setOpenModal,
@@ -94,6 +124,7 @@ const useWalletStore = (noteLoader?: NoteProps) => {
     setOpenModalDelete,
     setCloseModalDelete,
     resetNewButton,
+    handleSumbit,
     //state store
     activeNote,
     isOpenModal,

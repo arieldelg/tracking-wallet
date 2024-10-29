@@ -1,22 +1,12 @@
-import {
-  Form,
-  NavLink,
-  useLoaderData,
-  // useNavigation,
-  useSubmit,
-} from "react-router-dom";
+import { Form, NavLink, useLoaderData } from "react-router-dom";
 import { BillPreviewCard, MyNewButton, MyNewEmptySection } from "../components";
 import Modal from "../modals/Modal";
 import { ViewCard } from "./views";
 import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
-import { IMG, NoteProps } from "../interface/walletApp";
-import { FormEvent, useEffect } from "react";
+import { NoteProps } from "../interface/walletApp";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
-import {
-  setNotes,
-  GetNotesDBSelector,
-  setRemoveNote,
-} from "../store/wallet/walletSlice";
+import { setNotes, GetNotesDBSelector } from "../store/wallet/walletSlice";
 
 const Home = () => {
   const { notes, title } = useLoaderData() as {
@@ -36,30 +26,12 @@ const Home = () => {
     dispatchStore(setNotes(notes));
   }, [dispatchStore, notes]);
 
-  const submit = useSubmit();
-
-  const { resetNewButton, setOpenModal, isOpenModal } = useWalletStore();
+  const { resetNewButton, setOpenModal, isOpenModal, handleSumbit } =
+    useWalletStore();
   const { width } = useWindowDimensions();
 
   //* function that handle delete preview card
-  const handleSumbit = (
-    id: string,
-    images: IMG[],
-    e: FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("id", id);
-    for (const image of images) {
-      formData.append("images", image.id);
-    }
-    dispatchStore(setRemoveNote(id));
-    submit(formData, {
-      method: "delete",
-      action: "/?index",
-    });
-  };
-  // console.log(optimsticNotes);
+
   return (
     <>
       {/* 
@@ -154,7 +126,14 @@ const Home = () => {
           <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
             {optimisticStore?.slice(0, 4).map(({ ...props }) => (
               <Form
-                onSubmit={(e) => handleSumbit(props._id, props.images, e)}
+                onSubmit={(e) =>
+                  handleSumbit({
+                    id: props._id,
+                    images: props.images,
+                    e,
+                    path: "/?index",
+                  })
+                }
                 key={props._id}
               >
                 <BillPreviewCard

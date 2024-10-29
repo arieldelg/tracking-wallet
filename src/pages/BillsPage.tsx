@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BillPreviewCard, MyBillComponent, MyNewButton } from "../components";
 import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
 import { filterBy, keyWordFilter } from "../helpers/wallet";
-import { useLoaderData } from "react-router-dom";
+import { Form, useLoaderData } from "react-router-dom";
 import { NoteProps } from "../interface/walletApp";
 
 const BillsPage = () => {
@@ -13,7 +13,7 @@ const BillsPage = () => {
   };
 
   const { setHeaderName } = useHeaderName();
-  const { setActiveNote, resetNewButton, reset, activeNote } =
+  const { setActiveNote, resetNewButton, reset, activeNote, handleSumbit } =
     useWalletStore(activeNoteLoader);
 
   useEffect(() => {
@@ -129,15 +129,27 @@ const BillsPage = () => {
           className={`flex flex-col gap-6 xl:max-2xl:gap-4 pt-1 px-[2px] overflow-auto scrollbar xl:max-h-[374px] 2xl:max-h-[477px] ultraWide:max-h-[479px] 2xUltraWide:max-h-[640px] pb-2`}
         >
           {notesFiltered.notes.map(({ ...props }) => (
-            <BillPreviewCard
-              props={props}
+            <Form
+              onSubmit={(e) =>
+                handleSumbit({
+                  id: props._id,
+                  images: props.images,
+                  e,
+                  path: "/bills",
+                })
+              }
               key={props._id}
-              onClick={setActiveNote}
-              width={width}
-              className={`${
-                activeNote?._id === props._id ? "animate-translateCard" : ""
-              } sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[480px] 2xl:max-w-[565px] ultraWide:max-w-[700px] xl:max-2xl:px-3 h-auto xl:max-2xl:py-4 max-h-[84px]`}
-            />
+            >
+              <BillPreviewCard
+                props={props}
+                key={props._id}
+                onClick={setActiveNote}
+                width={width}
+                className={`${
+                  activeNote?._id === props._id ? "animate-translateCard" : ""
+                } sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px] xl:max-w-[480px] 2xl:max-w-[565px] ultraWide:max-w-[700px] xl:max-2xl:px-3 h-auto xl:max-2xl:py-4 max-h-[84px]`}
+              />
+            </Form>
           ))}
         </div>
       </div>

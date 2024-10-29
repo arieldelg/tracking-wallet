@@ -1,15 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { ProtectedSideBar } from "./NavigationsBars";
-// import { useEffect } from "react";
-// import { useWalletStore } from "../hooks";
 
 const ProtectedRoute = () => {
-  // const { startApplication } = useWalletStore();
-
-  // useEffect(() => {
-  //   startApplication();
-  // }, []);
-
   return (
     <main className="grid grid-cols-[250px_auto] h-screen">
       <ProtectedSideBar />

@@ -16,6 +16,7 @@ import {
 import LayoutHeader from "./pages/layout/LayoutHeader.tsx";
 import {
   actionAccountsPage,
+  actionBills,
   actionHome,
   actionNewBills,
 } from "./routes/actions/index.ts";
@@ -51,6 +52,7 @@ const route = createBrowserRouter([
             path: "bills",
             element: <BillsPage />,
             loader: loaderBillsPage,
+            action: actionBills,
           },
           {
             path: "settings",
