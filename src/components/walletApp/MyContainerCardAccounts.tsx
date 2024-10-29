@@ -5,29 +5,29 @@ import {
 } from "@heroicons/react/24/outline";
 import { PropsCardAccounts } from "../../interface/walletApp";
 import { useRef } from "react";
+import { Form, useSubmit } from "react-router-dom";
 
 const MyContainerCardAccounts = ({
   toogleClass,
   active,
-  activeAccountHK,
   setOpenModal,
   setOpenDelete,
+  activeAccountHK,
   ...props
 }: PropsCardAccounts) => {
   const divRef = useRef<HTMLDivElement | null>(null);
+  const submit = useSubmit();
   return (
     <div className="w-full h-auto flex flex-col items-center">
-      <div
-        className="flex w-full h-20 z-10"
-        onClick={() => activeAccountHK(props)}
-      >
+      <div className="flex w-full h-20 z-10">
         {/* 
         //* Para editar Cuenta
         */}
         <div
           className="h-full w-24 bg-customBlue rounded-l-xl flex items-center justify-center cursor-pointer"
           onClick={() => {
-            setOpenModal({});
+            activeAccountHK(props);
+            setOpenModal();
           }}
         >
           <PencilSquareIcon className="w-14 text-black" />
@@ -35,16 +35,26 @@ const MyContainerCardAccounts = ({
         {/* 
         //* Para activar la cuenta y las notas
         */}
-        <div
+        <Form
           className={`flex text-4xl justify-between items-center w-full px-8 bg-customBGDark1 h-full cursor-pointer ${
             active ? "text-green-400" : ""
           }`}
+          onClick={(e) => {
+            e.preventDefault();
+            submit(
+              { active: props._id },
+              {
+                method: "post",
+                action: "/accounts",
+              }
+            );
+          }}
         >
           <p className="capitalize">{props.title}</p>
           <p>
             {props.quantity} <span>{props.currency}</span>
           </p>
-        </div>
+        </Form>
         {/* 
         //* para eliminar la cuenta
         */}
@@ -52,6 +62,7 @@ const MyContainerCardAccounts = ({
           <TrashIcon
             className="w-14 text-black"
             onClick={() => {
+              activeAccountHK(props);
               setOpenDelete();
             }}
           />

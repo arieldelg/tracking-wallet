@@ -1,7 +1,6 @@
 import {
   Form,
   NavLink,
-  useFetcher,
   useLoaderData,
   // useNavigation,
   useSubmit,
@@ -25,8 +24,6 @@ const Home = () => {
     title: string;
   };
 
-  const fetcher = useFetcher({ key: "newBillPage" });
-  console.log({ fetcher });
   const { setHeaderName } = useHeaderName();
   const dispatchStore = useAppDispatch();
   const optimisticStore = useAppSelector(GetNotesDBSelector);
@@ -40,13 +37,8 @@ const Home = () => {
   }, [dispatchStore, notes]);
 
   const submit = useSubmit();
-  // const navigation = useNavigation();
 
-  // const optimsticNotes =
-  //   navigation.state !== "idle" && navigation.formData ? state : notes;
-
-  const { deleteNote, resetNewButton, setOpenModal, isOpenModal } =
-    useWalletStore();
+  const { resetNewButton, setOpenModal, isOpenModal } = useWalletStore();
   const { width } = useWindowDimensions();
 
   //* function that handle delete preview card
@@ -157,20 +149,17 @@ const Home = () => {
           to="newbill"
         />
       </div>
-      {optimisticStore.length !== 0 ? (
+      {optimisticStore?.length !== 0 ? (
         <div>
           <div className="grid grid-cols-2 w-full h-48  items-center place-content-between gap-x-14 2xl:text-base text-sm ultraWide:text-xl">
-            {optimisticStore.map(({ ...props }) => (
+            {optimisticStore?.slice(0, 4).map(({ ...props }) => (
               <Form
-                // method="post"
                 onSubmit={(e) => handleSumbit(props._id, props.images, e)}
                 key={props._id}
               >
                 <BillPreviewCard
                   props={props}
-                  // key={props._id}
                   openModal={setOpenModal}
-                  deleteNote={deleteNote}
                   width={width}
                 />
               </Form>

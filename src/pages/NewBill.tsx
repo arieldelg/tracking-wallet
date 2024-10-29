@@ -37,7 +37,7 @@ const NewBill = () => {
 
   useEffect(() => {
     setHeaderName(title);
-  }, [title]);
+  }, [title, setHeaderName]);
 
   const fetcher = useFetcher({ key: "newBillPage" });
   const imgRef = useRef<HTMLInputElement | null>(null);

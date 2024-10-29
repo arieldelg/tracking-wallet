@@ -17,7 +17,6 @@ const ViewCard = () => {
         getImage={setImg}
         nameHeader="New Bill"
         editPathTo={"/newBill"}
-        classNameContainer="ultrawide:max-w-[700px]"
         style={{ height: "100%", width: "100%" }}
       />
       {img && (

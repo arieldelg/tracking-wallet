@@ -3,7 +3,8 @@ import { MySelect, MyTextArea, MyTextInput } from "../../components";
 import TypeCurrency from "../../data/currencyType.json";
 import * as Yup from "yup";
 import { useWalletStore } from "../../hooks";
-import { UsersAccount, UsersAccountFormik } from "../../interface/walletApp";
+import { UsersAccountFormik } from "../../interface/walletApp";
+import { useSubmit } from "react-router-dom";
 
 const initialValues: UsersAccountFormik = {
   title: "",
@@ -13,29 +14,35 @@ const initialValues: UsersAccountFormik = {
 };
 
 const NewAccount = () => {
-  const {
-    setCloseModal,
-    setSaveAccount,
-    activeAccount,
-    setUpdateAccount,
-    getActiveAcountLocaleStorage,
-  } = useWalletStore();
+  const { setCloseModal, activeAccount } = useWalletStore();
+  const submit = useSubmit();
   return (
     <div
-      className="bg-customBGDark1 rounded-2xl ring-2 px-6 py-5 text-lg animate-fadeInBillModal ring-white w-full max-h-[600px] place-self-center h-5/6 flex flex-col justify-between xl:max-w-[550px] ultraWide:p-8 ultraWide:text-xl ultraWide:min-w-[730px] ultraWide:max-h-[750px] ultraWide:justify-evenly "
+      className="bg-customBGDark1 rounded-2xl ring-2 px-5 py-5 text-lg animate-fadeInBillModal ring-white w-full max-h-[600px] place-self-center h-5/6 flex flex-col justify-between xl:max-w-[550px] ultraWide:px-6 ultraWide:pt-3 ultraWide:pb-6 ultraWide:text-xl ultraWide:min-w-[730px] ultraWide:max-h-[750px] ultraWide:justify-between "
       onClick={(e) => e.stopPropagation()}
     >
-      <h1 className="text-3xl md:text-5xl ultraWide:text-7xl text-center w-full">
-        {activeAccount ? <span>Edit Account</span> : <span>New Account</span>}
+      <h1 className="text-3xl md:text-5xl ultraWide:text-7xl text-center w-full ">
+        {activeAccount ? (
+          <span className="text-5xl tracking-tight">
+            Edit {activeAccount.title}
+          </span>
+        ) : (
+          <span>New Account</span>
+        )}
       </h1>
       <Formik
         initialValues={activeAccount ? activeAccount : initialValues}
         onSubmit={(values, actions) => {
-          if (activeAccount) {
-            setUpdateAccount(values as UsersAccount);
-          } else {
-            setSaveAccount(values);
-          }
+          submit(
+            { ...values },
+            {
+              method: "post",
+              action: "/accounts",
+            }
+          );
+
+          setCloseModal();
+
           actions.resetForm();
         }}
         validationSchema={Yup.object({
@@ -105,7 +112,6 @@ const NewAccount = () => {
                 type="button"
                 className="w-52 ultraWide:w-64 h-full bg-customRed rounded-full ring-2 ring-customRed hover:bg-red-500 hover:ring-red-300"
                 onClick={() => {
-                  getActiveAcountLocaleStorage();
                   setCloseModal();
                 }}
               >

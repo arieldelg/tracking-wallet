@@ -7,13 +7,18 @@ import { AccountsPage, BillsPage, Home, NewBill } from "./pages/index.ts";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import {
+  loaderAccountsPage,
   loaderBillsPage,
   loaderHeader,
   loaderHome,
   loaderNewBills,
 } from "./routes/loaders/index.ts";
 import LayoutHeader from "./pages/layout/LayoutHeader.tsx";
-import { actionHome, actionNewBills } from "./routes/actions/index.ts";
+import {
+  actionAccountsPage,
+  actionHome,
+  actionNewBills,
+} from "./routes/actions/index.ts";
 
 const route = createBrowserRouter([
   {
@@ -39,6 +44,8 @@ const route = createBrowserRouter([
           {
             path: "accounts",
             element: <AccountsPage />,
+            loader: loaderAccountsPage,
+            action: actionAccountsPage,
           },
           {
             path: "bills",

@@ -18,7 +18,7 @@ export async function action({ request }: ActionFunctionArgs) {
     //     const form = formData as { images: string };
     //     if (form.images === "false") activeNoteHelper({ newNote: true });
 
-    return window.location.reload();
+    return null;
   } catch (error) {
     console.log(error);
     return null;

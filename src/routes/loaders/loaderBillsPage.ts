@@ -1,9 +1,13 @@
-import { getNotes } from "../../helpers/wallet";
+import {
+  activeAccountHelper,
+  activeNoteHelper,
+  getNotes,
+} from "../../helpers/wallet";
 import { NoteProps } from "../../interface/walletApp";
 
 const loader = async () => {
-  const accountID = localStorage.getItem("activeAccount");
-  const noteID = localStorage.getItem("activeNote");
+  const accountID = activeAccountHelper({});
+  const noteID = activeNoteHelper({});
   if (accountID) {
     const data = await getNotes(accountID);
     const filterNote = data.find((value) => value._id === noteID) as NoteProps;

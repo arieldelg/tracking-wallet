@@ -1,5 +1,5 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { IMG, NoteProps } from "../../interface/walletApp";
+import { NoteProps } from "../../interface/walletApp";
 import { CSSProperties } from "react";
 import { twMerge } from "tailwind-merge";
 import { date } from "../../helpers/wallet";
@@ -7,7 +7,6 @@ import { date } from "../../helpers/wallet";
 interface Props {
   props: NoteProps;
   onClick?: (note: NoteProps) => void;
-  deleteNote?: (id: string, images: IMG[]) => void;
   style?: CSSProperties;
   className?: string;
   width: number;
@@ -17,7 +16,6 @@ interface Props {
 const BillPreviewCard = ({
   openModal,
 
-  // deleteNote,
   props,
   onClick,
   style,
@@ -84,8 +82,6 @@ const BillPreviewCard = ({
         type="submit"
         onClick={(e) => {
           e.stopPropagation();
-          // if (revalidator) revalidator();
-          // if (deleteNote) deleteNote(props._id, props.images);
         }}
       >
         <TrashIcon className="w-10 text-red-800" />

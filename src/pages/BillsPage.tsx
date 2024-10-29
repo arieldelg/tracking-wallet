@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import { BillPreviewCard, MyBillComponent, MyNewButton } from "../components";
 import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
 import { filterBy, keyWordFilter } from "../helpers/wallet";
-import { useLoaderData, useNavigation } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { NoteProps } from "../interface/walletApp";
 
 const BillsPage = () => {
-  const navegation = useNavigation();
   const { notes, title, activeNoteLoader } = useLoaderData() as {
     notes: NoteProps[];
     title: string;
     activeNoteLoader: NoteProps;
   };
-  console.log(navegation);
+
   const { setHeaderName } = useHeaderName();
-  const { deleteNote, setActiveNote, resetNewButton, reset, activeNote } =
+  const { setActiveNote, resetNewButton, reset, activeNote } =
     useWalletStore(activeNoteLoader);
 
   useEffect(() => {
@@ -133,7 +132,6 @@ const BillsPage = () => {
             <BillPreviewCard
               props={props}
               key={props._id}
-              deleteNote={deleteNote}
               onClick={setActiveNote}
               width={width}
               className={`${
@@ -151,7 +149,7 @@ const BillsPage = () => {
           activeNote={activeNote}
           editPathTo={"/newBill"}
           nameHeader="Edit Bill"
-          classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px]"
+          classNameContainer="xl:max-2xl:px-5 xl:max-h-[454px] 2xl:w-[550px] 2xl:max-h-[558px] ultraWide:max-h-[560px] ultraWide:py-2"
           style={{ height: "100%" }}
         />
       ) : // : notesFiltered.notes.length > 0 ? (

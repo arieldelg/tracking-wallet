@@ -6,20 +6,33 @@ import {
 import Modal from "../modals/Modal";
 import { toogleClass } from "../helpers";
 import { NewAccount, WarningView } from "./views";
-import { useWalletStore, useWindowDimensions } from "../hooks";
+import { useHeaderName, useWalletStore, useWindowDimensions } from "../hooks";
 import ModalDelete from "../modals/ModalDelete";
+import { useLoaderData } from "react-router-dom";
+import { UsersAccount } from "../interface/walletApp";
+import { activeAccountHelper } from "../helpers/wallet";
+import { useEffect } from "react";
 
 const AccountsPage = () => {
+  const { accounts, title } = useLoaderData() as {
+    accounts: UsersAccount[];
+    title: string;
+    active: boolean;
+  };
+  const { setHeaderName } = useHeaderName();
   const {
     setOpenModal,
     isOpenModal,
-    Accounts,
-    activeAccountHK,
     setResetAccount,
     setOpenModalDelete,
     isOpenModalDelete,
-    activeAccount,
+    activeAccountHK,
   } = useWalletStore();
+
+  useEffect(() => {
+    setHeaderName(title);
+  }, [title, setHeaderName]);
+
   const { height } = useWindowDimensions();
 
   return (
@@ -27,23 +40,23 @@ const AccountsPage = () => {
       <MyNewButton
         openModal={() => {
           setResetAccount();
-          setOpenModal({});
+          setOpenModal();
         }}
       />
       <div
         style={{ height: height - 235 }}
         className="w-full  flex flex-col justify-start overflow-auto scrollbar"
       >
-        {Accounts.length > 0 ? (
-          Accounts.map((props) => (
+        {accounts.length > 0 ? (
+          accounts.map((props) => (
             <MyContainerCardAccounts
               {...props}
               key={props._id}
               toogleClass={toogleClass}
-              active={props._id === activeAccount?._id ? true : false}
-              activeAccountHK={activeAccountHK}
+              active={props._id === activeAccountHelper({}) ? true : false}
               setOpenModal={setOpenModal}
               setOpenDelete={setOpenModalDelete}
+              activeAccountHK={activeAccountHK}
             />
           ))
         ) : (

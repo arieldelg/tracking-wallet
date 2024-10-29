@@ -5,6 +5,7 @@ import {
   InitialValues,
   NoteProps,
   UsersAccount,
+  UsersAccountFormik,
 } from "../../interface/walletApp";
 import { getEnvirables } from "../getEnvirables";
 import { setActiveNoteSlice } from "../../store/wallet/walletSlice";
@@ -13,15 +14,22 @@ const { VITE_API_URL } = getEnvirables();
 const activeAccountHelper = ({
   account,
   refresh,
+  deleteAccount,
 }: {
   account?: string;
   refresh?: boolean;
+  deleteAccount?: boolean;
 }): string => {
   const isTrue = localStorage.getItem("activeAccount");
 
   if (isTrue === null) {
-    localStorage.setItem("activeAccount", account!);
-    return account as string;
+    localStorage.setItem("activeAccount", "1");
+    return "1";
+  }
+
+  if (deleteAccount) {
+    localStorage.removeItem("activeAccount");
+    return "1";
   }
 
   if (refresh) return localStorage.getItem("activeAccount") as string;
@@ -136,8 +144,8 @@ const savingImages = async (files: FileList[] | File[]) => {
 
     const id = activeNoteHelper({});
     await walletAPI.patch(`${VITE_API_URL}/note/imgs/${id}`, data.images);
-
-    return activeNoteHelper({ newNote: true });
+    activeNoteHelper({ newNote: true });
+    return;
     // return data.images;
   } catch (error) {
     console.log(error, "startSavingImages");
@@ -184,6 +192,7 @@ const getAccounts = async (): Promise<UsersAccount[]> => {
 };
 
 const getNotes = async (id: string): Promise<NoteProps[]> => {
+  if (id === "1") return [];
   try {
     const { data } = (await walletAPI.get(
       `${VITE_API_URL}/notes/${id}`
@@ -286,9 +295,20 @@ const getSingleAccount = async (id: string) => {
   try {
     const { data } = (await walletAPI(
       `${VITE_API_URL}/account/${id}`
-    )) as AxiosResponse<{ ok: boolean; account: UsersAccount }>;
-
+    )) as AxiosResponse<{
+      ok: boolean;
+      account: UsersAccount | UsersAccount[] | [];
+    }>;
     if (!data.ok) throw new Error("Error calling api single account");
+    if ((data.account as UsersAccount[]).length === 1) {
+      activeAccountHelper({ account: (data.account as UsersAccount[])[0]._id });
+      return (data.account as UsersAccount[])[0];
+    }
+    if ((data.account as []).length === 0) {
+      activeAccountHelper({ account: "1" });
+      return;
+    }
+
     return data.account;
   } catch (error) {
     console.log(error);
@@ -296,6 +316,7 @@ const getSingleAccount = async (id: string) => {
 };
 
 const notesHome = async (accountId: string) => {
+  if (accountId === "1") return [];
   try {
     const { data } = (await walletAPI.get(
       `${VITE_API_URL}/notes/preview/${accountId}`
@@ -346,7 +367,7 @@ const saveNote = async (formData: object, files: File[]) => {
 
   try {
     const {
-      data: { account, message, _id, ok },
+      data: { message, _id, ok },
     } = (await walletAPI.post(
       `${VITE_API_URL}/note/new`,
       note
@@ -357,7 +378,6 @@ const saveNote = async (formData: object, files: File[]) => {
       message: string;
     }>;
     if (!ok) throw new Error(message);
-    console.log(account);
     if (files.length === 0) return;
     return activeNoteHelper({ note: _id });
   } catch (error) {
@@ -389,7 +409,7 @@ const formData = (files: File[], values: InitialValues, previewIMG: IMG[]) => {
     }
 
     if (item === "images" && previewIMG.length === 0) {
-      formData.append(item, "false");
+      formData.append(item, "[]");
       continue;
     }
 
@@ -397,6 +417,73 @@ const formData = (files: File[], values: InitialValues, previewIMG: IMG[]) => {
   }
 
   return formData;
+};
+
+const stateAccount = (state?: boolean) => {
+  const isTrue = localStorage.getItem("select");
+
+  if (isTrue === null) {
+    localStorage.setItem("select", JSON.stringify(false));
+    return state;
+  }
+
+  // if (refresh) return localStorage.getItem("activeAccount") as string;
+
+  if (state) {
+    localStorage.setItem("select", JSON.stringify(state));
+    return state;
+  }
+
+  return JSON.parse(localStorage.getItem("select") as string);
+};
+
+const updateNote = async (values: UsersAccount) => {
+  const account = {
+    ...values,
+    quantity: JSON.parse(values.quantity as unknown as string),
+  };
+  try {
+    const { data } = (await walletAPI.put(
+      `${VITE_API_URL}/account/update`,
+      account
+    )) as AxiosResponse<{ ok: boolean }>;
+    if (!data.ok) throw new Error("Error updating account");
+    return;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const saveAccount = async (values: UsersAccountFormik) => {
+  const account = {
+    ...values,
+    quantity: JSON.parse(values.quantity as unknown as string),
+  };
+  try {
+    const {
+      data: { ok, _id },
+    } = (await walletAPI.post(
+      `${VITE_API_URL}/account/new`,
+      account
+    )) as AxiosResponse<{ ok: boolean; _id: string }>;
+
+    if (!ok) throw new Error("Error Saving Account");
+    return _id;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteAccount = async (id: string) => {
+  try {
+    const { data } = await walletAPI.delete(
+      `${VITE_API_URL}/account/delete/${id}`
+    );
+    if (!data.ok) throw new Error("error delete account");
+    return;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export {
@@ -415,4 +502,8 @@ export {
   deleteNote,
   saveNote,
   formData,
+  stateAccount,
+  updateNote,
+  saveAccount,
+  deleteAccount,
 };

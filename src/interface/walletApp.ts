@@ -37,9 +37,9 @@ export interface PropsCardAccounts {
   _id: string;
   toogleClass?: (event: HTMLDivElement | null) => void;
   active: boolean;
-  activeAccountHK: (value: UsersAccount) => void;
-  setOpenModal: ({ id }: { id?: string }) => void;
+  setOpenModal: () => void;
   setOpenDelete: () => void;
+  activeAccountHK: (account: UsersAccount) => void;
 }
 
 export interface UsersAccount extends UsersAccountFormik {
